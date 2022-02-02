@@ -12,31 +12,44 @@ import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 
 
-const SignIn = ({ navigation }) => {
+const SignUp = ({ navigation }) => {
 
     return (
         <ScrollView style={styles.container}>
             <View style={styles.MainContainer} >
             <View style={styles.DirectionView}>
-            <TouchableOpacity 
+            <TouchableOpacity
+            onPress={() => navigation.navigate("Login") }
             style={styles.ImgView}>
-                <Apptext style={styles.SignInTxt}>Login</Apptext>
-                <Apptext style={styles.line}></Apptext>
+                <Apptext style={styles.SignUpTxt}>Login</Apptext>
+                
             </TouchableOpacity>
-            <TouchableOpacity 
-            onPress={() => navigation.navigate("SignUp")}
-            style={[styles.ImgView, {marginHorizontal:wp('5%')}]}>
-                <Apptext style={styles.SignUpTxt}>Sign Up</Apptext>
+            <TouchableOpacity style={[styles.ImgView, {marginHorizontal:wp('5%')}]}>
+                <Apptext style={styles.SignInTxt}>Sign Up</Apptext>
+                <Apptext style={styles.line}></Apptext>
             </TouchableOpacity>
             </View>
             <View style={{marginTop:26}} >
-                <Apptext style={styles.WlcmTxt} >Welcome Back to </Apptext>
-                <Apptext style={styles.VidTxt} >VidMatch</Apptext>
+                <Apptext style={styles.WlcmTxt} >let's create</Apptext>
+                <Apptext style={styles.VidTxt}>your sign in </Apptext>
             </View>
             <View>
-            <Apptext style={styles.cntrView} >Login </Apptext>
+            <Apptext style={styles.cntrView} >Sign Up</Apptext>
             </View>
             <View style={{ marginTop: wp('1%') }}>
+            <FormInput
+                    // labelValue={email}
+                    placeholderText="First Name"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                />
+                   <FormInput
+                    // labelValue={email}
+                    placeholderText="Last Name"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                />
+                 
             <FormInput
                     // labelValue={email}
                     placeholderText="Email address"
@@ -49,23 +62,19 @@ const SignIn = ({ navigation }) => {
                     // labelValue={password}
                     placeholderText="Password"
                     autoCapitalize="none"
-                    rightImgName={require('../../../../assets/eye-off.png')}
+                    // rightImgName={require('../../../../assets/eye-off.png')}
                     secureTextEntry={true}
                     autoCorrect={false}
                 />
             
             </View>
-            <View style={styles.lightBoxTxt}>
-                <TouchableOpacity>
-                    <Apptext style={DefaultStyles.lightTxt}> Forgot Password?</Apptext>
-                </TouchableOpacity>
-            </View>
-            <View style={{ marginTop: wp('10%') }}>
+           
+            <View style={{ marginTop: wp('9%') }}>
                     <FormButton
-                        buttonTitle={"Login"}
-                        onPress={() => navigation.navigate("Home")}
+                        buttonTitle={"Sign Up"}
                     /> 
             </View>
+            <Apptext style={styles.OR} >Or</Apptext>
             <View style={styles.socialViews} >
                 <TouchableOpacity style={styles.socialBox} >
                 <Image source={require('../../../../assets/google.png')} />
@@ -75,11 +84,11 @@ const SignIn = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.bottomLines} >
-                <Apptext style={styles.bottomTxt}> Don't have an account? </Apptext>
+                <Apptext style={styles.bottomTxt}> Already have an account? </Apptext>
                 <TouchableOpacity
-                onPress={() => navigation.navigate("SignUp")}
+                onPress={() => navigation.navigate("Login") }
                 >
-                    <Apptext style={[styles.bottomTxt,{color: DefaultStyles.colors.black,  }]}>Signup Here</Apptext>
+                    <Apptext style={[styles.bottomTxt,{color: DefaultStyles.colors.black,  }]}>Login Here</Apptext>
                 </TouchableOpacity>
             </View>
             </View>  
@@ -87,7 +96,7 @@ const SignIn = ({ navigation }) => {
     )
 }
 
-export default SignIn;
+export default SignUp;
 
 const styles = StyleSheet.create({
     container: {
@@ -115,19 +124,19 @@ const styles = StyleSheet.create({
         color: DefaultStyles.colors.black,
     },
     line:{ 
-        width:50,
+        width:70,
         height:2,
         backgroundColor: DefaultStyles.colors.black,
     },
     WlcmTxt:{
         fontSize:24,
         marginTop:wp('1%'),
-        fontFamily:'Poppins-Regular',
+        fontFamily:'ABeeZee-Regular',
         
     },
     VidTxt:{
         fontSize:28,
-        fontFamily:'Poppins-Medium',
+        fontFamily:'ABeeZee-Regular',
         marginTop:wp('1%')
     },
     cntrView:{
@@ -135,10 +144,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf:'center',
         fontSize:30,
-        marginTop: 107
+        marginTop: 35
     },
     socialViews:{
-        marginTop:41,
+        marginTop: wp('7%'),
         flexDirection:'row',
         justifyContent:'space-around'
     },
@@ -149,6 +158,11 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         borderRadius:4,
         backgroundColor:"lightgray"
+    },
+    OR:{
+        fontFamily:'Roboto-Regular',
+        alignSelf:'center',
+        fontSize:14
     },
     methods: {
         justifyContent: 'center', alignItems: 'center',
@@ -166,7 +180,7 @@ const styles = StyleSheet.create({
     },
     bottomLines: {
         alignSelf: 'center',
-        marginTop: wp('10%'),
+        marginTop: wp('11%'),
         marginBottom: wp('5%'),
         flexDirection: 'row'
     },

@@ -1,6 +1,8 @@
 export default {
   primary: "#db4754",
   secondary: "#09154a",
+  sky:'#dbf7ff',
+  grash:'#f0f0f0',
   bottomBoxClr:'#878787',
   red:"#F33333",
   tertiary: "#6349EB",

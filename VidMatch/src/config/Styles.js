@@ -17,8 +17,8 @@ export default {
     fontWeight: "400"
   },
   lightTxt: {
-    color: colors.primary,
-    fontSize: 12,
-    fontFamily: "Lato-Regular",
+    color: colors.black,
+    fontSize: 13,
+    fontFamily: "Poppins-Regular",
   },
 };

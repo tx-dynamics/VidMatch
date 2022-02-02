@@ -152,6 +152,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+    release {
+      storeFile file('vidMatch.keystore')
+      storePassword '1234567'
+      keyAlias 'vidmat-alias'
+      keyPassword '1234567'
+    }
     }
     buildTypes {
         debug {
