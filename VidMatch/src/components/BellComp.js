@@ -4,7 +4,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import DefaultStyles from "../config/Styles";
 import Apptext from '../components/Apptext';
 
-const FvrtComp = ({ labelValue, placeholderText,
+const BellComp = ({ labelValue, placeholderText,
     iconType, leftIconType, leftImgName, rightImgName,
     onPress,
     rightIconType, ...rest }) => {
@@ -13,9 +13,9 @@ const FvrtComp = ({ labelValue, placeholderText,
         onPress={onPress}
         style={[styles.inputContainer]} >
             <View style={{ flexDirection: 'row' }}>
-               <Image style={styles.imgStl}
+               {/* <Image style={styles.imgStl}
                 source={leftImgName}
-               />
+               /> */}
                <View style={styles.txtView}>
                 <Apptext style={styles.txtVal}>{labelValue}</Apptext>
                 </View>
@@ -29,7 +29,7 @@ const FvrtComp = ({ labelValue, placeholderText,
     );
 };
 
-export default FvrtComp;
+export default BellComp;
 
 const styles = StyleSheet.create({
     HumanInput: {
@@ -44,22 +44,24 @@ const styles = StyleSheet.create({
     },
     txtView:{
         justifyContent:'center',
-        marginHorizontal:wp('3%'),
-        width:wp('55%'),
+        // marginHorizontal:wp('3%'),
+        width:wp('80%'),
+        // backgroundColor:"red"
     },
     txtVal:{
-        fontFamily:'poppins-Regular',
-        fontSize:wp('4%')
+        fontFamily:'Poppins-Regular',
+        fontSize:wp('3%'),
+        color:DefaultStyles.colors.black
     },
     inputContainer: {
-        width: wp('88%'),
-        marginBottom:wp('3%'),
+        width: wp('90%'),
+        marginBottom:wp('5%'),
         alignSelf: 'center',
-        // height:75,
-        padding:wp('2%'),
-        paddingLeft:wp('4%'),
-        backgroundColor: DefaultStyles.colors.grash,
-        borderRadius: 6,
+        // height:52,
+        padding:wp('5%'),
+        // paddingLeft:wp('4%'),
+        backgroundColor: DefaultStyles.colors.sky,
+        borderRadius: 12,
         borderBottomColor: "white",
         // shadowColor: "#000",
         // shadowOffset: {

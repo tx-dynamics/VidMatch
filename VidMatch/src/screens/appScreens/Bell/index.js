@@ -11,15 +11,15 @@ import Apptext from '../../../components/Apptext';
 import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 import Header from '../../../components/Header';
-import InboxComp from '../../../components/InboxComp';
+import BellComp from '../../../components/BellComp';
 
-const Chats = ({ navigation }) => {
+const Bell = ({ navigation }) => {
 
     const DATA = [
         {
             id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
             count: "+5",
-            label: "Alex Mintz",
+            label: "A new Match Has been Found. View Now",
             msg: "Lorem ipsum",
             Img: require("../../../../assets/boy1.png"),
             dt: "5 minutes ago",
@@ -28,7 +28,7 @@ const Chats = ({ navigation }) => {
         {
             id: 'bd7acbewweea-c1b1-46c2-aed5-3ad53abb28ba',
             count: "",
-            label: 'Amelia Tray',
+            label: 'Your Premium Subscription Has Been Added',
             msg: "Will do, super, thank you",
             Img: require("../../../../assets/boy2.png"),
             dt: "2 hours ago",
@@ -37,30 +37,13 @@ const Chats = ({ navigation }) => {
         {
             id: 'bd7acbea-c1bewew1-46c2-aed5-3ad53abb28ba',
             count: "+3",
-            label: "Krysia Eurydyka",
+            label: "Welcome to VidMatch. Let’s Get Started",
             msg: "Lorem ipsum",
             Img: require("../../../../assets/boy3.png"),
             dt: "3 hours ago",
             move: "Detail"
         },
-        {
-            id: 'bd7acbea-c1bewew31-46c2-aed5-3ad53abb28ba',
-            count: "+3",
-            label: "jarosław kowalski",
-            msg: "Lorem ipsum",
-            Img: require("../../../../assets/boy1.png"),
-            dt: "3 hours ago",
-            move: "Detail"
-        },
-        {
-            id: 'bd7acbea-c1be4wew1-46c2-aed5-3ad53abb28ba',
-            count: "+3",
-            label: "Krysia Eurydyka",
-            msg: "Lorem ipsum",
-            Img: require("../../../../assets/boy2.png"),
-            dt: "3 hours ago",
-            move: "Detail"
-        },
+       
        
     ];
 
@@ -68,26 +51,16 @@ const Chats = ({ navigation }) => {
         <View style={styles.container}>
             <Header
             backgroundColor={"white"}
-            headerLabel={"Chats"}
+            headerLabel={"Notifications"}
             leftImgName={require('../../../../assets/hamBurger.png')}
             rightImg={require('../../../../assets/play.png')}
             />
          <View style={styles.MainContainer}>
-         <TouchableOpacity style={styles.searchBar}>
-                <Image style={{marginHorizontal:18}} source={require('../../../../assets/search.png')} />
-                <TextInput style={{ padding: 19, color: 'grey' }}
-                    placeholder='Alex'
-                    style={{width:wp('60%')}}
-                    onChangeText={(val) => console.log(val)}
-                />
-                <TouchableOpacity style={styles.blueBox}>
-                <Image source={require('../../../../assets/bigAdd.png')} />
-                </TouchableOpacity>
-            </TouchableOpacity>
-           
-             <View style={{ marginTop: wp('3%') }} >
+     
+             <View style={{ marginTop: wp('9%') }} >
                     <FlatList
                         data={DATA}
+                        maxHeight={"99%"}
                         showsVerticalScrollIndicator={false}
                         keyExtractor={(item) => item.id}
                         ListEmptyComponent={() => {
@@ -98,9 +71,9 @@ const Chats = ({ navigation }) => {
                             );
                           }}
                         renderItem={({ item,index }) => (
-                            <InboxComp
+                            <BellComp
                                 imgName={item.Img}
-                                label={item.label}
+                                labelValue={item.label}
                                 msg={item.msg}
                                 // rightImgName={item.isLike ? require('../../../../assets/redHeart.png') : require('../../../../assets/heart.png')}
                             />
@@ -113,7 +86,7 @@ const Chats = ({ navigation }) => {
     )
 }
 
-export default Chats;
+export default Bell;
 
 const styles = StyleSheet.create({
     container: {
@@ -124,28 +97,28 @@ const styles = StyleSheet.create({
         marginHorizontal:wp('5%')
     },
     searchBar: {
-        height: 52,
-        width: wp('73%') ,
+        height: 57,
+        width: wp('72%') ,
         backgroundColor: "white",
         flexDirection:'row',
         marginTop: wp('6%'),
-        borderRadius: 6,
-        alignItems:'center',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
+        borderRadius: 10,
+        alignItems:'center'
+        // shadowColor: "#000",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 2,
+        // },
+        // shadowOpacity: 0.25,
+        // shadowRadius: 3.84,
+        // elevation: 5,
     },
     blueBox:{
-        width:wp('13%'),
+        width:wp('16%'),
         alignItems:'center',
         justifyContent:'center',
-        height:48,
-        borderRadius:6,
+        height:57,
+        borderRadius:8,
         backgroundColor:DefaultStyles.colors.secondary
     },
     topTxtView:{

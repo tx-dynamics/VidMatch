@@ -1,6 +1,8 @@
 import React,{useState, useEffect} from 'react';
 import {StyleSheet,Image, Text, View } from 'react-native';
+import { widthPercentageToDP } from 'react-native-responsive-screen';
 import DefaultStyles from "../../../config/Styles";
+import SVGImg from '../../../../assets/loading.svg';
 
 const Splash = ({navigation}) => {
 
@@ -17,7 +19,8 @@ const Splash = ({navigation}) => {
             source={require('../../../../assets/splahLogo.png')}
             style={styles.splashImage}
             resizeMode={"contain"}/>
-
+            <SVGImg style={{alignSelf:'center'}} width={30} height={30} />
+           
         </View>
     )
 }
@@ -32,8 +35,8 @@ const styles = StyleSheet.create({
     },
     splashImage:{
         flex:1,
-        width:258,
-        height:172,
+        width:200,
+        height:200,
         alignSelf:"center"
     }
 

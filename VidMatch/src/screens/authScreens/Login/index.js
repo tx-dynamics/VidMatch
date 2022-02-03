@@ -10,9 +10,14 @@ import DefaultStyles from '../../../config/Styles';
 import Apptext from '../../../components/Apptext';
 import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
+import { useSelector } from 'react-redux';
+import { useDispatch } from "react-redux";
+import { setUser } from '../../../redux/actions/authAction';
 
 
 const SignIn = ({ navigation }) => {
+
+    let dispatch = useDispatch();
 
     return (
         <ScrollView style={styles.container}>
@@ -57,13 +62,16 @@ const SignIn = ({ navigation }) => {
             </View>
             <View style={styles.lightBoxTxt}>
                 <TouchableOpacity>
-                    <Apptext style={DefaultStyles.lightTxt}> Forgot Password?</Apptext>
+                    <Apptext style={styles.lightTxt}> Forgot password?</Apptext>
                 </TouchableOpacity>
             </View>
             <View style={{ marginTop: wp('10%') }}>
                     <FormButton
                         buttonTitle={"Login"}
-                        onPress={() => navigation.navigate("Home")}
+                        onPress={() => {
+                            dispatch(setUser(true))
+                            // navigation.navigate("Home")
+                        }}
                     /> 
             </View>
             <View style={styles.socialViews} >
@@ -79,7 +87,7 @@ const SignIn = ({ navigation }) => {
                 <TouchableOpacity
                 onPress={() => navigation.navigate("SignUp")}
                 >
-                    <Apptext style={[styles.bottomTxt,{color: DefaultStyles.colors.black,  }]}>Signup Here</Apptext>
+                    <Apptext style={[styles.bottomTxt,{color: DefaultStyles.colors.black, fontStyle:"italic",  }]}>Signup Here</Apptext>
                 </TouchableOpacity>
             </View>
             </View>  
@@ -138,7 +146,7 @@ const styles = StyleSheet.create({
         marginTop: 107
     },
     socialViews:{
-        marginTop:41,
+        marginTop:wp('8%'),
         flexDirection:'row',
         justifyContent:'space-around'
     },
@@ -162,7 +170,12 @@ const styles = StyleSheet.create({
     lightBoxTxt: {
         flexDirection: 'row',
         marginTop: wp('3%'),
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
+    },
+    lightTxt:{
+        color: DefaultStyles.colors.black,
+        fontSize: 13,
+        fontFamily: "Poppins-Regular",
     },
     bottomLines: {
         alignSelf: 'center',
@@ -172,7 +185,6 @@ const styles = StyleSheet.create({
     },
     bottomTxt: {
         fontSize: 14,
-        fontStyle:"italic",
         color:DefaultStyles.colors.black,
         fontFamily: "Roboto-Regular",
 

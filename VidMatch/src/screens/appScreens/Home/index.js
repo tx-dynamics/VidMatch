@@ -53,6 +53,7 @@ const Home = ({ navigation }) => {
             leftImgName={require('../../../../assets/hamBurger.png')}
             centerImg={require('../../../../assets/headerLogo.png')}
             rightImg={require('../../../../assets/play.png')}
+            onPressRight={() => navigation.navigate("VideoMatch")}
             />
          <View style={styles.MainContainer}>
              <View style={styles.topTxtView}>
@@ -61,7 +62,7 @@ const Home = ({ navigation }) => {
              <Image source={require('../../../../assets/add.png')} />
              </TouchableOpacity>
              </View>
-             <View style={{ marginTop: wp('8%') }} >
+             <View style={{ marginTop: wp('6%') }} >
                     <FlatList
                         data={DATA}
                         keyExtractor={(item) => item.id}
@@ -76,7 +77,6 @@ const Home = ({ navigation }) => {
                             <FvrtComp
                                 leftImgName={item.Img}
                                 labelValue={item.label}
-                                onPress={() => navigation.navigate("Chats")}
                                 // rightImgName={item.isLike ? require('../../../../assets/redHeart.png') : require('../../../../assets/heart.png')}
                             />
 

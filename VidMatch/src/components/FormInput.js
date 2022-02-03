@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TextInput, StyleSheet, Image } from 'react-native';
+import { View, TextInput, StyleSheet,TouchableOpacity, Image } from 'react-native';
 // import Feather from 'react-native-vector-icons/Feather';
 // import FontAwesome from 'react-native-vector-icons/Feather';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -23,9 +23,9 @@ const FormInput = ({ labelValue, placeholderText,
                     placeholderTextColor={'#929292' } 
                     {...rest}
                 />
-               
+                <TouchableOpacity>
                 <Image style={{marginTop:wp('5%'), marginHorizontal:wp('5%') }} source={rightImgName} />
-
+                </TouchableOpacity>
             </View>
         </View>
     );

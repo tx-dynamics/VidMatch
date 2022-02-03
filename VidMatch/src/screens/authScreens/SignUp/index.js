@@ -31,7 +31,7 @@ const SignUp = ({ navigation }) => {
             </View>
             <View style={{marginTop:26}} >
                 <Apptext style={styles.WlcmTxt} >let's create</Apptext>
-                <Apptext style={styles.VidTxt}>your sign in </Apptext>
+                <Apptext style={styles.WlcmTxt}>your sign in </Apptext>
             </View>
             <View>
             <Apptext style={styles.cntrView} >Sign Up</Apptext>
@@ -52,7 +52,7 @@ const SignUp = ({ navigation }) => {
                  
             <FormInput
                     // labelValue={email}
-                    placeholderText="Email address"
+                    placeholderText="Email"
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoCorrect={false}
@@ -88,7 +88,7 @@ const SignUp = ({ navigation }) => {
                 <TouchableOpacity
                 onPress={() => navigation.navigate("Login") }
                 >
-                    <Apptext style={[styles.bottomTxt,{color: DefaultStyles.colors.black,  }]}>Login Here</Apptext>
+                    <Apptext style={[styles.bottomTxt,{color: DefaultStyles.colors.black,fontStyle:"italic",  }]}>Login Here</Apptext>
                 </TouchableOpacity>
             </View>
             </View>  
@@ -186,7 +186,6 @@ const styles = StyleSheet.create({
     },
     bottomTxt: {
         fontSize: 14,
-        fontStyle:"italic",
         color:DefaultStyles.colors.black,
         fontFamily: "Roboto-Regular",
 
