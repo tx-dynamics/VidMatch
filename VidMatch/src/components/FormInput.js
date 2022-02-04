@@ -7,9 +7,12 @@ import DefaultStyles from "../config/Styles";
 
 const FormInput = ({ labelValue, placeholderText,
     iconType, leftIconType, leftImgName, rightImgName,
+    onPress,
+    placeholderTextColor = '#929292',
+    backgroundColor= DefaultStyles.colors.sky,
     rightIconType, ...rest }) => {
     return (
-        <View style={[styles.inputContainer]} >
+        <View style={[styles.inputContainer, {backgroundColor : backgroundColor}]} >
             <View style={{ flexDirection: 'row' }}>
                
                 <View style={{ justifyContent: 'center' }} >
@@ -20,11 +23,11 @@ const FormInput = ({ labelValue, placeholderText,
                     style={styles.HumanInput}
                     numberOfLines={1}
                     placeholder={placeholderText}
-                    placeholderTextColor={'#929292' } 
+                    placeholderTextColor={ placeholderTextColor} 
                     {...rest}
                 />
-                <TouchableOpacity>
-                <Image style={{marginTop:wp('5%'), marginHorizontal:wp('5%') }} source={rightImgName} />
+                <TouchableOpacity onPress={onPress}>
+                <Image style={{width:14, height:14,tintColor:"gray",marginTop:wp('5%'), marginHorizontal:wp('5%') }} source={rightImgName} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -47,7 +50,6 @@ const styles = StyleSheet.create({
         paddingLeft: wp('3%'),
         //paddingTop: wp('1%'),
         justifyContent:'center',
-        backgroundColor: DefaultStyles.colors.sky,
         borderRadius: 8,
         borderBottomColor: "white",
         // shadowColor: "#000",

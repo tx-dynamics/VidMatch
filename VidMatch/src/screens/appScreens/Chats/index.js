@@ -102,11 +102,13 @@ const Chats = ({ navigation }) => {
                                 imgName={item.Img}
                                 label={item.label}
                                 msg={item.msg}
+                                onPress={() => navigation.navigate("ChatDetail")}
                                 // rightImgName={item.isLike ? require('../../../../assets/redHeart.png') : require('../../../../assets/heart.png')}
                             />
 
                         )}
                     />
+
                 </View>
          </View>
         </View>
@@ -121,7 +123,8 @@ const styles = StyleSheet.create({
         // backgroundColor: DefaultStyles.colors.white,
     },
     MainContainer:{
-        marginHorizontal:wp('5%')
+        marginHorizontal:wp('5%'),
+        height:wp('100%')
     },
     searchBar: {
         height: 52,
@@ -141,10 +144,10 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     blueBox:{
-        width:wp('13%'),
+        width:wp('14%'),
         alignItems:'center',
         justifyContent:'center',
-        height:48,
+        height:52,
         borderRadius:6,
         backgroundColor:DefaultStyles.colors.secondary
     },

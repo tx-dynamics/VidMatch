@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
         backgroundColor: DefaultStyles.colors.black,
     },
     WlcmTxt:{
-        fontSize:24,
+        fontSize:30,
         marginTop:wp('1%'),
         fontFamily:'ABeeZee-Regular',
         

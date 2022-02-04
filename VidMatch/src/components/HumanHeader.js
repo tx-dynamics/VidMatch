@@ -10,13 +10,16 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import Apptext from "./Apptext";
 import DefaultStyles from "../config/Styles";
 
-function Header({
+function HumanHeader({
   headerLabel,
   backgroundColor,
   leftImgName,
   centerImg,
+  phoneImg,
+  menuImg,
+  onPressPhone,
+  onPressMenu,
   isBack = true,
-  height = wp("23%"),
   contentColor = DefaultStyles.colors.secondary,
   onPressLeft,
   onPressRight,
@@ -27,17 +30,10 @@ function Header({
     <View
       style={{
         ...styles.container,
-        height:height,
         backgroundColor: backgroundColor,
         ...style,
       }}
     >
-      {/* <MaterialCommunityIcons
-        size={20}
-        onPress={onPressLeft}
-        name={leftIcon}
-        color={contentColor}
-      /> */}
       <TouchableOpacity 
       onPress={onPressLeft} 
       style={{width:wp('6%')}}>
@@ -45,12 +41,18 @@ function Header({
         <Image source={leftImgName} />
       ) : null}
       </TouchableOpacity>
-      <View style={{alignItems:'center', width:wp('70%'), height:wp('5%')}}>
-      <Image source={centerImg} />
+      <View style={styles.imgView} >
+      <Image style={{width:48, height:48}} source={centerImg} />
       <Apptext style={styles.headerLabel} >{headerLabel}</Apptext>
       </View>
-      <TouchableOpacity style={{width:wp('6%')}} onPress={onPressRight}>
-        <Image source={rightImg} />
+      <TouchableOpacity style={styles.space} onPress={onPressRight}>
+        <Image style={{tintColor:"#3F3F3F"}} source={rightImg} />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.space} onPress={onPressPhone}>
+        <Image source={phoneImg} />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.space} onPress={onPressMenu}>
+        <Image source={menuImg} />
       </TouchableOpacity>
 
 
@@ -60,11 +62,11 @@ function Header({
 const styles = StyleSheet.create({
  
   container: {
+    height: wp("20%"),
     width: wp("100%"),
     borderBottomRightRadius: 1,
     borderBottomLeftRadius: 1,
     alignItems: "center",
-    justifyContent: "space-between",
     flexDirection: "row",
     padding: wp('5%'),
     shadowColor: "#000",
@@ -78,12 +80,24 @@ const styles = StyleSheet.create({
     // borderBottomWidth:0.5,
     elevation: 3,
   },
+  imgView:{
+    flexDirection:'row',
+    alignItems:'center',
+    height:wp('20%'),
+    // backgroundColor:"red",
+    padding:wp('5%'),paddingTop:wp('6%')
+  },
   headerLabel:{
     fontFamily:'Poppins-SemiBold',
     color:DefaultStyles.colors.secondary,
     fontSize:14,
-    // backgroundColor:"red",
+    marginHorizontal:wp('3%'),
+    width:wp('32%'),
+    // backgroundColor:"green"
+  },
+  space:{
+      marginHorizontal:wp('2%')
   }
 });
 
-export default Header;
+export default HumanHeader;

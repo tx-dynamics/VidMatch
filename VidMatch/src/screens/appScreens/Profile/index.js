@@ -88,7 +88,7 @@ const Profile = ({ navigation }) => {
                     <Image source={require('../../../../assets/blurBoy.png')} />
                     <Apptext style={styles.imgTxt} >Hanna Spratt</Apptext>
                 </TouchableOpacity>
-                {/* <ScrollView> */}
+                <ScrollView>
                 <View style={styles.twoTxts}>
                     <Apptext style={styles.cncts} >Connects</Apptext>
                     <Apptext style={styles.VLine}></Apptext>
@@ -125,11 +125,12 @@ const Profile = ({ navigation }) => {
                             firstImg={item.firstImg}
                             scndImg={item.scndImg}
                             subTxt={item.msg}
+                            leftOnPress={() => navigation.navigate("VideoDetail")}
                         />
 
                     )}
                 />
-                {/* </ScrollView> */}
+                </ScrollView>
             </View>
 
         </View>
@@ -189,6 +190,7 @@ const styles = StyleSheet.create({
     VLine: {
         width: 0.5,
         height: wp('17%'),
+        marginTop:wp('1%'),
         backgroundColor: DefaultStyles.colors.gray,
     },
     HLine: {
@@ -215,7 +217,7 @@ const styles = StyleSheet.create({
     },
     achTxt: {
         fontFamily: 'Poppins-Regular',
-        fontSize: 14
+        fontSize: 14,marginTop:wp('1%')
     },
     rcnt: {
         fontSize: 12,

@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   inboxName: {
     fontSize:15,
     width: wp('56%'),
-    marginLeft: wp('5%'),
+    marginLeft: wp('3%'),
     marginTop: wp('1%')
   },
   inboxDate: {
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     color: DefaultStyles.colors.black, 
     fontSize:11,
     width: 160, alignSelf: 'center',
-    marginLeft: -10,
+    marginLeft: -32,
     marginTop: -20,
   }
 

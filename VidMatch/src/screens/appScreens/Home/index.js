@@ -77,6 +77,7 @@ const Home = ({ navigation }) => {
                             <FvrtComp
                                 leftImgName={item.Img}
                                 labelValue={item.label}
+                                onPress={() => navigation.navigate("Premium")}
                                 // rightImgName={item.isLike ? require('../../../../assets/redHeart.png') : require('../../../../assets/heart.png')}
                             />
 

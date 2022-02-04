@@ -12,6 +12,11 @@ import Chat from '../screens/appScreens/Chats';
 import Bell from "./appScreens/Bell";
 import Profile from "./appScreens/Profile";
 import VideoMatch from "./appScreens/VideoMatch";
+import ChatDetail from "./appScreens/Chats/ChatDetail";
+import VideoDetail from "./appScreens/Profile/VideoDetail";
+import Premium from "./appScreens/PaymentScreens/Premium";
+import AskPaymentOption from "./appScreens/PaymentScreens/AskPaymentOption";
+import Payment from "./appScreens/PaymentScreens/Payment";
 
 const Tab = createBottomTabNavigator();
 
@@ -43,6 +48,9 @@ const GeneralNavigator = () => {
                 
             <StackNavigator.Screen name="HomeNavigator" component={HomeNavigator} />
             <StackNavigator.Screen name="VideoMatch" component={VideoMatch} />
+            <StackNavigator.Screen name="Premium" component={Premium} />
+            <StackNavigator.Screen name="AskPaymentOption" component={AskPaymentOption} />
+            <StackNavigator.Screen name="Payment" component={Payment} />
 
         </StackNavigator.Navigator>
     )
@@ -70,6 +78,7 @@ const ChatNavigator = () => {
                 headerShown: false
             }}>
             <StackNavigator.Screen name="Chat" component={Chat} />
+            <StackNavigator.Screen name="ChatDetail" component={ChatDetail } />
 
         </StackNavigator.Navigator>
     )
@@ -98,6 +107,7 @@ const ProfileNavigator = () => {
                 headerShown: false
             }}>
             <StackNavigator.Screen name="Profile" component={Profile} />
+            <StackNavigator.Screen name="VideoDetail" component={VideoDetail} />
 
         </StackNavigator.Navigator>
     )

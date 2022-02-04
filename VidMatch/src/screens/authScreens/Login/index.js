@@ -18,6 +18,11 @@ import { setUser } from '../../../redux/actions/authAction';
 const SignIn = ({ navigation }) => {
 
     let dispatch = useDispatch();
+    const [isEntry, setEntry] = useState(true);
+
+    const updateSecureTextEntry = () => {
+        setEntry(!isEntry)
+    }
 
     return (
         <ScrollView style={styles.container}>
@@ -54,8 +59,9 @@ const SignIn = ({ navigation }) => {
                     // labelValue={password}
                     placeholderText="Password"
                     autoCapitalize="none"
-                    rightImgName={require('../../../../assets/eye-off.png')}
-                    secureTextEntry={true}
+                    rightImgName={isEntry ? require('../../../../assets/eye-off.png') : require('../../../../assets/eye.png')}
+                    onPress={updateSecureTextEntry}
+                    secureTextEntry={isEntry ? true : false }
                     autoCorrect={false}
                 />
             
@@ -170,11 +176,14 @@ const styles = StyleSheet.create({
     lightBoxTxt: {
         flexDirection: 'row',
         marginTop: wp('3%'),
-        justifyContent: 'flex-end',
+        backgroundColor:"red",
+        marginHorizontal:wp('55%')
+        // justifyContent: 'flex-end',
     },
     lightTxt:{
         color: DefaultStyles.colors.black,
         fontSize: 13,
+        width:wp('55%'),
         fontFamily: "Poppins-Regular",
     },
     bottomLines: {

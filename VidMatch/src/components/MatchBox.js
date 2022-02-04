@@ -12,7 +12,7 @@ const MatchBox = ({ leftTitle, rightTitle, leftImgName,
     return (
         <View style={styles.MainContainer}>
             <TouchableOpacity onPress={leftOnPress} style={styles.SightingContainer} {...rest}>
-                <ImageBackground imageStyle={{borderRadius:12}} style={styles.SightingContainer} source={leftImgName}>
+                <ImageBackground imageStyle={{borderRadius:10}} style={styles.SightingContainer} source={leftImgName}>
                     <View  style={styles.direction}>
                         <Image style={styles.imgBox} source={firstImg} />
                         <Image style={styles.imgBox} source={scndImg} />
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         // shadowOpacity: 0.25,
         // shadowRadius: 3.84,
         // elevation: 1,
-        borderRadius: 12
+        borderRadius: 10
     },
     direction:{
         flexDirection:'row',
