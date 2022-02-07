@@ -6,20 +6,20 @@ import Apptext from '../components/Apptext';
 
 const FvrtComp = ({ labelValue, placeholderText,
     iconType, leftIconType, leftImgName, rightImgName,
-    onPress,
+    onPress,borderRadius= 6,rightOnPress,
     rightIconType, ...rest }) => {
     return (
         <TouchableOpacity 
         onPress={onPress}
-        style={[styles.inputContainer]} >
-            <View style={{ flexDirection: 'row' }}>
+        style={[styles.inputContainer, {borderRadius:borderRadius}]} >
+            <View style={{ flexDirection: 'row',alignItems:'center' }}>
                <Image style={styles.imgStl}
                 source={leftImgName}
                />
                <View style={styles.txtView}>
                 <Apptext style={styles.txtVal}>{labelValue}</Apptext>
                 </View>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={rightOnPress} >
                 <Image
                 style={styles.hrtStl}
                 source={rightImgName}  />
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     txtView:{
         justifyContent:'center',
         marginHorizontal:wp('3%'),
-        width:wp('55%'),
+        width:wp('50%'),
     },
     txtVal:{
         fontFamily:'poppins-Regular',
@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
         padding:wp('2%'),
         paddingLeft:wp('4%'),
         backgroundColor: DefaultStyles.colors.grash,
-        borderRadius: 6,
         borderBottomColor: "white",
         // shadowColor: "#000",
         // shadowOffset: {
@@ -72,7 +71,8 @@ const styles = StyleSheet.create({
         // elevation: 3,
     },
     hrtStl:{
-        width:22,
-        height:20
+        width:25,
+        height:25,
+        marginRight:wp('10%')
     }
 });

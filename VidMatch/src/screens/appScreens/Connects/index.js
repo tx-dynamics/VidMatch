@@ -11,17 +11,16 @@ import Apptext from '../../../components/Apptext';
 import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 import Header from '../../../components/Header';
-import BellComp from '../../../components/BellComp';
-import {DrawerActions, useNavigation} from '@react-navigation/native'
+import FvrtComp from '../../../components/FvrtComp';
 
-
-const Bell = ({ navigation }) => {
+const Connects = ({ navigation }) => {
 
     const DATA = [
         {
             id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
             count: "+5",
-            label: "A new Match Has been Found. View Now",
+            label: "Alex Mintz",
+            conct: require("../../../../assets/blueAdd.png"),
             msg: "Lorem ipsum",
             Img: require("../../../../assets/boy1.png"),
             dt: "5 minutes ago",
@@ -30,8 +29,9 @@ const Bell = ({ navigation }) => {
         {
             id: 'bd7acbewweea-c1b1-46c2-aed5-3ad53abb28ba',
             count: "",
-            label: 'Your Premium Subscription Has Been Added',
+            label: 'Amelia Tray',
             msg: "Will do, super, thank you",
+            conct: require("../../../../assets/blueAdd.png"),
             Img: require("../../../../assets/boy2.png"),
             dt: "2 hours ago",
             move: "Detail"
@@ -39,13 +39,33 @@ const Bell = ({ navigation }) => {
         {
             id: 'bd7acbea-c1bewew1-46c2-aed5-3ad53abb28ba',
             count: "+3",
-            label: "Welcome to VidMatch. Let’s Get Started",
+            label: "Krysia Eurydyka",
             msg: "Lorem ipsum",
             Img: require("../../../../assets/boy3.png"),
+            conct: require("../../../../assets/blueAdd.png"),
             dt: "3 hours ago",
             move: "Detail"
         },
-       
+        {
+            id: 'bd7acbea-c1bewew31-46c2-aed5-3ad53abb28ba',
+            count: "+3",
+            label: "jarosław kowalski",
+            msg: "Lorem ipsum",
+            Img: require("../../../../assets/boy1.png"),
+            conct: require("../../../../assets/blueAdd.png"),
+            dt: "3 hours ago",
+            move: "Detail"
+        },
+        {
+            id: 'bd7acbea-c1be4wew1-46c2-aed5-3ad53abb28ba',
+            count: "+3",
+            label: "Krysia Eurydyka",
+            msg: "Lorem ipsum",
+            Img: require("../../../../assets/boy2.png"),
+            conct: require("../../../../assets/blueAdd.png"),
+            dt: "3 hours ago",
+            move: "Detail"
+        },
        
     ];
 
@@ -53,19 +73,26 @@ const Bell = ({ navigation }) => {
         <View style={styles.container}>
             <Header
             backgroundColor={"white"}
-            headerLabel={"Notifications"}
-            leftImgName={require('../../../../assets/hamBurger.png')}
-            onPressLeft={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+            headerLabel={"Connects"}
+            leftImgName={require('../../../../assets/arrow-back.png')}
             rightImg={require('../../../../assets/play.png')}
+            onPressLeft={() => navigation.goBack()}
             />
          <View style={styles.MainContainer}>
-     
-             <View style={{ marginTop: wp('9%') }} >
+         <TouchableOpacity style={styles.searchBar}>
+                <Image style={{marginHorizontal:18}} source={require('../../../../assets/search.png')} />
+                <TextInput style={{ padding: 19, color: 'grey' }}
+                    placeholder='Alex'
+                    style={{width:wp('75%')}}
+                    onChangeText={(val) => console.log(val)}
+                />
+            </TouchableOpacity>
+           
+            <View style={{ marginTop: wp('6%') }} >
                     <FlatList
                         data={DATA}
-                        maxHeight={"99%"}
-                        showsVerticalScrollIndicator={false}
                         keyExtractor={(item) => item.id}
+                        showsVerticalScrollIndicator={false}
                         ListEmptyComponent={() => {
                             return (
                               <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
@@ -74,12 +101,13 @@ const Bell = ({ navigation }) => {
                             );
                           }}
                         renderItem={({ item,index }) => (
-                            <BellComp
-                                imgName={item.Img}
+                            <FvrtComp
+                                leftImgName={item.Img}
+                                borderRadius={9}
                                 labelValue={item.label}
-                                msg={item.msg}
-                                // rightImgName={item.isLike ? require('../../../../assets/redHeart.png') : require('../../../../assets/heart.png')}
-                            />
+                                rightImgName={item.conct}
+                                rightOnPress={() => navigation.navigate("AddConnect")}
+                                />
 
                         )}
                     />
@@ -89,39 +117,40 @@ const Bell = ({ navigation }) => {
     )
 }
 
-export default Bell;
+export default Connects;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // backgroundColor: DefaultStyles.colors.white,
+        backgroundColor: DefaultStyles.colors.white,
     },
     MainContainer:{
-        marginHorizontal:wp('5%')
+        marginHorizontal:wp('5%'),
+        height:wp('100%')
     },
     searchBar: {
         height: 57,
-        width: wp('72%') ,
-        backgroundColor: "white",
+        width: wp('89%') ,
+        // backgroundColor: "red",
         flexDirection:'row',
         marginTop: wp('6%'),
-        borderRadius: 10,
-        alignItems:'center'
-        // shadowColor: "#000",
-        // shadowOffset: {
-        //     width: 0,
-        //     height: 2,
-        // },
-        // shadowOpacity: 0.25,
-        // shadowRadius: 3.84,
-        // elevation: 5,
+        borderRadius: 9,
+        alignItems:'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 2,
     },
     blueBox:{
-        width:wp('16%'),
+        width:wp('14%'),
         alignItems:'center',
         justifyContent:'center',
-        height:57,
-        borderRadius:8,
+        height:52,
+        borderRadius:6,
         backgroundColor:DefaultStyles.colors.secondary
     },
     topTxtView:{

@@ -39,7 +39,7 @@ const VideoDetail = ({ navigation }) => {
             <ScrollView>
                 <TouchableOpacity>
                 <ImageBackground 
-                style={styles.BoxView} imageStyle={{borderRadius:10}}
+                style={styles.BoxView} imageStyle={{borderRadius:7}}
                 resizeMode='stretch'
                 source={require('../../../../assets/Rectangle7.png')} >
                 <Image source={require('../../../../assets/PlayIcon.png')} />
@@ -87,12 +87,12 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         marginTop:wp('7%'),
-        borderRadius:10
+        borderRadius:7
     },
     DirectionView:{
         flexDirection:'row',
         justifyContent:'space-evenly',
-        marginHorizontal:wp('5%'),
+        marginHorizontal:wp('12%'),
         marginTop:wp('8%')
     },
     threeBoxes:{
@@ -136,6 +136,7 @@ const styles = StyleSheet.create({
         marginTop:wp('6%'),
         width:wp('90%'),
         textAlign:'left',
+        marginBottom:wp('7%')
     }
 
 })

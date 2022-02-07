@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-    View, TouchableOpacity, ActivityIndicator,
+    View, TouchableOpacity, ActivityIndicator, TextInput,
     ToastAndroid, Alert, Image, StyleSheet, ScrollView, FlatList,
 }
     from 'react-native';
@@ -13,13 +13,18 @@ import Apptext from '../../../components/Apptext';
 import Header from '../../../components/Header';
 import FormInput from '../../../components/FormInput';
 import PremiumComp from '../../../components/PremiumComp';
-
+import CountryPicker from 'react-native-country-picker-modal'
+import { CountryCode, Country } from '../../appScreens/PaymentScreens/types';
 
 
 const Premium = ({ navigation }) => {
 
-    
+
     const [isItem, setSelectedItem] = useState([]);
+    const [withFlag, setWithFlag] = useState('')
+    const [countryCode, setCountryCode] = useState('US')
+    const [country, setCountry] = useState("America")
+    const [isVisibe, setVisible] = useState(false)
 
     const DATA = [
         {
@@ -27,7 +32,7 @@ const Premium = ({ navigation }) => {
             count: "+5",
             label: "Per Month",
             msg: "$9,99",
-            chkOffer:false,
+            chkOffer: false,
             Img: require("../../../../assets/boy1.png"),
             dt: "5 minutes ago",
             move: "Detail"
@@ -35,10 +40,10 @@ const Premium = ({ navigation }) => {
         {
             id: 'bd7acbewweea-c1b1-46c2-aed5-3ad53abb28ba',
             count: "",
-            label: 'Per 6 Month',
+            label: 'Per 6 month',
             msg: "$41,95",
-            chkOffer:true,
-            offer:"Save ($6,99) 30%",
+            chkOffer: true,
+            offer: "Save ($6,99) 30%",
             Img: require("../../../../assets/boy2.png"),
             dt: "2 hours ago",
             move: "Detail"
@@ -46,17 +51,23 @@ const Premium = ({ navigation }) => {
         {
             id: 'bd7acbea-c1bewew1-46c2-aed5-3ad53abb28ba',
             count: "+3",
-            label: "Per 12 Month",
+            label: "Per 12 month",
             msg: "$59,88",
-            chkOffer:true,
-            offer:"Save ($4,99) 50%",
+            chkOffer: true,
+            offer: "Save ($4,99) 50%",
             Img: require("../../../../assets/boy3.png"),
             dt: "3 hours ago",
             move: "Detail"
         },
-       
-       
+
+
     ];
+
+    const onSelect = (country) => {
+        setCountryCode(country.cca2)
+        setCountry(country.name)
+        setWithFlag(country.flag)
+    }
 
     const addCategories = async (item) => {
         var selectedIdss = [...isItem]
@@ -64,7 +75,7 @@ const Premium = ({ navigation }) => {
             selectedIdss = selectedIdss.filter(id => id !== item.id)
         }
         else {
-            selectedIdss=[]
+            selectedIdss = []
             selectedIdss.push(item.id)
         }
         await setSelectedItem(selectedIdss)
@@ -84,10 +95,11 @@ const Premium = ({ navigation }) => {
                 <View style={{
                     borderBottomLeftRadius: 15,
                     borderBottomRightRadius: 15,
-                    backgroundColor: "#f1edf2"
+                    backgroundColor: "#f1edf2",
+                    height: wp('65%')
                 }}>
                     <View style={styles.DirectionView}>
-                        <Image source={require('../../../../assets/yellowStar.png')} />
+                        <Image style={{ height: 20, width: 20 }} source={require('../../../../assets/yellowStar.png')} />
                         <Apptext style={styles.topTxt}>Vidmatch Premium</Apptext>
                     </View>
                     <View style={styles.threeLines}>
@@ -106,34 +118,65 @@ const Premium = ({ navigation }) => {
                     </View>
                 </View>
                 <View style={styles.rgn}>
-                <Apptext style={styles.rgnTxt}>Your Region</Apptext>
-                <View>
-                <FormInput
-                    // labelValue={email}
-                    backgroundColor="white"
-                    placeholderText="America"
-                    placeholderTextColor='black'
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                />
-                <Apptext style={[styles.rgnTxt, {marginTop:14}]}>Select Package</Apptext>
+                    <Apptext style={styles.rgnTxt}>Your Region</Apptext>
+                    <View style={{ flexDirection: 'row', marginTop: wp('4%'), }}>
+                        <TouchableOpacity onPress={() => setVisible(true)} style={styles.inputContainer}>
+                            <CountryPicker
+                                {...{
+                                    countryCode,
+                                    onSelect,
+                                }}
+                                visible={isVisibe}
+                            />
+                            <TextInput
+                                // value={labelValue}
+                                numberOfLines={1}
+                                placeholder={country}
+                                placeholderTextColor={"black"}
+                            />
+
+                        </TouchableOpacity>
+                    </View>
+                    {/* <TouchableOpacity style={{flexDirection:'row' }} onPress={() => setVisible(true)} >
+                        <CountryPicker
+                            {...{
+                                countryCode,
+                                onSelect,
+                            }}
+                            visible={isVisibe}
+                        />                        
+                        <FormInput
+                            // labelValue={email}
+                            // leftImgName={require('../../../../assets/google.png')}
+                            leftImgName={withFlag}
+                            backgroundColor="white"
+                            placeholderText=" America"
+                            placeholderTextColor='black'
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            borderColor={"lightgray"}
+                            borderWidth={0.5}
+                        />
+                    </TouchableOpacity>
+                   */}
+                    <Apptext style={[styles.rgnTxt, { marginTop: 14 }]}>Select Package</Apptext>
+
                 </View>
-                </View>
-                <View>
-                <FlatList
+                <View style={{marginTop:wp('4%')}}>
+                    <FlatList
                         data={DATA}
                         maxHeight={"99%"}
                         showsVerticalScrollIndicator={false}
                         keyExtractor={(item) => item.id}
                         ListEmptyComponent={() => {
                             return (
-                              <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
-                                No Item Found
-                              </Apptext>
+                                <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
+                                    No Item Found
+                                </Apptext>
                             );
-                          }}
-                        renderItem={({ item,index }) => (
+                        }}
+                        renderItem={({ item, index }) => (
                             <PremiumComp
                                 labelValue={item.label}
                                 priceValue={item.msg}
@@ -143,7 +186,7 @@ const Premium = ({ navigation }) => {
                                     addCategories(item)
                                     navigation.navigate("AskPaymentOption")
                                 }}
-                                myStl={isItem.includes(item.id) ? true : false }
+                                myStl={isItem.includes(item.id) ? true : false}
                             />
 
                         )}
@@ -164,20 +207,20 @@ const styles = StyleSheet.create({
     MainContainer: {
         marginHorizontal: wp('7%')
     },
-    rgn:{
-        marginTop:wp('6%'),
-        marginHorizontal:wp('5%')
+    rgn: {
+        marginTop: wp('6%'),
+        marginHorizontal: wp('5%')
     },
-    rgnTxt:{
-        fontSize:14,
-        color:DefaultStyles.colors.gray
+    rgnTxt: {
+        fontSize: 14,
+        color: DefaultStyles.colors.gray
 
-    },  
+    },
     threeLines: {
         marginTop: wp('8%'),
         width: wp('100%'),
         height: wp('30%'),
-        marginHorizontal:wp('5%')
+        marginHorizontal: wp('5%')
     },
     topTxt: {
         fontSize: 18,
@@ -192,7 +235,8 @@ const styles = StyleSheet.create({
     DirectionView: {
         marginTop: wp('9%'),
         flexDirection: 'row',
-        marginHorizontal:wp('5%')
+        alignItems: 'center',
+        marginHorizontal: wp('5%')
 
     },
     ImgView: {
@@ -274,6 +318,31 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: DefaultStyles.colors.black,
         fontFamily: "Roboto-Regular",
-
     },
+    inputContainer: {
+        flexDirection: 'row',
+        width: wp('92%'),
+        // backgroundColor: "green",
+        borderRadius: 5,
+        height: wp('15%'),
+        marginTop: wp('3%'),
+        borderWidth: 0.4,
+        alignSelf: 'center',
+        borderColor: "white",
+        borderRightColor: "white",
+        borderLeftColor: "white",
+        borderTopColor: "white",
+        alignItems:'center',
+        paddingLeft:wp('3%'),
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+
+        elevation: 1,
+    },
+  
 });

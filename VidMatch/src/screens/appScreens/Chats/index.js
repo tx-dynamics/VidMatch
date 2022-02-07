@@ -12,6 +12,8 @@ import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 import Header from '../../../components/Header';
 import InboxComp from '../../../components/InboxComp';
+import {DrawerActions, useNavigation} from '@react-navigation/native'
+
 
 const Chats = ({ navigation }) => {
 
@@ -70,6 +72,7 @@ const Chats = ({ navigation }) => {
             backgroundColor={"white"}
             headerLabel={"Chats"}
             leftImgName={require('../../../../assets/hamBurger.png')}
+            onPressLeft={() => navigation.dispatch(DrawerActions.toggleDrawer())}
             rightImg={require('../../../../assets/play.png')}
             />
          <View style={styles.MainContainer}>
@@ -80,7 +83,9 @@ const Chats = ({ navigation }) => {
                     style={{width:wp('60%')}}
                     onChangeText={(val) => console.log(val)}
                 />
-                <TouchableOpacity style={styles.blueBox}>
+                <TouchableOpacity
+                onPress={() => navigation.navigate("Connects")}
+                style={styles.blueBox}>
                 <Image source={require('../../../../assets/bigAdd.png')} />
                 </TouchableOpacity>
             </TouchableOpacity>

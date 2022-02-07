@@ -8,88 +8,86 @@ import {
 } from "react-native-responsive-screen";
 import DefaultStyles from '../../../config/Styles';
 import Apptext from '../../../components/Apptext';
-import FormInput from '../../../components/FormInput';
-import FormButton from '../../../components/FormButton';
 import Header from '../../../components/Header';
-import BellComp from '../../../components/BellComp';
-import {DrawerActions, useNavigation} from '@react-navigation/native'
+import MatchBox from '../../../components/MatchBox';
 
+const RecentMatch = ({ navigation }) => {
 
-const Bell = ({ navigation }) => {
-
+    
     const DATA = [
         {
             id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
             count: "+5",
-            label: "A new Match Has been Found. View Now",
+            label: "Alex Mintz",
             msg: "Lorem ipsum",
-            Img: require("../../../../assets/boy1.png"),
+            Img: require("../../../../assets/boyBack.jpg"),
+            firstImg: require("../../../../assets/blur1.png"),
+            scndImg: require("../../../../assets/blur2.png"),
             dt: "5 minutes ago",
             move: "Detail"
         },
         {
             id: 'bd7acbewweea-c1b1-46c2-aed5-3ad53abb28ba',
             count: "",
-            label: 'Your Premium Subscription Has Been Added',
+            label: 'Amelia Tray',
             msg: "Will do, super, thank you",
-            Img: require("../../../../assets/boy2.png"),
+            Img: require("../../../../assets/boyBack.jpg"),
+            firstImg: require("../../../../assets/blur1.png"),
+            scndImg: require("../../../../assets/blur2.png"),
             dt: "2 hours ago",
             move: "Detail"
         },
         {
             id: 'bd7acbea-c1bewew1-46c2-aed5-3ad53abb28ba',
             count: "+3",
-            label: "Welcome to VidMatch. Let’s Get Started",
+            label: "Krysia Eurydyka",
             msg: "Lorem ipsum",
-            Img: require("../../../../assets/boy3.png"),
+            Img: require("../../../../assets/boyBack.jpg"),
+            firstImg: require("../../../../assets/blur1.png"),
+            scndImg: require("../../../../assets/blur2.png"),
             dt: "3 hours ago",
             move: "Detail"
         },
-       
-       
+      
+
     ];
+
 
     return (
         <View style={styles.container}>
             <Header
             backgroundColor={"white"}
-            headerLabel={"Notifications"}
-            leftImgName={require('../../../../assets/hamBurger.png')}
-            onPressLeft={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+            headerLabel={"Match"}
+            leftImgName={require('../../../../assets/arrow-back.png')}
             rightImg={require('../../../../assets/play.png')}
+            onPressLeft={() => navigation.goBack()}
             />
          <View style={styles.MainContainer}>
-     
-             <View style={{ marginTop: wp('9%') }} >
-                    <FlatList
-                        data={DATA}
-                        maxHeight={"99%"}
-                        showsVerticalScrollIndicator={false}
-                        keyExtractor={(item) => item.id}
-                        ListEmptyComponent={() => {
-                            return (
-                              <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
-                                No Item Found
-                              </Apptext>
-                            );
-                          }}
-                        renderItem={({ item,index }) => (
-                            <BellComp
-                                imgName={item.Img}
-                                labelValue={item.label}
-                                msg={item.msg}
-                                // rightImgName={item.isLike ? require('../../../../assets/redHeart.png') : require('../../../../assets/heart.png')}
-                            />
+            <Apptext style={{marginHorizontal:wp('4%'), fontSize:12, color:DefaultStyles.colors.secondary}}>Recent Matches</Apptext>
+         <FlatList
+                    data={DATA}
+                    numColumns={2}
+                    horizontal={false}
+                    keyExtractor={(item, index) => index}
+                    // maxHeight={'75%'}
+                    renderItem={({ item, index }) => (
+                        <MatchBox
+                            leftTitle={item.label}
+                            leftImgName={item.Img}
+                            firstImg={item.firstImg}
+                            scndImg={item.scndImg}
+                            subTxt={item.msg}
+                            leftOnPress={() => navigation.navigate("VideoDetail")}
+                        />
 
-                        )}
-                    />
-                </View>
+                    )}
+                />
          </View>
         </View>
     )
 }
 
-export default Bell;
+export default RecentMatch;
 
 const styles = StyleSheet.create({
     container: {
@@ -97,31 +95,32 @@ const styles = StyleSheet.create({
         // backgroundColor: DefaultStyles.colors.white,
     },
     MainContainer:{
-        marginHorizontal:wp('5%')
+        marginTop:wp('13%'),
+        marginHorizontal:wp('1%')
     },
     searchBar: {
-        height: 57,
-        width: wp('72%') ,
+        height: 52,
+        width: wp('73%') ,
         backgroundColor: "white",
         flexDirection:'row',
         marginTop: wp('6%'),
-        borderRadius: 10,
-        alignItems:'center'
-        // shadowColor: "#000",
-        // shadowOffset: {
-        //     width: 0,
-        //     height: 2,
-        // },
-        // shadowOpacity: 0.25,
-        // shadowRadius: 3.84,
-        // elevation: 5,
+        borderRadius: 6,
+        alignItems:'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     blueBox:{
-        width:wp('16%'),
+        width:wp('14%'),
         alignItems:'center',
         justifyContent:'center',
-        height:57,
-        borderRadius:8,
+        height:52,
+        borderRadius:6,
         backgroundColor:DefaultStyles.colors.secondary
     },
     topTxtView:{

@@ -53,10 +53,10 @@ const Payment = ({ props, route, navigation }) => {
             <ScrollView>
                 {!show ?
                     <>
-                        <View style={{ paddingHorizontal: wp(4) }}>
+                        <View style={{ paddingHorizontal: wp('4%') }}>
                             <ImageBackground
                                 style={{
-                                    width: 315, height: 185, alignSelf: 'center',
+                                    width: 360, height: 220, alignSelf: 'center',
                                     borderColor: cardnum !== '' && nam !== '' && exp !== '' && cvc !== '' ? '#00F462' : 'white',
                                     borderRadius: 14, marginTop: 24
                                 }}
@@ -65,7 +65,7 @@ const Payment = ({ props, route, navigation }) => {
                      
                               <ResponsiveText
                                 style={{
-                                    fontSize: 16, marginHorizontal: wp('4%'), marginTop: wp('8%'),
+                                    fontSize: 16, marginHorizontal: wp('4%'), 
                                     fontFamily:'Poppins-Medium',color:"#3a3c3f"
                                 }} 
 

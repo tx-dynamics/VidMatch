@@ -17,10 +17,37 @@ import VideoDetail from "./appScreens/Profile/VideoDetail";
 import Premium from "./appScreens/PaymentScreens/Premium";
 import AskPaymentOption from "./appScreens/PaymentScreens/AskPaymentOption";
 import Payment from "./appScreens/PaymentScreens/Payment";
+import Connects from "./appScreens/Connects";
+import AddConnect from "./appScreens/Connects/AddConnect";
+import RecentMatch from "./appScreens/VideoMatch/RecentMatch";
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import DrawerContent from  "../screens/Drawer/DrawerContent";
+
 
 const Tab = createBottomTabNavigator();
-
 const StackNavigator = createNativeStackNavigator()
+const Drawer = createDrawerNavigator();
+
+const DrawerNavigator = () => {
+    return (
+      <Drawer.Navigator
+        screenOptions={{
+            headerShown:false 
+        }}
+        drawerStyle={{
+          borderRadius: wp("8%"),
+          borderWidth: 2,
+          borderColor: DefaultStyles.colors.primary,
+          overflow: "hidden",
+          width: wp("70%"),
+        }}
+        drawerContent={(props) => <DrawerContent {...props} />}
+      >
+        <Drawer.Screen name="Drawer" component={AppNavigator} />
+      </Drawer.Navigator>
+
+    )
+}
 
 const AppNavigator = () => {
 
@@ -29,6 +56,7 @@ const AppNavigator = () => {
             <StackNavigator.Screen name="Root" options={{ headerShown: false }}>
                 {props => <MyTabs {...props} />}
             </StackNavigator.Screen>
+
             {/* <StackNavigator.Screen name="withoutBottomTabnavigator" component={withoutBottomTabnavigator}
                 options={{ headerShown: false }} /> */}
         </StackNavigator.Navigator>
@@ -51,6 +79,7 @@ const GeneralNavigator = () => {
             <StackNavigator.Screen name="Premium" component={Premium} />
             <StackNavigator.Screen name="AskPaymentOption" component={AskPaymentOption} />
             <StackNavigator.Screen name="Payment" component={Payment} />
+            <StackNavigator.Screen name="RecentMatch" component={RecentMatch} />
 
         </StackNavigator.Navigator>
     )
@@ -79,6 +108,8 @@ const ChatNavigator = () => {
             }}>
             <StackNavigator.Screen name="Chat" component={Chat} />
             <StackNavigator.Screen name="ChatDetail" component={ChatDetail } />
+            <StackNavigator.Screen name="Connects" component={Connects } />
+            <StackNavigator.Screen name="AddConnect" component={AddConnect } />
 
         </StackNavigator.Navigator>
     )
@@ -236,7 +267,7 @@ const MainNavigator = () => {
     const user = useSelector((state) => state.auth.user)
     console.log("chkk", user)
     if (user != false) {
-        return <AppNavigator />
+        return <DrawerNavigator />
     }
     else {
         return <AuthNavigator />

@@ -138,19 +138,18 @@ labelTxt:{
 
     fontFamily:'Poppins-Medium',
     fontSize: 12,
-    marginTop: wp('2%'),
+    marginTop: wp('1%'),
     marginHorizontal:wp('3%')
     },
     PicMainView:{
-        marginBottom:wp('5%'),
-
+        marginBottom:wp('2%'),
         marginHorizontal:wp('25%') 
     },
     msgView:{
         width:wp('70%'),
         borderRadius:13,
         backgroundColor:"#2176ff",
-        padding:15,
+        padding:13,
         shadowColor: "#000",
         shadowOffset: {
           width: 0,
@@ -168,6 +167,7 @@ labelTxt:{
     ChatMsgView: {
         flexDirection: 'row',
         height:wp('14%') ,
+        marginTop:wp('2%'),
         justifyContent: 'space-between',
         width: wp('90%'),
         alignItems:'center',
@@ -182,7 +182,7 @@ labelTxt:{
       ChatSndMsgBtn: {
         width: 40, height: 38,
         borderRadius: 6,
-        marginHorizontal:wp('3%'),
+        marginHorizontal:wp('2%'),
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#2176ff'

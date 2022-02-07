@@ -11,10 +11,11 @@ import DefaultStyles from "../config/Styles";
 
 // import { Colors } from "../Constants/Colors";
 
-const InputField = ({width = wp('85%'), ...props}) => {
+const InputField = ({width = wp('89%'), ...props}) => {
     return (
         <View style={[styles.textInputStyle, props.shadow ? null : null, {
             width:width,
+            alignSelf:'center',
             marginTop: props.marginTopp ? props.marginTopp : wp(1.5),
             borderRadius: props.borderRadius ? props.borderRadius : 4,
             backgroundColor: props.backgroundColor

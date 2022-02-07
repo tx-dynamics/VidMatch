@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity,FlatList, ActivityIndicator,
-ToastAndroid, Alert, Image, StyleSheet, ScrollView,}
-from 'react-native';
+import {
+    View, TouchableOpacity, FlatList, Modal, ActivityIndicator,
+    ToastAndroid, Alert, Image, StyleSheet, ScrollView,
+}
+    from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -12,6 +14,8 @@ import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 import Header from '../../../components/Header';
 import FvrtComp from '../../../components/FvrtComp';
+import {DrawerActions, useNavigation} from '@react-navigation/native'
+
 
 const Home = ({ navigation }) => {
 
@@ -43,48 +47,130 @@ const Home = ({ navigation }) => {
             dt: "3 hours ago",
             move: "Detail"
         },
-       
+
     ];
 
+    const [isVisibe, setVisible] = useState(false)
     return (
         <View style={styles.container}>
+            <Modal
+                visible={isVisibe}>
+                <View style={{
+                    flex: 1,
+                    width: wp('100%'),
+                    shadowColor: "#000",
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.34,
+                    shadowRadius: 6.27,
+                    elevation: 6,
+                    backgroundColor: "#181818",
+                }}>
+                    <View
+                        style={{
+                            marginTop: wp('25%'),
+                        }}>
+                    <Apptext style={{
+                    color:"white",
+                    alignSelf:'center',
+                    fontSize:24,
+                    fontFamily:'Poppins-SemiBold'}}>Super Match Found!</Apptext>
+                    <Image style={{marginTop:17, alignSelf:'center', backgroundColor:'#181818'}} source={require('../../../../assets/modalStar.png')} />
+                    </View>
+                    <View style={{
+                        flexDirection:'row',
+                        justifyContent:'space-evenly',
+                        marginHorizontal:wp('5%'),
+                        marginTop:wp('8%'),
+                        alignItems:'center' }}>
+                        <Image style={{
+                        width:80, height:80,
+                        borderRadius:68}} source={require('../../../../assets/blurBoy.png')} />
+                        <Image style={{
+                        width:28, height:28,
+                        tintColor:"white",
+                        borderRadius:68}} source={require('../../../../assets/play.png')} />
+                        <Image style={{
+                        width:80, height:80,
+                        borderRadius:68}} source={require('../../../../assets/boy3.png')} />
+                    </View>
+                    <TouchableOpacity 
+                        onPress={() => setVisible(false)}
+                        style={{
+                        flexDirection:'row',
+                        width:wp('82%'),
+                        height:wp('16%'),
+                        alignItems:'center',
+                        justifyContent:'center',
+                        backgroundColor:'#dbf7ff',
+                        borderRadius:11,
+                        alignSelf:'center',
+                        marginTop:wp('18%'),
+                        marginBottom:wp('6%')
+                        }}>
+                        <Image 
+                        style={{tintColor:DefaultStyles.colors.secondary,marginHorizontal:wp('2%')}} 
+                        source={require('../../../../assets/msg.png')} />
+                        <Apptext style={{
+                        fontFamily:'Poppins-Regular',
+                        fontSize:14,
+                        color:DefaultStyles.colors.secondary
+                        }}>Message</Apptext>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => {
+                        navigation.navigate("RecentMatch")
+                        setVisible(false)
+                        }}>
+                        <Apptext 
+                        style={{
+                        fontSize:18,fontFamily:'Poppins-Medium',
+                        marginTop:wp('17%'),
+                        color:"white",alignSelf:'center'
+                        }}>Continue</Apptext>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
+      
             <Header
-            backgroundColor={"white"}
-            leftImgName={require('../../../../assets/hamBurger.png')}
-            centerImg={require('../../../../assets/headerLogo.png')}
-            rightImg={require('../../../../assets/play.png')}
-            onPressRight={() => navigation.navigate("VideoMatch")}
+                backgroundColor={"white"}
+                leftImgName={require('../../../../assets/hamBurger.png')}
+                centerImg={require('../../../../assets/headerLogo.png')}
+                rightImg={require('../../../../assets/play.png')}
+                onPressLeft={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+                onPressRight={() => navigation.navigate("VideoMatch")}
             />
-         <View style={styles.MainContainer}>
-             <View style={styles.topTxtView}>
-             <Apptext style={styles.topTxt}>Select a connection for VidMatch </Apptext>
-             <TouchableOpacity>
-             <Image source={require('../../../../assets/add.png')} />
-             </TouchableOpacity>
-             </View>
-             <View style={{ marginTop: wp('6%') }} >
+            <View style={styles.MainContainer}>
+                <View style={styles.topTxtView}>
+                    <Apptext style={styles.topTxt}>Select a connection for VidMatch </Apptext>
+                    <TouchableOpacity onPress={() => setVisible(true)} >
+                        <Image source={require('../../../../assets/add.png')} />
+                    </TouchableOpacity>
+                </View>
+                <View style={{ marginTop: wp('6%') }} >
                     <FlatList
                         data={DATA}
                         keyExtractor={(item) => item.id}
                         ListEmptyComponent={() => {
                             return (
-                              <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
-                                No Item Found
-                              </Apptext>
+                                <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
+                                    No Item Found
+                                </Apptext>
                             );
-                          }}
-                        renderItem={({ item,index }) => (
+                        }}
+                        renderItem={({ item, index }) => (
                             <FvrtComp
                                 leftImgName={item.Img}
                                 labelValue={item.label}
                                 onPress={() => navigation.navigate("Premium")}
-                                // rightImgName={item.isLike ? require('../../../../assets/redHeart.png') : require('../../../../assets/heart.png')}
+                            // rightImgName={item.isLike ? require('../../../../assets/redHeart.png') : require('../../../../assets/heart.png')}
                             />
 
                         )}
                     />
                 </View>
-         </View>
+            </View>
         </View>
     )
 }
@@ -96,25 +182,25 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: DefaultStyles.colors.white,
     },
-    MainContainer:{
-        marginHorizontal:wp('5%')
-        },
-    topTxtView:{
-        flexDirection:'row',
-        justifyContent:'space-between',
-        marginTop:wp('9%')
+    MainContainer: {
+        marginHorizontal: wp('5%')
     },
-    topTxt:{
-        fontFamily:'poppins-Regular',
-        fontSize:12,
-        color:DefaultStyles.colors.secondary
+    topTxtView: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: wp('9%')
     },
-    DirectionView:{
-    flexDirection:'row',
+    topTxt: {
+        fontFamily: 'poppins-Regular',
+        fontSize: 12,
+        color: DefaultStyles.colors.secondary
+    },
+    DirectionView: {
+        flexDirection: 'row',
     },
     ImgView: {
         // marginHorizontal:wp('7%'),
-        marginTop:wp('10%')
+        marginTop: wp('10%')
     },
     SignInTxt: {
         fontFamily: "Poppins-SemiBold",
@@ -126,46 +212,46 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: DefaultStyles.colors.black,
     },
-    line:{ 
-        width:70,
-        height:2,
+    line: {
+        width: 70,
+        height: 2,
         backgroundColor: DefaultStyles.colors.black,
     },
-    WlcmTxt:{
-        fontSize:24,
-        marginTop:wp('1%'),
-        fontFamily:'ABeeZee-Regular',
-        
+    WlcmTxt: {
+        fontSize: 24,
+        marginTop: wp('1%'),
+        fontFamily: 'ABeeZee-Regular',
+
     },
-    VidTxt:{
-        fontSize:28,
-        fontFamily:'ABeeZee-Regular',
-        marginTop:wp('1%')
+    VidTxt: {
+        fontSize: 28,
+        fontFamily: 'ABeeZee-Regular',
+        marginTop: wp('1%')
     },
-    cntrView:{
+    cntrView: {
         justifyContent: 'center',
         alignItems: 'center',
-        alignSelf:'center',
-        fontSize:30,
+        alignSelf: 'center',
+        fontSize: 30,
         marginTop: 35
     },
-    socialViews:{
+    socialViews: {
         marginTop: wp('7%'),
-        flexDirection:'row',
-        justifyContent:'space-around'
+        flexDirection: 'row',
+        justifyContent: 'space-around'
     },
-    socialBox:{
-        width:wp('27%') ,
-        height:wp('15%') ,
-        alignItems:'center',
-        justifyContent:'center',
-        borderRadius:4,
-        backgroundColor:"lightgray"
+    socialBox: {
+        width: wp('27%'),
+        height: wp('15%'),
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 4,
+        backgroundColor: "lightgray"
     },
-    OR:{
-        fontFamily:'Roboto-Regular',
-        alignSelf:'center',
-        fontSize:14
+    OR: {
+        fontFamily: 'Roboto-Regular',
+        alignSelf: 'center',
+        fontSize: 14
     },
     methods: {
         justifyContent: 'center', alignItems: 'center',
@@ -189,8 +275,8 @@ const styles = StyleSheet.create({
     },
     bottomTxt: {
         fontSize: 14,
-        fontStyle:"italic",
-        color:DefaultStyles.colors.black,
+        fontStyle: "italic",
+        color: DefaultStyles.colors.black,
         fontFamily: "Roboto-Regular",
 
     },

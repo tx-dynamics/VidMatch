@@ -46,7 +46,7 @@ function HumanHeader({
       <Apptext style={styles.headerLabel} >{headerLabel}</Apptext>
       </View>
       <TouchableOpacity style={styles.space} onPress={onPressRight}>
-        <Image style={{tintColor:"#3F3F3F"}} source={rightImg} />
+        <Image style={{tintColor:"#3F3F3F", marginTop:wp('2%')}} source={rightImg} />
       </TouchableOpacity>
       <TouchableOpacity style={styles.space} onPress={onPressPhone}>
         <Image source={phoneImg} />

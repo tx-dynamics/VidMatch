@@ -65,13 +65,13 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         width: wp('92%'),
-        marginBottom:wp('5%'),
+        marginBottom:wp('3%'),
         alignSelf: 'center',
         height:wp('19%'),
         justifyContent:'center',
         paddingLeft:wp('5%'),
         backgroundColor: '#f0f0f0',
-        borderRadius: 12,
+        borderRadius: 6,
         borderBottomColor: "white",
         // shadowColor: "#000",
         // shadowOffset: {
@@ -85,13 +85,13 @@ const styles = StyleSheet.create({
     },
     inputContainer1: {
         width: wp('92%'),
-        marginBottom:wp('5%'),
+        marginBottom:wp('3%'),
         alignSelf: 'center',
         height:wp('19%'),
         padding:wp('5%'),
         // paddingLeft:wp('4%'),
         backgroundColor: DefaultStyles.colors.sky,
-        borderRadius: 12,
+        borderRadius: 6,
         borderBottomColor: "white",
         // shadowColor: "#000",
         // shadowOffset: {

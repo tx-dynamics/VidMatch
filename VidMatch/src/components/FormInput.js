@@ -9,10 +9,18 @@ const FormInput = ({ labelValue, placeholderText,
     iconType, leftIconType, leftImgName, rightImgName,
     onPress,
     placeholderTextColor = '#929292',
+    borderWidth=borderWidth,
+    borderColor=borderColor ,
+    borderBottomColor=borderBottomColor ,
     backgroundColor= DefaultStyles.colors.sky,
     rightIconType, ...rest }) => {
     return (
-        <View style={[styles.inputContainer, {backgroundColor : backgroundColor}]} >
+        <View style={[styles.inputContainer,
+         {backgroundColor : backgroundColor,
+         borderColor:borderColor,
+         borderWidth:borderWidth,
+         borderBottomColor:borderBottomColor
+         }]}>
             <View style={{ flexDirection: 'row' }}>
                
                 <View style={{ justifyContent: 'center' }} >
@@ -51,7 +59,7 @@ const styles = StyleSheet.create({
         //paddingTop: wp('1%'),
         justifyContent:'center',
         borderRadius: 8,
-        borderBottomColor: "white",
+       
         // shadowColor: "#000",
         // shadowOffset: {
         //     width: 0,

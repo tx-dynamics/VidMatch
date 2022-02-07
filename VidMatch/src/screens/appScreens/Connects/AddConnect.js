@@ -14,10 +14,8 @@ import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 import BackgroundHeader from '../../../components/BackgroundHeader';
 import MatchBox from '../../../components/MatchBox';
-import {DrawerActions, useNavigation} from '@react-navigation/native'
 
-
-const Profile = ({ navigation }) => {
+const AddConnect = ({ navigation }) => {
 
     const DATA = [
         {
@@ -78,70 +76,57 @@ const Profile = ({ navigation }) => {
 
     ];
 
+    const [isTrue, setTrue] = useState(false);
+
     return (
         <View style={styles.container}>
             <BackgroundHeader
                 backImg={require('../../../../assets/boyBack.jpg')}
-                leftImgName={require('../../../../assets/hamBurger.png')}
-                rightImg={require('../../../../assets/play.png')}
-                onPressLeft={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-                
+                leftImgName={require('../../../../assets/arrow-back.png')}
+                onPressLeft={() => navigation.goBack()}
             />
             <View style={styles.whiteView}>
                 <TouchableOpacity style={styles.imgBox} >
-                    <Image source={require('../../../../assets/blurBoy.png')} />
-                    <Apptext style={styles.imgTxt} >Hanna Spratt</Apptext>
+                    <Image source={require('../../../../assets/alexAdd.png')} />
+                    <Apptext style={styles.imgTxt} >Alex Mintz</Apptext>
                 </TouchableOpacity>
                 {/* <ScrollView> */}
                 <View style={styles.twoTxts}>
                     <Apptext style={styles.cncts} >Connects</Apptext>
                     <Apptext style={styles.VLine}></Apptext>
-                    <Apptext style={styles.cncts}>Matches</Apptext>
+                    <Apptext style={isTrue === false ? [styles.cncts, {color: "lightgray"}] : styles.cncts}>Matches</Apptext>
                 </View>
                 <View style={styles.twoLowerTxts}>
-                    <Apptext style={styles.nmbrTxt} >01</Apptext>
-                    <Apptext style={styles.nmbrTxt}>07</Apptext>
+                    <Apptext style={styles.nmbrTxt} >03</Apptext>
+                    <Apptext style={styles.nmbrTxt}>{isTrue ? "07" : "" } </Apptext>
                 </View>
+              {
+              isTrue === false ? (
+              <TouchableOpacity onPress={() => setTrue(true)} style={styles.addBtn}>
+                <Apptext style={styles.btnTxt}>Add to Your Connection</Apptext>
+                </TouchableOpacity>
+              ) : null    
+            }
+                {
+                    isTrue ? (
+                        <TouchableOpacity 
+                        onPress={() => setTrue(false)}
+                        style={[styles.addBtn]}>
+                        <Image style={{marginHorizontal:wp('2%')}} source={require('../../../../assets/msg.png')} />
+                        <Apptext style={styles.btnTxt}>Message</Apptext>
+                        </TouchableOpacity>
+                    ) : null
+                }
+              
                 <Apptext style={styles.HLine}> </Apptext>
-                <View style={styles.DirectionView}>
-                    <TouchableOpacity style={styles.buttonView}>
-                        <Image source={require('../../../../assets/Achivement.png')} />
-                        <Apptext style={styles.achTxt} >Achievements</Apptext>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonView}>
-                        <Image source={require('../../../../assets/Like.png')} />
-                        <Apptext style={styles.achTxt} >Your Likes</Apptext>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.MainContainer}>
-                    <Apptext style={styles.rcnt}>Recent Activities</Apptext>
-                </View>
-                <FlatList
-                    data={DATA}
-                    numColumns={2}
-                    horizontal={false}
-                    keyExtractor={(item, index) => index}
-                    // maxHeight={'75%'}
-                    renderItem={({ item, index }) => (
-                        <MatchBox
-                            leftTitle={item.label}
-                            leftImgName={item.Img}
-                            firstImg={item.firstImg}
-                            scndImg={item.scndImg}
-                            subTxt={item.msg}
-                            leftOnPress={() => navigation.navigate("VideoDetail")}
-                        />
-
-                    )}
-                />
-                {/* </ScrollView> */}
+               
             </View>
 
         </View>
     )
 }
 
-export default Profile;
+export default AddConnect;
 
 const styles = StyleSheet.create({
     container: {
@@ -156,19 +141,19 @@ const styles = StyleSheet.create({
         borderRadius: 40,
     },
     imgBox: {
-        width: 125,
+        width: 127,
         marginTop: -60,
-        height: 125,
+        height: 127,
         borderWidth: 0.2,
         borderColor: "lightgray",
-        borderRadius: 20,
+        borderRadius: 16,
         alignSelf: 'center'
     },
     imgTxt: {
         fontFamily: 'Poppins-Bold',
         fontSize: 18,
-        // backgroundColor:"red",
-        marginTop: wp('3%')
+        marginTop: wp('3%'),
+        alignSelf:'center'
     },
     twoTxts: {
         flexDirection: 'row',
@@ -191,6 +176,23 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
         color: DefaultStyles.colors.black
     },
+    addBtn:{
+        flexDirection:'row',
+        width:wp('82%'),
+        height:wp('16%'),
+        alignItems:'center',
+        justifyContent:'center',
+        backgroundColor:DefaultStyles.colors.secondary,
+        borderRadius:11,
+        alignSelf:'center',
+        marginTop:wp('6%'),
+        marginBottom:wp('6%')
+    },
+    btnTxt:{
+        fontFamily:'Poppins-Regular',
+        fontSize:14,
+        color:"white"
+    },
     VLine: {
         width: 0.5,
         height: wp('17%'),
@@ -201,8 +203,8 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginTop: wp('3%'),
         width: wp('90%'),
-        height: 0.5,
-        backgroundColor: DefaultStyles.colors.gray,
+        height: 1,
+        backgroundColor: "lightgray",
     },
     DirectionView: {
         flexDirection: 'row',
