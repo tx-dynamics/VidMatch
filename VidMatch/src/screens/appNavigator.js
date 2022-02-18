@@ -151,10 +151,15 @@ const MyTabs = () => {
             // tabBarOptions={{
             //     keyboardHidesTabBar: true,
             // }}
+            tabBarOptions={{
+                showIcon: true,
+                showLabel: false,
+                keyboardHidesTabBar: true,
+              }}
             screenOptions={{
                 headerShown: false,
                 tabBarActiveTintColor: DefaultStyles.colors.textColor,
-                keyboardHidesTabBar: true,
+                // keyboardHidesTabBar: true,
                 tabBarStyle: {
                     borderTopWidth: 0,
                     backgroundColor: DefaultStyles.colors.white,
@@ -165,7 +170,7 @@ const MyTabs = () => {
                     fontSize: wp('2%'),
                     fontFamily: "Poppins-Regular",
                     color: DefaultStyles.colors.primary
-                }
+                },
 
             }}>
 

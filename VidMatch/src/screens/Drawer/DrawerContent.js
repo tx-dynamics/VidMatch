@@ -58,7 +58,7 @@ function DrawerContent({ navigation, userImg, username, userEmail }) {
         <Image source={require('../../../assets/pencilUser.png')} />
     </TouchableOpacity>
     </View>
-    <View style={{marginTop:wp('12%')}}>
+    <ScrollView style={{marginTop:wp('12%')}}>
     <TouchableOpacity style={styles.listView}>
     <View style={styles.blueBox}>
     <Image style={{tintColor:"white", height:12, width:12 }} source={require('../../../assets/play.png')} />
@@ -75,7 +75,7 @@ function DrawerContent({ navigation, userImg, username, userEmail }) {
     </TouchableOpacity>
     <TouchableOpacity style={styles.listView}>
     <View style={styles.blueBox}>
-    <Image style={{tintColor:"white", height:12, width:12 }} source={require('../../../assets/icon1.png')} />
+    <Image style={{tintColor:"white", height:12, width:15 }} source={require('../../../assets/icon1.png')} />
     </View>
     <Apptext style={styles.innerTxt} > Join Premium</Apptext>
     <Image style={{marginTop:wp('1%'), tintColor:DefaultStyles.colors.secondary }} source={require('../../../assets/chevron-right.png')} />
@@ -94,15 +94,16 @@ function DrawerContent({ navigation, userImg, username, userEmail }) {
     <Apptext style={styles.innerTxt} > About Us</Apptext>
     <Image style={{marginTop:wp('1%'), tintColor:DefaultStyles.colors.secondary }} source={require('../../../assets/chevron-right.png')} />
     </TouchableOpacity>
-    </View>
-    <TouchableOpacity style={[styles.DirectionView, {
-    marginTop:wp('20%')}]}>
+    
+    <TouchableOpacity style={[styles.DirectionView,{ marginTop:wp('40%')
+    }]}>
     <TouchableOpacity
     style={styles.logoutBox}>
     <Image source={require('../../../assets/logout.png')} />
     </TouchableOpacity>
     <Apptext style={styles.logoutTxt}>Logout</Apptext>
     </TouchableOpacity>
+    </ScrollView>
   </View>
   );
 }
@@ -115,7 +116,8 @@ const styles = StyleSheet.create({
     // paddingTop: -50
 },
 bck:{
-    marginHorizontal:wp('6%'),marginTop:wp('10%')
+    marginHorizontal:wp('4%'),
+    marginTop:wp('10%')
 },
 logo:{
     marginTop:wp('8%'),marginHorizontal:wp('15%'),
@@ -133,6 +135,8 @@ threeItems:{
 golBox:{
     width:52, height:52,
     // backgroundColor:"red",
+    borderWidth:2,
+    borderColor:"white",
     borderRadius:40,
 },
 hanaTxt:{
@@ -180,6 +184,7 @@ innerTxt:{
 },
 logoutBox:{
     marginHorizontal:wp('5%'),
+    marginBottom:wp('5%'),
     backgroundColor:"white",
     height:28, width:28,
     borderRadius:4,

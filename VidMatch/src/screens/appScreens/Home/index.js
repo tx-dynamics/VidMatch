@@ -55,7 +55,7 @@ const Home = ({ navigation }) => {
         <View style={styles.container}>
             <Modal
                 visible={isVisibe}>
-                <View style={{
+                <ScrollView style={{
                     flex: 1,
                     width: wp('100%'),
                     shadowColor: "#000",
@@ -97,7 +97,9 @@ const Home = ({ navigation }) => {
                         borderRadius:68}} source={require('../../../../assets/boy3.png')} />
                     </View>
                     <TouchableOpacity 
-                        onPress={() => setVisible(false)}
+                        onPress={() => {
+                        navigation.navigate("ChatDetail")
+                        setVisible(false)}}
                         style={{
                         flexDirection:'row',
                         width:wp('82%'),
@@ -120,17 +122,17 @@ const Home = ({ navigation }) => {
                         }}>Message</Apptext>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => {
-                        navigation.navigate("RecentMatch")
+                        navigation.navigate("Home")
                         setVisible(false)
                         }}>
                         <Apptext 
                         style={{
                         fontSize:18,fontFamily:'Poppins-Medium',
-                        marginTop:wp('17%'),
+                        marginTop:wp('30%'),
                         color:"white",alignSelf:'center'
                         }}>Continue</Apptext>
                     </TouchableOpacity>
-                </View>
+                </ScrollView>
             </Modal>
       
             <Header
