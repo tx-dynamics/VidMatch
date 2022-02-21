@@ -109,7 +109,7 @@ const AskPaymentOption = ({ navigation }) => {
                                 isOffer={item.chkOffer === false}
                                 onPress={() => {
                                     addCategories(item)
-                                    navigation.navigate("Payment")
+                                    navigation.navigate("withoutBottomTabnavigator", {screen:"ElsePayment"})
                                 }}
                                 myStl={isItem.includes(item.id) ? true : false }
                             />

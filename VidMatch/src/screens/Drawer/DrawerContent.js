@@ -73,7 +73,9 @@ function DrawerContent({ navigation, userImg, username, userEmail }) {
     <Apptext style={styles.innerTxt} > Settings</Apptext>
     <Image style={{marginTop:wp('1%'), tintColor:DefaultStyles.colors.secondary }} source={require('../../../assets/chevron-right.png')} />
     </TouchableOpacity>
-    <TouchableOpacity style={styles.listView}>
+    <TouchableOpacity 
+    onPress={() => navigation.navigate("Premium")}
+    style={styles.listView}>
     <View style={styles.blueBox}>
     <Image style={{tintColor:"white", height:12, width:15 }} source={require('../../../assets/icon1.png')} />
     </View>

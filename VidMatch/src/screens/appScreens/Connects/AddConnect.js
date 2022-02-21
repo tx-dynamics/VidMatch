@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     },
     HLine: {
         alignSelf: 'center',
-        marginTop: wp('3%'),
+        marginTop: wp('1%'),
         width: wp('90%'),
         height: 1,
         backgroundColor: "lightgray",

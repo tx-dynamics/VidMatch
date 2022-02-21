@@ -22,6 +22,7 @@ import AddConnect from "./appScreens/Connects/AddConnect";
 import RecentMatch from "./appScreens/VideoMatch/RecentMatch";
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import DrawerContent from  "../screens/Drawer/DrawerContent";
+import ElsePayment from "./appScreens/PaymentScreens/ElsePayment";
 
 
 const Tab = createBottomTabNavigator();
@@ -49,6 +50,24 @@ const DrawerNavigator = () => {
     )
 }
 
+
+const WithoutBottomTabnavigator = () => {
+    
+    return(
+    <StackNavigator.Navigator
+    screenOptions={{
+        headerShown: false
+    }}
+    >
+    <StackNavigator.Screen name="AskPaymentOption" component={AskPaymentOption} />
+    <StackNavigator.Screen name="Payment" component={Payment} />
+    <StackNavigator.Screen name="ElsePayment" component={ElsePayment } />
+
+    </StackNavigator.Navigator>
+)
+}
+
+
 const AppNavigator = () => {
 
     return (
@@ -57,8 +76,8 @@ const AppNavigator = () => {
                 {props => <MyTabs {...props} />}
             </StackNavigator.Screen>
 
-            {/* <StackNavigator.Screen name="withoutBottomTabnavigator" component={withoutBottomTabnavigator}
-                options={{ headerShown: false }} /> */}
+            <StackNavigator.Screen name="withoutBottomTabnavigator" component={WithoutBottomTabnavigator}
+                options={{ headerShown: false }} />
         </StackNavigator.Navigator>
 
     )
@@ -77,8 +96,7 @@ const GeneralNavigator = () => {
             <StackNavigator.Screen name="HomeNavigator" component={HomeNavigator} />
             <StackNavigator.Screen name="VideoMatch" component={VideoMatch} />
             <StackNavigator.Screen name="Premium" component={Premium} />
-            <StackNavigator.Screen name="AskPaymentOption" component={AskPaymentOption} />
-            <StackNavigator.Screen name="Payment" component={Payment} />
+         
             <StackNavigator.Screen name="RecentMatch" component={RecentMatch} />
 
         </StackNavigator.Navigator>

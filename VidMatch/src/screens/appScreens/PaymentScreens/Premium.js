@@ -184,7 +184,7 @@ const Premium = ({ navigation }) => {
                                 offerTxt={item.offer}
                                 onPress={() => {
                                     addCategories(item)
-                                    navigation.navigate("AskPaymentOption")
+                                    navigation.navigate("withoutBottomTabnavigator",{screen:"AskPaymentOption"})
                                 }}
                                 myStl={isItem.includes(item.id) ? true : false}
                             />
