@@ -8,9 +8,12 @@ import DefaultStyles from "../../../config/Styles";
 import Apptext from '../../../components/Apptext';
 import Header from '../../../components/Header';
 import AskPaymentComp from '../../../components/AskPaymentComp';
+import { useSelector } from 'react-redux';
 
 
 const AskPaymentOption = ({ navigation }) => {
+
+    const user = useSelector((state) => state.auth.user)
 
     const [isShow, setShow] = useState(false);
     const [checked, setChecked] = useState('CreditCard');
@@ -109,7 +112,12 @@ const AskPaymentOption = ({ navigation }) => {
                                 isOffer={item.chkOffer === false}
                                 onPress={() => {
                                     addCategories(item)
-                                    navigation.navigate("withoutBottomTabnavigator", {screen:"ElsePayment"})
+                                    {
+                                        user ? navigation.navigate("withoutBottomTabnavigator",{screen:"ElsePayment"}):
+                                        navigation.navigate("ElsePayment")
+                                     
+                                    }
+                                    // navigation.navigate("withoutBottomTabnavigator", {screen:"ElsePayment"})
                                 }}
                                 myStl={isItem.includes(item.id) ? true : false }
                             />

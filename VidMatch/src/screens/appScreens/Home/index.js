@@ -119,7 +119,7 @@ const Home = ({ navigation }) => {
                         fontFamily:'Poppins-Regular',
                         fontSize:14,
                         color:DefaultStyles.colors.secondary
-                        }}>Message</Apptext>
+                        }}>Send A Message</Apptext>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => {
                         navigation.navigate("Home")
@@ -146,7 +146,12 @@ const Home = ({ navigation }) => {
             <View style={styles.MainContainer}>
                 <View style={styles.topTxtView}>
                     <Apptext style={styles.topTxt}>Select a connection for VidMatch </Apptext>
-                    <TouchableOpacity onPress={() => setVisible(true)} >
+                    <TouchableOpacity onPress={() =>
+                        { 
+                        // setVisible(true)
+                        navigation.navigate("Connects")
+                    }
+                        }>
                         <Image source={require('../../../../assets/add.png')} />
                     </TouchableOpacity>
                 </View>

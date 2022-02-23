@@ -23,13 +23,15 @@ const Card = ({ card }) => (
       // padding:5, 
       backgroundColor:"#110808",
       flexDirection:'row',
-      justifyContent:'space-evenly',
+      justifyContent:'center',
+      alignItems:'center',
+      // justifyContent:'space-evenly',
        borderWidth:0.5, borderColor:"white",marginTop:13,alignItems:'center',
-       
        borderRadius:42}}>
-         <Image style={{tintColor:"white", width:10, height:10}} source={require('../../assets/eye.png')} />
+         <Image style={{width:10, height:10}} source={require('../../assets/figmaEye.png')} />
 
-         <Text style={{fontSize:9, fontFamily:'Poppins-Regular', color:"white"}}>Seen it</Text>
+      
+         <Text style={{fontSize:9,marginLeft:'5%', fontFamily:'Poppins-Regular', color:"white"}}>Seen it</Text>
 
       </TouchableOpacity>
       </View>

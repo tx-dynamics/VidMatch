@@ -94,6 +94,7 @@ const GeneralNavigator = () => {
             }}>
                 
             <StackNavigator.Screen name="HomeNavigator" component={HomeNavigator} />
+            
             <StackNavigator.Screen name="VideoMatch" component={VideoMatch} />
             <StackNavigator.Screen name="Premium" component={Premium} />
          
@@ -112,6 +113,8 @@ const HomeNavigator = () => {
                 headerShown: false
             }}>
             <StackNavigator.Screen name="Home" component={Home} />
+            <StackNavigator.Screen name="Connects" component={Connects } />
+            <StackNavigator.Screen name="AddConnect" component={AddConnect } />
 
         </StackNavigator.Navigator>
     )
@@ -126,8 +129,9 @@ const ChatNavigator = () => {
             }}>
             <StackNavigator.Screen name="Chat" component={Chat} />
             <StackNavigator.Screen name="ChatDetail" component={ChatDetail } />
-            <StackNavigator.Screen name="Connects" component={Connects } />
-            <StackNavigator.Screen name="AddConnect" component={AddConnect } />
+            {/* <StackNavigator.Screen name="Connects" component={Connects } /> */}
+            {/* <StackNavigator.Screen name="AddConnect" component={AddConnect } /> */}
+            <StackNavigator.Screen name="VideoMatch" component={VideoMatch} />
 
         </StackNavigator.Navigator>
     )
@@ -142,6 +146,8 @@ const BellNavigator = () => {
                 headerShown: false
             }}>
             <StackNavigator.Screen name="Bell" component={Bell} />
+            <StackNavigator.Screen name="VideoMatch" component={VideoMatch} />
+
 
         </StackNavigator.Navigator>
     )
@@ -157,6 +163,8 @@ const ProfileNavigator = () => {
             }}>
             <StackNavigator.Screen name="Profile" component={Profile} />
             <StackNavigator.Screen name="VideoDetail" component={VideoDetail} />
+            <StackNavigator.Screen name="VideoMatch" component={VideoMatch} />
+
 
         </StackNavigator.Navigator>
     )

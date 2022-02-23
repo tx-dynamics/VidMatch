@@ -57,6 +57,8 @@ const Bell = ({ navigation }) => {
             leftImgName={require('../../../../assets/hamBurger.png')}
             onPressLeft={() => navigation.dispatch(DrawerActions.toggleDrawer())}
             rightImg={require('../../../../assets/play.png')}
+            onPressRight={() => navigation.navigate("VideoMatch")}
+
             />
          <View style={styles.MainContainer}>
      

@@ -21,6 +21,7 @@ import Header from '../../../components/Header';
 import DefaultStyles from "../../../config/Styles";
 import Apptext from '../../../components/Apptext';
 import { LinearGradient } from 'react-native-svg';
+import { useSelector } from 'react-redux';
 
 
 
@@ -33,6 +34,8 @@ const ElsePayment = (props) => {
     const [promo, setpromo] = useState('');
     const [show, setshow] = useState(false);
     const [isPayment, setPayment] = useState(false);
+    const user = useSelector((state) => state.auth.user)
+
 
 
     return (
@@ -228,8 +231,12 @@ const ElsePayment = (props) => {
                         </View>
                         <TouchableOpacity
                             onPress={() =>
-                                 {setPayment(false)
-                                props.navigation.navigate("Home")
+                                 {
+                                setPayment(false)
+                                {
+                                user ? props.navigation.navigate("Home"):
+                                props.navigation.navigate("Login")
+                                }
                                 }}
                             style={[styles.buttonContainer, { marginTop: wpp('60%') }]}>
                             {/* <Image style={{marginHorizontal:wp('2%')}} source={require('../../../../assets/Lock.png')} />  */}

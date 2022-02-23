@@ -9,7 +9,6 @@ export default StyleSheet.create({
     height: 360,
     justifyContent: 'center',
     alignItems: 'center',
-    
     backgroundColor: Colors.white,
     borderRadius: 10,
     shadowColor: Colors.black,
@@ -35,7 +34,7 @@ export default StyleSheet.create({
     height: '100%',
     position: 'absolute',
     left: 10,
-    bottom: 30,
+    bottom: 20,
   },
   text: {
     // textAlign: 'center',

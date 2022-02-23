@@ -15,11 +15,14 @@ import FormInput from '../../../components/FormInput';
 import PremiumComp from '../../../components/PremiumComp';
 import CountryPicker from 'react-native-country-picker-modal'
 import { CountryCode, Country } from '../../appScreens/PaymentScreens/types';
+import { useSelector } from 'react-redux';
 
 
 const Premium = ({ navigation }) => {
 
 
+    const user = useSelector((state) => state.auth.user)
+    console.log("user", user)
     const [isItem, setSelectedItem] = useState([]);
     const [withFlag, setWithFlag] = useState('')
     const [countryCode, setCountryCode] = useState('US')
@@ -184,7 +187,11 @@ const Premium = ({ navigation }) => {
                                 offerTxt={item.offer}
                                 onPress={() => {
                                     addCategories(item)
-                                    navigation.navigate("withoutBottomTabnavigator",{screen:"AskPaymentOption"})
+                                    {
+                                    user ? navigation.navigate("withoutBottomTabnavigator",{screen:"AskPaymentOption"}):
+                                    navigation.navigate("AskPaymentOption")
+                                 
+                                }
                                 }}
                                 myStl={isItem.includes(item.id) ? true : false}
                             />

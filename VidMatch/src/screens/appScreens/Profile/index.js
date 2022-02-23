@@ -85,6 +85,8 @@ const Profile = ({ navigation }) => {
                 leftImgName={require('../../../../assets/hamBurger.png')}
                 rightImg={require('../../../../assets/play.png')}
                 onPressLeft={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+                onPressRight={() => navigation.navigate("VideoMatch")}
+
                 
             />
             <View style={styles.whiteView}>

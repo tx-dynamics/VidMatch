@@ -74,6 +74,8 @@ const Chats = ({ navigation }) => {
             leftImgName={require('../../../../assets/hamBurger.png')}
             onPressLeft={() => navigation.dispatch(DrawerActions.toggleDrawer())}
             rightImg={require('../../../../assets/play.png')}
+            onPressRight={() => navigation.navigate("VideoMatch")}
+
             />
          <View style={styles.MainContainer}>
          <TouchableOpacity style={styles.searchBar}>
@@ -84,7 +86,7 @@ const Chats = ({ navigation }) => {
                     onChangeText={(val) => console.log(val)}
                 />
                 <TouchableOpacity
-                onPress={() => navigation.navigate("Connects")}
+                // onPress={() => navigation.navigate("Connects")}
                 style={styles.blueBox}>
                 <Image source={require('../../../../assets/bigAdd.png')} />
                 </TouchableOpacity>

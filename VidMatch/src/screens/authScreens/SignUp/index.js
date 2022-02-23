@@ -24,7 +24,8 @@ const SignUp = ({ navigation }) => {
                 <Apptext style={styles.SignUpTxt}>Login</Apptext>
                 
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.ImgView, {marginHorizontal:wp('5%')}]}>
+            <TouchableOpacity 
+            style={[styles.ImgView, {marginHorizontal:wp('5%')}]}>
                 <Apptext style={styles.SignInTxt}>Sign Up</Apptext>
                 <Apptext style={styles.line}></Apptext>
             </TouchableOpacity>
@@ -72,6 +73,7 @@ const SignUp = ({ navigation }) => {
             <View style={{ marginTop: wp('9%') }}>
                     <FormButton
                         buttonTitle={"Sign Up"}
+                        onPress={() => navigation.navigate("SignUpModal")}
                     /> 
             </View>
             <Apptext style={styles.OR} >Or</Apptext>

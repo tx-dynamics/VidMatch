@@ -137,15 +137,17 @@ const styles = StyleSheet.create({
         marginTop: wp('6%'),
         borderRadius: 9,
         alignItems:'center',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 5,
-        },
-        shadowOpacity: 0.34,
-        shadowRadius: 6.27,
+        borderWidth:0.5,
+        borderColor:"gray"
+        // shadowColor: "#000",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 5,
+        // },
+        // shadowOpacity: 0.34,
+        // shadowRadius: 6.27,
         
-        elevation: 3,
+        // elevation: 3,
         // shadowColor: "#000",
         // shadowOffset: {
         //     width: 0,

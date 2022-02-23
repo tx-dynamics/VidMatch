@@ -47,7 +47,9 @@ function DrawerContent({ navigation, userImg, username, userEmail }) {
         <Image style={styles.logo} source={require('../../../assets/DrawerLogo.png')} />
         </View>
     </View>
-    <View style={styles.threeItems} >
+    <TouchableOpacity 
+    onPress={() => navigation.navigate("ProfileNavigator", {screen:"Profile"})}
+    style={styles.threeItems} >
     <TouchableOpacity>
     <Image style={styles.golBox} source={require('../../../assets/blurBoy.png')} />
     </TouchableOpacity>
@@ -57,9 +59,11 @@ function DrawerContent({ navigation, userImg, username, userEmail }) {
     <TouchableOpacity style={styles.add} >
         <Image source={require('../../../assets/pencilUser.png')} />
     </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
     <ScrollView style={{marginTop:wp('12%')}}>
-    <TouchableOpacity style={styles.listView}>
+    <TouchableOpacity 
+    onPress={() => navigation.navigate("Home")}
+    style={styles.listView}>
     <View style={styles.blueBox}>
     <Image style={{tintColor:"white", height:12, width:12 }} source={require('../../../assets/play.png')} />
     </View>
@@ -97,7 +101,7 @@ function DrawerContent({ navigation, userImg, username, userEmail }) {
     <Image style={{marginTop:wp('1%'), tintColor:DefaultStyles.colors.secondary }} source={require('../../../assets/chevron-right.png')} />
     </TouchableOpacity>
     
-    <TouchableOpacity style={[styles.DirectionView,{ marginTop:wp('40%')
+    <TouchableOpacity style={[styles.DirectionView,{ marginTop:wp('60%')
     }]}>
     <TouchableOpacity
     style={styles.logoutBox}>
@@ -185,7 +189,7 @@ innerTxt:{
     color:DefaultStyles.colors.secondary
 },
 logoutBox:{
-    marginHorizontal:wp('5%'),
+    marginHorizontal:wp('7%'),
     marginBottom:wp('5%'),
     backgroundColor:"white",
     height:28, width:28,

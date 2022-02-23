@@ -187,7 +187,7 @@ export default VideoMatch = ({ navigation }) => {
       </View>
       <View style={{
         // marginTop:wp('110%'),
-        marginTop:wp('110%'),
+        marginTop:wp('115%'),
        flexDirection:'row', justifyContent:'space-evenly'}}>
           <TouchableOpacity 
           // onPress={handleOnSwipedLeft}

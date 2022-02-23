@@ -131,7 +131,7 @@ export default AddConnect;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // backgroundColor: DefaultStyles.colors.white,
+        backgroundColor: DefaultStyles.colors.white,
     },
     whiteView: {
         width: wp('100%'),
