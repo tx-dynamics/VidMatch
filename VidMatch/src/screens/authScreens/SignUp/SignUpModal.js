@@ -33,6 +33,7 @@ const SignUpModal = ({ navigation }) => {
             borderRadius:16, 
             alignSelf:'center'
             }} >
+
              <View style={styles.DirectionView}>
                         <Image style={{ height: 20, width: 20 }} source={require('../../../../assets/yellowStar.png')} />
                         <Apptext style={styles.topTxt}>Try Premium</Apptext>
@@ -62,6 +63,7 @@ const SignUpModal = ({ navigation }) => {
                 style={[styles.btn, {
                     borderColor:"transparent",
                     width:wp('90%'),
+                    marginBottom:'10%',
                     backgroundColor:DefaultStyles.colors.secondary,
                      marginTop:161}]}>
                     <Apptext style={[styles.btnTxt, {fontSize:14, lineHeight:21}]}>Use it for Free</Apptext>

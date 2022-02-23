@@ -20,8 +20,8 @@ import Button from '../../../components/Button';
 import Header from '../../../components/Header';
 import DefaultStyles from "../../../config/Styles";
 import Apptext from '../../../components/Apptext';
-import { LinearGradient } from 'react-native-svg';
 import { useSelector } from 'react-redux';
+import LinearGradient from 'react-native-linear-gradient';
 
 
 
@@ -185,6 +185,7 @@ const ElsePayment = (props) => {
                     </Pressable>}
                 <Modal
                     visible={isPayment}>
+                    
                     <ScrollView style={{
                         flex: 1,
                         width: wpp('100%'),
@@ -202,6 +203,8 @@ const ElsePayment = (props) => {
                         // backgroundGradientTop: "#333333",
                         // backgroundGradientBottom: "#666666"
                     }}>
+                        <LinearGradient colors={['white','#2a4578','white']}>
+                        
                         <View
                             onPress={() => setPayment(false)}
                             style={{
@@ -242,6 +245,8 @@ const ElsePayment = (props) => {
                             {/* <Image style={{marginHorizontal:wp('2%')}} source={require('../../../../assets/Lock.png')} />  */}
                             <Apptext style={styles.buttonText}>{"Go To Home"}</Apptext>
                         </TouchableOpacity>
+                    </LinearGradient>
+
                     </ScrollView>
                 </Modal>
             </ScrollView >
