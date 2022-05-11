@@ -59,7 +59,10 @@ const SignUpModal = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
                 <TouchableOpacity
-                onPress={() => dispatch(setUser(true))}
+                onPress={() => 
+                    // dispatch(setUser(true))
+                    navigation.replace("Login")
+                }
                 style={[styles.btn, {
                     borderColor:"transparent",
                     width:wp('90%'),

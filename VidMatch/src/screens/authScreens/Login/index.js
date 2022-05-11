@@ -13,6 +13,10 @@ import FormButton from '../../../components/FormButton';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import { setUser } from '../../../redux/actions/authAction';
+import { getData } from '../../../firebase/utility';
+import Snackbar from 'react-native-snackbar';
+import auth from '@react-native-firebase/auth';
+
 
 
 const SignIn = ({ navigation }) => {
@@ -22,6 +26,102 @@ const SignIn = ({ navigation }) => {
 
     const updateSecureTextEntry = () => {
         setEntry(!isEntry)
+    }
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [mailChk, setMailChk] = useState(false);
+    const [passChk, setPassChk] = useState(false);
+    const [duplicateEmail, setDuplicateEmail] = useState(false);
+    const [weakPass, setWeakPass] = useState(false);
+    const [badFormat, setBadFormat] = useState(false);
+    const [isLoading, setLoading] = useState(false);
+    const [noUser, setNoUser] = useState(false);
+
+
+    const checkValues = () => {
+        if (email === "" && password === "") {
+            setMailChk(true)
+            setPassChk(true)
+        }
+        else if (email === "") {
+            setMailChk(true)
+            setPassChk(false)
+        }
+        else if (password === "") {
+            setPassChk(true)
+            setMailChk(false)
+        }
+        else {
+            console.log("Sign IN Called")
+            signIn(email, password)
+        }
+
+    }
+
+    const signIn = async (email, password) => {
+
+        let success = true;
+        setLoading(true)
+        console.log("LoginValues", email, password)
+
+        await auth().signInWithEmailAndPassword(email, password)
+            .then(async user => {
+                setMailChk(false)
+                setPassChk(false)
+                setWeakPass(false)
+                setBadFormat(false)
+                setDuplicateEmail(false)
+                let userinfo = await getData('Users', user.user.uid);
+                var user1 = auth().currentUser;
+                console.log(user1)
+                if (user1.uid) {
+                    dispatch(setUser(true))
+                    // navigation.replace("Drawer")
+                    setLoading(false)
+                }
+                else {
+                    console.log("Error")
+                }
+                // props.navigation.navigate("SignUp")
+            })
+            .catch(function (error) {
+                success = false;
+                setLoading(false)
+                console.log(error.code + ':: ' + error.message);
+                if (error.code === 'auth/email-already-in-use') {
+                    setDuplicateEmail(true)
+                }
+                else if (error.code === 'auth/user-not-found') {
+                    setNoUser(true)
+                    setWeakPass(false)
+                    setBadFormat(false)
+
+                }
+                else if (error.code === 'auth/invalid-email') {
+                    setBadFormat(true)
+                    setWeakPass(false)
+                    setNoUser(false)
+
+                }
+                else if (error.code === 'auth/wrong-password') {
+                    setWeakPass(true)
+                    console.log(error.code)
+                    setPassChk(false)
+                    setBadFormat(false)
+                    setNoUser(false)
+
+                }
+                else {
+                    Snackbar.show({
+                        text: error.code,
+                        duration: Snackbar.LENGTH_LONG,
+                        backgroundColor: DefaultStyles.colors.primary
+                    });
+                    // Alert.alert(error.code)
+                }
+            });
+        return success;
     }
 
     return (
@@ -53,8 +153,30 @@ const SignIn = ({ navigation }) => {
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoCorrect={false}
+                    onChangeText={(txt) => {
+                        setEmail(txt)
+                        setMailChk(false)
+                    }}
                 />
-              
+                {mailChk ? <View>
+                <Apptext style={styles.errorTxt}>
+                        Please Must Enter Email Address</Apptext>
+                </View> : null}
+                {duplicateEmail ? <View>
+                <Apptext style={styles.errorTxt}>
+                        The email address is already in use by another account.</Apptext>
+                </View> : null}
+                {badFormat ? <View>
+                <Apptext style={styles.errorTxt}>
+                        The email address is badly formatted</Apptext>
+                </View> : null}
+                {noUser ? <View>
+                <Apptext style={styles.errorTxt}>
+
+                        There is no user record found with this email
+                    </Apptext>
+                </View> : null}
+
                 <FormInput
                     // labelValue={password}
                     placeholderText="Password"
@@ -63,8 +185,20 @@ const SignIn = ({ navigation }) => {
                     onPress={updateSecureTextEntry}
                     secureTextEntry={isEntry ? true : false }
                     autoCorrect={false}
+                    onChangeText={(txt) => {
+                        setPassword(txt)
+                        setPassChk(false)
+                    }}
                 />
-            
+             {passChk ? <View >
+                <Apptext style={styles.errorTxt}>
+                        Please Must Enter Password</Apptext>
+                </View> : null}
+                {weakPass ? <View>
+                    <Apptext style={styles.errorTxt}>
+                        The password is weak or the user enter invalid password.
+                    </Apptext>
+                </View> : null}
             </View>
             <View style={styles.lightBoxTxt}>
                 <TouchableOpacity>
@@ -73,10 +207,9 @@ const SignIn = ({ navigation }) => {
             </View>
             <View style={{ marginTop: wp('10%') }}>
                     <FormButton
-                        buttonTitle={"Login"}
+                        buttonTitle={isLoading ? "Loging In ...." : "Login"}
                         onPress={() => {
-                            dispatch(setUser(true))
-                            // navigation.navigate("Home")
+                            checkValues()
                         }}
                     /> 
             </View>
@@ -198,4 +331,9 @@ const styles = StyleSheet.create({
         fontFamily: "Roboto-Regular",
 
     },
+    errorTxt:{
+        marginTop: wp(2),
+        fontSize: 10,
+        color: "red"
+    }
 });

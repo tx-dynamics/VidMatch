@@ -10,9 +10,108 @@ import DefaultStyles from '../../../config/Styles';
 import Apptext from '../../../components/Apptext';
 import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
+import auth from '@react-native-firebase/auth';
+import Snackbar from 'react-native-snackbar';
+import { saveData } from '../../../firebase/utility';
+
 
 
 const SignUp = ({ navigation }) => {
+
+    const [fName, setFName] = useState('');
+    const [lName, setLName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [fChk, setFChk] = useState(false);
+    const [lChk, setLChk] = useState(false);
+    const [mailChk, setMailChk] = useState(false);
+    const [passChk, setPassChk] = useState(false);
+    const [badFormat, setBadFormat] = useState(false);
+
+
+
+    const checkValues = () => {
+        if (email === "" && password === "" && fName === "" && lName === "" ) {
+            setMailChk(true)
+            setPassChk(true)
+            setFChk(true)
+            setLChk(true)     
+        }
+        else if (fName === "") {
+            setFName(true)
+        }
+        else if (lName === "") {
+            setLName(true)
+        }
+        else if (email === "") {
+            setMailChk(true)
+        }
+        else if (password === "") {
+            setPassChk(true)
+        }
+
+        else if(badFormat === true){
+            setBadFormat(true)
+        }
+        else {
+            console.log("Sign Up Called")
+            signUp()
+        }
+    }
+
+    const ValidateEmail = (inputText) => {
+        console.log(inputText)
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (inputText.match(mailformat)) {
+            setBadFormat(false)
+            return true;
+        }
+        else {
+            setBadFormat(true)
+            return false;
+        }
+    }
+   
+    const signUp = async () => {
+            let success = true;
+            await auth()
+                .createUserWithEmailAndPassword(email, password)
+                .then(async user => {
+                    let Details = {
+                        email: email,
+                        fullName: fName,
+                        lastName:lName,
+                        displayName:fName+lName
+                    };
+
+                    console.log(Details)
+                    await saveData('Users', user.user.uid, Details);
+                    console.log(user);
+                    // navigation.navigate("Login")
+                    navigation.navigate("SignUpModal")
+
+                    Snackbar.show({
+                        text: 'Account Created',
+                        duration: Snackbar.LENGTH_LONG,
+                        backgroundColor:DefaultStyles.colors.secondary
+                      });
+
+                })
+                .catch(function (error) {
+                    success = false;
+                    console.log(error)
+                    Snackbar.show({
+                        text: error.code,
+                        duration: Snackbar.LENGTH_LONG,
+                        backgroundColor:DefaultStyles.colors.primary
+                      });
+                    // Alert.alert(error.code)
+
+                    
+                });
+            return success;
+        
+    }
 
     return (
         <ScrollView style={styles.container}>
@@ -43,22 +142,54 @@ const SignUp = ({ navigation }) => {
                     placeholderText="First Name"
                     autoCapitalize="none"
                     autoCorrect={false}
+                    onChangeText={(txt) => {
+                        setFName(txt)
+                        setFChk(false)
+                    }}
                 />
+                {fChk ? <View>
+                    <Apptext style={styles.errorTxt}>
+                        Please Must Enter First Name</Apptext>
+                </View> : null}
                    <FormInput
                     // labelValue={email}
                     placeholderText="Last Name"
                     autoCapitalize="none"
                     autoCorrect={false}
+                    onChangeText={(txt) => {
+                        setLName(txt)
+                        setLChk(false)
+                    }}
                 />
+                {lChk ? <View>
+                    <Apptext style={styles.errorTxt}>
+                    
+                        Please Must Enter Last Name</Apptext>
+                </View> : null}
                  
-            <FormInput
+                <FormInput
                     // labelValue={email}
                     placeholderText="Email"
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoCorrect={false}
+                    onChangeText={(txt) => {
+                        setEmail(txt)
+                        setMailChk(false)
+                        ValidateEmail(txt)
+
+                    }}
                 />
-              
+                {mailChk ? <View>
+                    <Apptext style={styles.errorTxt}>
+
+                        Please Must Enter Email Address</Apptext>
+                </View> : null}
+                {badFormat ? <View>
+                    <Apptext style={styles.errorTxt}>
+
+                        Please Enter Valid Email Address</Apptext>
+                </View> : null}
                 <FormInput
                     // labelValue={password}
                     placeholderText="Password"
@@ -66,14 +197,25 @@ const SignUp = ({ navigation }) => {
                     // rightImgName={require('../../../../assets/eye-off.png')}
                     secureTextEntry={true}
                     autoCorrect={false}
+                    onChangeText={(txt) => {
+                        setPassword(txt)
+                        setPassChk(false)
+                    }}
                 />
+                 {passChk ? <View>
+                    <Apptext style={styles.errorTxt}>
+                        Please Must Enter Password</Apptext>
+                </View> : null}
             
             </View>
            
             <View style={{ marginTop: wp('9%') }}>
                     <FormButton
                         buttonTitle={"Sign Up"}
-                        onPress={() => navigation.navigate("SignUpModal")}
+                        onPress={() => 
+                            checkValues()
+                        }
+
                     /> 
             </View>
             <Apptext style={styles.OR} >Or</Apptext>
@@ -192,4 +334,9 @@ const styles = StyleSheet.create({
         fontFamily: "Roboto-Regular",
 
     },
+    errorTxt:{
+        marginTop: wp(2),
+        fontSize: 10,
+        color: "red"
+    }
 });
