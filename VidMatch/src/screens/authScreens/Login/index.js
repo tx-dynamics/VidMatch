@@ -201,7 +201,9 @@ const SignIn = ({ navigation }) => {
                 </View> : null}
             </View>
             <View style={styles.lightBoxTxt}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate("ForgotPassword")
+                }}>
                     <Apptext style={styles.lightTxt}> Forgot password?</Apptext>
                 </TouchableOpacity>
             </View>

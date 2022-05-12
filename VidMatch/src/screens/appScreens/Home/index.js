@@ -16,41 +16,25 @@ import Header from '../../../components/Header';
 import FvrtComp from '../../../components/FvrtComp';
 import {DrawerActions, useNavigation} from '@react-navigation/native'
 
+import { getAllOfCollection, getListing } from '../../../firebase/utility';
 
 const Home = ({ navigation }) => {
-
-    const DATA = [
-        {
-            id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-            count: "+5",
-            label: "Alex Mintz",
-            msg: "Lorem ipsum",
-            Img: require("../../../../assets/boy1.png"),
-            dt: "5 minutes ago",
-            move: "Detail"
-        },
-        {
-            id: 'bd7acbewweea-c1b1-46c2-aed5-3ad53abb28ba',
-            count: "",
-            label: 'John Doe',
-            msg: "Will do, super, thank you",
-            Img: require("../../../../assets/boy2.png"),
-            dt: "2 hours ago",
-            move: "Detail"
-        },
-        {
-            id: 'bd7acbea-c1bewew1-46c2-aed5-3ad53abb28ba',
-            count: "+3",
-            label: "Amelia Tray",
-            msg: "Lorem ipsum",
-            Img: require("../../../../assets/boy3.png"),
-            dt: "3 hours ago",
-            move: "Detail"
-        },
-
-    ];
-
     const [isVisibe, setVisible] = useState(false)
+    const [data, setData] = useState([])
+    const [isLoading, setLoading] = useState(false)
+
+    const chkData = async () => {
+        setLoading(true)
+        let res = await getAllOfCollection("Connections")
+        setData(res?.media)
+        console.log(res)
+        setLoading(false)
+    }
+    
+    useEffect(() => {
+        chkData()
+    },[])
+    
     return (
         <View style={styles.container}>
             <Modal
@@ -156,9 +140,12 @@ const Home = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={{ marginTop: wp('6%') }} >
-                    <FlatList
-                        data={DATA}
-                        keyExtractor={(item) => item.id}
+                   {isLoading ? 
+                   <ActivityIndicator size={"large"} color={DefaultStyles.colors.primary} />
+                   : 
+                   <FlatList
+                        data={data}
+                        keyExtractor={(item) => item?.id}
                         ListEmptyComponent={() => {
                             return (
                                 <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
@@ -168,14 +155,14 @@ const Home = ({ navigation }) => {
                         }}
                         renderItem={({ item, index }) => (
                             <FvrtComp
-                                leftImgName={item.Img}
-                                labelValue={item.label}
+                                leftImgName={{ uri : item?.thumbnail}}
+                                labelValue={item?.name}
                                 // onPress={() => navigation.navigate("Premium")}
                             // rightImgName={item.isLike ? require('../../../../assets/redHeart.png') : require('../../../../assets/heart.png')}
                             />
 
                         )}
-                    />
+                    />}
                 </View>
             </View>
         </View>

@@ -12,9 +12,10 @@ import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 import Header from '../../../components/Header';
 import FvrtComp from '../../../components/FvrtComp';
+import { getAllOfCollection, getListing } from '../../../firebase/utility';
 
-const Connects = ({ navigation }) => {
 
+const Connects = ({ navigation, route }) => {
     const DATA = [
         {
             id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -69,6 +70,48 @@ const Connects = ({ navigation }) => {
        
     ];
 
+
+    const [data, setData] = useState([])
+    const [isLoading, setLoading] = useState(false)
+    const [filteredData, setfilteredData] = useState([]);
+    const [search, setsearch] = useState('');
+
+    const chkData = async () => {
+        setLoading(true)
+        let res = await getAllOfCollection("Connections")
+        setData(res?.media)
+        console.log("Connects Screen",res)
+        setLoading(false)
+    }
+    
+    useEffect(() => {
+        chkData()
+    },[])
+
+    const searchFilterFunction = (text) => {
+        console.log("txt", text)
+        // Check if searched text is not blank
+        if (text) {
+            // Inserted text is not blank
+            // Filter the masterDataSource
+            // Update FilteredDataSource
+            const newData = data.filter(function (item) {
+                const itemData = item.name ? item.name.toUpperCase() : "".toUpperCase();
+                const textData = text.toUpperCase();
+                return itemData.indexOf(textData) > -1;
+            });
+            setData(newData);
+            setsearch(text);
+        } else {
+            // Inserted text is blank
+            // Update FilteredDataSource with masterDataSource
+            chkData()
+            setData(data);
+            setsearch(text);
+        }
+    };
+
+
     return (
         <View style={styles.container}>
             <Header
@@ -81,17 +124,20 @@ const Connects = ({ navigation }) => {
          <View style={styles.MainContainer}>
          <TouchableOpacity style={styles.searchBar}>
                 <Image style={{marginHorizontal:18}} source={require('../../../../assets/search.png')} />
-                <TextInput style={{ padding: 19, color: 'grey' }}
+                <TextInput style={{width:wp('70%'), padding: 10, color: 'grey' }}
                     placeholder='Alex'
-                    style={{width:wp('75%')}}
-                    onChangeText={(val) => console.log(val)}
+                    // style={{}}
+                    onChangeText={(val) => searchFilterFunction(val)}    
                 />
             </TouchableOpacity>
            
             <View style={{ marginTop: wp('6%') }} >
+            {isLoading ? 
+                   <ActivityIndicator size={"large"} color={DefaultStyles.colors.primary} />
+                   : 
                     <FlatList
-                        data={DATA}
-                        keyExtractor={(item) => item.id}
+                        data={data}
+                        keyExtractor={(item) => item?.id}
                         showsVerticalScrollIndicator={false}
                         ListEmptyComponent={() => {
                             return (
@@ -102,15 +148,16 @@ const Connects = ({ navigation }) => {
                           }}
                         renderItem={({ item,index }) => (
                             <FvrtComp
-                                leftImgName={item.Img}
+                                leftImgName={{ uri : item?.thumbnail}}
                                 borderRadius={9}
-                                labelValue={item.label}
-                                rightImgName={item.conct}
-                                rightOnPress={() => navigation.navigate("AddConnect")}
+                                labelValue={item?.name}
+                                rightImgName={require("../../../../assets/blueAdd.png")}
+                                rightOnPress={() => navigation.navigate("AddConnect", {items:item})}
                                 />
 
                         )}
                     />
+            }
                 </View>
          </View>
         </View>

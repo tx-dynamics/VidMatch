@@ -158,6 +158,11 @@ export async function getAllOptions(collection) {
   return data;
 }
 
+// export async function passwordReset(email) {
+//   return auth().sendPasswordResetEmail(email);
+// }
+
+
 export async function passwordReset(email) {
   return auth().sendPasswordResetEmail(email);
 }

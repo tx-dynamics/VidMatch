@@ -8,6 +8,7 @@ import AskPaymentOption from "../appScreens/PaymentScreens/AskPaymentOption";
 import ElsePayment from "../appScreens/PaymentScreens/ElsePayment";
 import Payment from "../appScreens/PaymentScreens/Payment";
 import Premium from "../appScreens/PaymentScreens/Premium";
+import ForgotPassword from "./Forgot/ForgotPassword";
 
 const AuthStack = createNativeStackNavigator()
 
@@ -25,7 +26,7 @@ const SplashNavigator = () => {
             <AuthStack.Screen name ="ElsePayment" component={ElsePayment}/>
             <AuthStack.Screen name ="Payment" component={Payment}/>
             <AuthStack.Screen name ="Premium" component={Premium}/>
-
+            <AuthStack.Screen name ="ForgotPassword" component={ForgotPassword} />
 
             
         </AuthStack.Navigator>

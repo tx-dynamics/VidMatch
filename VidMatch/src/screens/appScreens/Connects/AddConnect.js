@@ -15,8 +15,7 @@ import FormButton from '../../../components/FormButton';
 import BackgroundHeader from '../../../components/BackgroundHeader';
 import MatchBox from '../../../components/MatchBox';
 
-const AddConnect = ({ navigation }) => {
-
+const AddConnect = ({ navigation,route }) => {
     const DATA = [
         {
             id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -76,7 +75,11 @@ const AddConnect = ({ navigation }) => {
 
     ];
 
+
     const [isTrue, setTrue] = useState(false);
+    const {items}  = route.params;
+    console.log("Received",items)
+
 
     return (
         <View style={styles.container}>
@@ -86,15 +89,27 @@ const AddConnect = ({ navigation }) => {
                 onPressLeft={() => navigation.goBack()}
             />
             <View style={styles.whiteView}>
-                <TouchableOpacity style={styles.imgBox} >
-                    <Image source={require('../../../../assets/alexAdd.png')} />
-                    <Apptext style={styles.imgTxt} >Alex Mintz</Apptext>
+                <TouchableOpacity  >
+                    {
+                    items?.thumbnail ? 
+                    <Image 
+                    style={styles.imgBox}
+                    source={{uri: items?.thumbnail}}
+                     />
+                     :    
+                    <Image 
+                    style={styles.imgBox}
+                    source={require('../../../../assets/alexAdd.png')}
+                     />}
+                    <Apptext style={styles.imgTxt} >{items?.name}</Apptext>
                 </TouchableOpacity>
                 {/* <ScrollView> */}
                 <View style={styles.twoTxts}>
                     <Apptext style={styles.cncts} >Connects</Apptext>
                     <Apptext style={styles.VLine}></Apptext>
-                    <Apptext style={isTrue === false ? [styles.cncts, {color: "lightgray"}] : styles.cncts}>Matches</Apptext>
+                    <Apptext 
+                    style={isTrue === false ? [styles.cncts, {color: "lightgray"}]
+                     : styles.cncts}>Matches</Apptext>
                 </View>
                 <View style={styles.twoLowerTxts}>
                     <Apptext style={styles.nmbrTxt} >03</Apptext>
