@@ -15,8 +15,10 @@ import FormButton from '../../../components/FormButton';
 import Header from '../../../components/Header';
 import FvrtComp from '../../../components/FvrtComp';
 import {DrawerActions, useNavigation} from '@react-navigation/native'
+import { getAllOfCollection,getData, getAllOptions,getListing } from '../../../firebase/utility';
+import auth from '@react-native-firebase/auth';
 
-import { getAllOfCollection, getListing } from '../../../firebase/utility';
+
 
 const Home = ({ navigation }) => {
     const [isVisibe, setVisible] = useState(false)
@@ -25,7 +27,8 @@ const Home = ({ navigation }) => {
 
     const chkData = async () => {
         setLoading(true)
-        let res = await getAllOfCollection("Connections")
+        var userInfo = auth().currentUser;
+        let res = await getData("Connections", userInfo.uid)
         setData(res?.media)
         console.log(res)
         setLoading(false)
@@ -155,8 +158,8 @@ const Home = ({ navigation }) => {
                         }}
                         renderItem={({ item, index }) => (
                             <FvrtComp
-                                leftImgName={{ uri : item?.thumbnail}}
-                                labelValue={item?.name}
+                                leftImgName={item.thumbnail ? { uri : item?.thumbnail} : require('../../../Assets/Images/dp.png') }
+                                labelValue={item?.displayName}
                                 // onPress={() => navigation.navigate("Premium")}
                             // rightImgName={item.isLike ? require('../../../../assets/redHeart.png') : require('../../../../assets/heart.png')}
                             />

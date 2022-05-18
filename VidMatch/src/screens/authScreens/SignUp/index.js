@@ -35,7 +35,8 @@ const SignUp = ({ navigation }) => {
             setMailChk(true)
             setPassChk(true)
             setFChk(true)
-            setLChk(true)     
+            setLChk(true)    
+            setBadFormat(false) 
         }
         else if (fName === "") {
             setFName(true)
@@ -66,6 +67,9 @@ const SignUp = ({ navigation }) => {
             setBadFormat(false)
             return true;
         }
+        else if (email === ""){
+            setBadFormat(false)
+        }
         else {
             setBadFormat(true)
             return false;
@@ -81,7 +85,8 @@ const SignUp = ({ navigation }) => {
                         email: email,
                         fullName: fName,
                         lastName:lName,
-                        displayName:fName+lName
+                        displayName:fName+lName,
+                        uid:user.user.uid
                     };
 
                     console.log(Details)
@@ -176,8 +181,6 @@ const SignUp = ({ navigation }) => {
                     onChangeText={(txt) => {
                         setEmail(txt)
                         setMailChk(false)
-                        ValidateEmail(txt)
-
                     }}
                 />
                 {mailChk ? <View>
@@ -188,7 +191,7 @@ const SignUp = ({ navigation }) => {
                 {badFormat ? <View>
                     <Apptext style={styles.errorTxt}>
 
-                        Please Enter Valid Email Address</Apptext>
+                        The Email Address is badly formatted</Apptext>
                 </View> : null}
                 <FormInput
                     // labelValue={password}
@@ -213,7 +216,9 @@ const SignUp = ({ navigation }) => {
                     <FormButton
                         buttonTitle={"Sign Up"}
                         onPress={() => 
-                            checkValues()
+                           { checkValues()
+                            ValidateEmail(email)
+}
                         }
 
                     /> 

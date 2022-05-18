@@ -150,7 +150,7 @@ export async function getAllOptions(collection) {
   querySnapshot.forEach(function(doc) {
     if (doc.exists) {
       //console.log(doc.data());
-      data.push(doc.data().pageHeading);
+      data.push(doc.data());
     } else {
       console.log('No document found!');
     }

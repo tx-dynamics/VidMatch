@@ -43,7 +43,11 @@ const ForgotPassword = ({ navigation }) => {
         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (inputText.match(mailformat)) {
             setBadFormat(false)
+            // setMailChk(true)
             return true;
+        }
+        else if (email === ""){
+            setBadFormat(false)
         }
         else {
             setBadFormat(true)
@@ -57,6 +61,11 @@ const ForgotPassword = ({ navigation }) => {
             setMailChk(true)
             setBadFormat(false)
         }
+        // else if(badFormat === true)
+        // {
+        //     setMailChk(false)
+        //     setBadFormat(true)
+        // }
         else {
             console.log("forgot called")
             let success = true;
@@ -66,7 +75,7 @@ const ForgotPassword = ({ navigation }) => {
                     Snackbar.show({
                         text: 'Password Reset Link Sent On Your Email',
                         duration: Snackbar.LENGTH_LONG,
-                        backgroundColor: DefaultStyles.colors.primary
+                        backgroundColor: DefaultStyles.colors.secondary
                     });
                     navigation.navigate("Login")
                 })
@@ -132,7 +141,7 @@ const ForgotPassword = ({ navigation }) => {
                             autoCorrect={false}
                             onChangeText={(txt) => {
                                 setEmail(txt)
-                                ValidateEmail(txt)
+                                // ValidateEmail(txt)
                                 setMailChk(false)
                             }}
                         />
@@ -161,6 +170,7 @@ const ForgotPassword = ({ navigation }) => {
                             buttonTitle={isLoading ? "Sending ...." : "Send"}
                             onPress={() => {
                                 checkValues()
+                                ValidateEmail(email)
                             }}
                         />
                     </View>

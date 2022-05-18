@@ -13,11 +13,26 @@ import FormButton from '../../../components/FormButton';
 import LinearGradient from 'react-native-linear-gradient';
 import { useDispatch } from "react-redux";
 import { setUser } from '../../../redux/actions/authAction';
+import auth from '@react-native-firebase/auth';
+import Snackbar from 'react-native-snackbar';
 
 
 const SignUpModal = ({ navigation }) => {
 
     let dispatch = useDispatch();
+
+    const chkUser = () => {
+        var user1 = auth().currentUser;
+        console.log(user1)
+        if (user1.uid) {
+            dispatch(setUser(true))
+            Snackbar.show({
+                text: 'Login Successful',
+                duration: Snackbar.LENGTH_LONG,
+                backgroundColor:DefaultStyles.colors.secondary
+              });
+        }
+    } 
 
     return (
         <ScrollView style={styles.container}>
@@ -60,8 +75,7 @@ const SignUpModal = ({ navigation }) => {
                 </View>
                 <TouchableOpacity
                 onPress={() => 
-                    // dispatch(setUser(true))
-                    navigation.replace("Login")
+                    chkUser()
                 }
                 style={[styles.btn, {
                     borderColor:"transparent",

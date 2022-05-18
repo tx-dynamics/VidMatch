@@ -12,7 +12,8 @@ import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 import Header from '../../../components/Header';
 import FvrtComp from '../../../components/FvrtComp';
-import { getAllOfCollection, getListing } from '../../../firebase/utility';
+import { getAllOfCollection,getData, getAllOptions,getListing } from '../../../firebase/utility';
+import auth from '@react-native-firebase/auth';
 
 
 const Connects = ({ navigation, route }) => {
@@ -78,9 +79,17 @@ const Connects = ({ navigation, route }) => {
 
     const chkData = async () => {
         setLoading(true)
-        let res = await getAllOfCollection("Connections")
-        setData(res?.media)
+        // let res = await getAllOfCollection("Users")
+        
+        var userInfo = auth().currentUser;
+        let res = await getAllOptions("Users")
         console.log("Connects Screen",res)
+        setData(res)
+        // res.map(async(val) => {
+        //     // let datas = await getListing("Users", val.uid)
+        //     console.log("datas",val.uid)
+        // })
+
         setLoading(false)
     }
     
@@ -96,7 +105,7 @@ const Connects = ({ navigation, route }) => {
             // Filter the masterDataSource
             // Update FilteredDataSource
             const newData = data.filter(function (item) {
-                const itemData = item.name ? item.name.toUpperCase() : "".toUpperCase();
+                const itemData = item.displayName ? item.displayName.toUpperCase() : "".toUpperCase();
                 const textData = text.toUpperCase();
                 return itemData.indexOf(textData) > -1;
             });
@@ -137,7 +146,7 @@ const Connects = ({ navigation, route }) => {
                    : 
                     <FlatList
                         data={data}
-                        keyExtractor={(item) => item?.id}
+                        keyExtractor={(item) => item?.uid}
                         showsVerticalScrollIndicator={false}
                         ListEmptyComponent={() => {
                             return (
@@ -148,9 +157,9 @@ const Connects = ({ navigation, route }) => {
                           }}
                         renderItem={({ item,index }) => (
                             <FvrtComp
-                                leftImgName={{ uri : item?.thumbnail}}
+                                leftImgName={item.thumbnail ? {uri : item?.thumbnail} : require("../../../Assets/Images/dp.png")}
                                 borderRadius={9}
-                                labelValue={item?.name}
+                                labelValue={item?.displayName}
                                 rightImgName={require("../../../../assets/blueAdd.png")}
                                 rightOnPress={() => navigation.navigate("AddConnect", {items:item})}
                                 />

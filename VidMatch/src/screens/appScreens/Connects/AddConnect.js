@@ -10,10 +10,14 @@ import {
 } from "react-native-responsive-screen";
 import DefaultStyles from '../../../config/Styles';
 import Apptext from '../../../components/Apptext';
-import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 import BackgroundHeader from '../../../components/BackgroundHeader';
 import MatchBox from '../../../components/MatchBox';
+import Snackbar from 'react-native-snackbar';
+import { saveData, saveFvrtsData } from '../../../firebase/utility';
+import auth from '@react-native-firebase/auth';
+
+
 
 const AddConnect = ({ navigation,route }) => {
     const DATA = [
@@ -75,11 +79,41 @@ const AddConnect = ({ navigation,route }) => {
 
     ];
 
-
     const [isTrue, setTrue] = useState(false);
     const {items}  = route.params;
     console.log("Received",items)
 
+    const addConnection = async() => {
+        var userInfo = auth().currentUser;
+        
+        let Details = {
+            email: items.email,
+            fullName: items.fullName,
+            lastName:items.lastName ,
+            displayName:items.displayName ,
+            uid:items.uid
+        };
+
+        console.log(Details)
+        await saveFvrtsData('Connections', userInfo.uid, Details)
+        .then(async user => {
+            Snackbar.show({
+                text: 'Connection Added Successfully',
+                duration: Snackbar.LENGTH_LONG,
+                backgroundColor:DefaultStyles.colors.secondary
+              });
+        })
+        .catch(function (error) {
+            success = false;
+            console.log(error)
+            Snackbar.show({
+                text: error.code,
+                duration: Snackbar.LENGTH_LONG,
+                backgroundColor:DefaultStyles.colors.primary
+              });
+            
+        });
+    }
 
     return (
         <View style={styles.container}>
@@ -99,9 +133,9 @@ const AddConnect = ({ navigation,route }) => {
                      :    
                     <Image 
                     style={styles.imgBox}
-                    source={require('../../../../assets/alexAdd.png')}
+                    source={require('../../../Assets/Images/dp.png')}
                      />}
-                    <Apptext style={styles.imgTxt} >{items?.name}</Apptext>
+                    <Apptext style={styles.imgTxt} >{items?.displayName}</Apptext>
                 </TouchableOpacity>
                 {/* <ScrollView> */}
                 <View style={styles.twoTxts}>
@@ -112,12 +146,16 @@ const AddConnect = ({ navigation,route }) => {
                      : styles.cncts}>Matches</Apptext>
                 </View>
                 <View style={styles.twoLowerTxts}>
-                    <Apptext style={styles.nmbrTxt} >03</Apptext>
-                    <Apptext style={styles.nmbrTxt}>{isTrue ? "07" : "" } </Apptext>
+                    <Apptext style={styles.nmbrTxt} >00</Apptext>
+                    <Apptext style={styles.nmbrTxt}>{isTrue ? "00" : "" } </Apptext>
                 </View>
               {
               isTrue === false ? (
-              <TouchableOpacity onPress={() => setTrue(true)} style={styles.addBtn}>
+              <TouchableOpacity 
+              onPress={() => {
+               addConnection()   
+               setTrue(true)}}
+               style={styles.addBtn}>
                 <Apptext style={styles.btnTxt}>Add to Your Connection</Apptext>
                 </TouchableOpacity>
               ) : null    

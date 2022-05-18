@@ -52,6 +52,7 @@ const SignIn = ({ navigation }) => {
             setPassChk(true)
             setMailChk(false)
         }
+     
         else {
             console.log("Sign IN Called")
             signIn(email, password)
@@ -79,6 +80,11 @@ const SignIn = ({ navigation }) => {
                     dispatch(setUser(true))
                     // navigation.replace("Drawer")
                     setLoading(false)
+                    Snackbar.show({
+                        text: 'Login Successful',
+                        duration: Snackbar.LENGTH_LONG,
+                        backgroundColor:DefaultStyles.colors.secondary
+                      });
                 }
                 else {
                     console.log("Error")
@@ -124,6 +130,22 @@ const SignIn = ({ navigation }) => {
         return success;
     }
 
+    const ValidateEmail = (inputText) => {
+        console.log(inputText)
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (inputText.match(mailformat)) {
+            setBadFormat(false)
+            return true;
+        }
+        else if (email === ""){
+            setBadFormat(false)
+        }
+        else {
+            setBadFormat(true)
+            return false;
+        }
+    }
+
     return (
         <ScrollView style={styles.container}>
             <View style={styles.MainContainer} >
@@ -156,6 +178,7 @@ const SignIn = ({ navigation }) => {
                     onChangeText={(txt) => {
                         setEmail(txt)
                         setMailChk(false)
+                        
                     }}
                 />
                 {mailChk ? <View>
@@ -172,7 +195,6 @@ const SignIn = ({ navigation }) => {
                 </View> : null}
                 {noUser ? <View>
                 <Apptext style={styles.errorTxt}>
-
                         There is no user record found with this email
                     </Apptext>
                 </View> : null}
@@ -212,6 +234,8 @@ const SignIn = ({ navigation }) => {
                         buttonTitle={isLoading ? "Loging In ...." : "Login"}
                         onPress={() => {
                             checkValues()
+                            ValidateEmail(email)
+
                         }}
                     /> 
             </View>
@@ -334,6 +358,7 @@ const styles = StyleSheet.create({
 
     },
     errorTxt:{
+        // marginVertical:wp('3%'),
         marginTop: wp(2),
         fontSize: 10,
         color: "red"
