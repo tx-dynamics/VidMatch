@@ -115,6 +115,7 @@ const HomeNavigator = () => {
             <StackNavigator.Screen name="Home" component={Home} />
             <StackNavigator.Screen name="Connects" component={Connects } />
             <StackNavigator.Screen name="AddConnect" component={AddConnect } />
+            <StackNavigator.Screen name="ChatDetail" component={ChatDetail } />
 
         </StackNavigator.Navigator>
     )

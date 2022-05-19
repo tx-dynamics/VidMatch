@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet, FlatList, TouchableOpacity, Image, KeyboardAvoidingView, TextInput } from 'react-native';
 import Apptext from '../../../components/Apptext';
 import DefaultStyles from "../../../config/Styles";
@@ -6,10 +6,13 @@ import Feather from 'react-native-vector-icons/Feather';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import ChatDetailComp from '../../../components/ChatDetailComp';
 import HumanHeader from '../../../components/HumanHeader';
+import { getData, addToArrays,upDateData, saveData } from '../../../firebase/utility';
+import auth from '@react-native-firebase/auth';
+import Snackbar from 'react-native-snackbar';
+import firestore from '@react-native-firebase/firestore';
 
 
-const ChatDetail = ({ navigation }) => {
-
+const ChatDetail = ({ navigation, route }) => {
     const DATA = [
         {
             id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -20,23 +23,118 @@ const ChatDetail = ({ navigation }) => {
             dt: "5 minutes ago",
             move: "Detail"
         },
-       
+
 
     ];
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    const items = route.params.items;
+    const [messages, setMessages] = useState([]);
+    const [isTxt, setTxt] = useState([]);
+    // console.log("Rcvd", items)
+
+
+    // useEffect(() => {
+    //     getMessages()
+    // }, []);
+
+    // const getMessages = async () => {
+    //     var userInfo = auth().currentUser;
+    //     let messages = await getData(
+    //         'Chats',
+    //         userInfo.uid,
+    //         items.uid,
+    //     );
+    //     if (messages) {
+    //         //   await this.setState({ messages: messages });
+    //         setMessages(messages)
+    //     } else {
+    //         return 0;
+    //     }
+    //     // let that = this;
+
+    //     await firestore()
+    //         .collection('Chats')
+    //         .doc(userInfo.uid)
+    //         .onSnapshot(async doc => {
+    //             setMessages(doc.data()[items.uid].reverse())
+    //             // that.setState({ messages: doc.data()[this.state.friendID].reverse() });
+    //         });
+    //     //console.log('OK OK', this.state.messages);
+    // };
+
+    const onSend = async (messages = []) => {
+        var userInfo = auth().currentUser;
+
+        // if (this.state.isConnected) {
+        //   this.setState(previousState => ({
+        //     messages: GiftedChat.append(previousState.messages, messages),
+        //   }));
+        // messages[0].createdAt = Date.parse(messages[0].createdAt);
+        //messages[0].unssen = true;
+        await addToArrays(
+            'Chats',
+            userInfo.uid,
+            items.uid,
+            messages[0],
+        );
+        messages[0].user._id = 2;
+        await addToArrays(
+            'Chats',
+            items.uid,
+            userInfo.uid,
+            messages[0],
+        );
+        //   await saveData('notifications', items.uid, {
+        //     createdAt: messages[0].createdAt,
+        //     text: messages[0].text,
+        //     _id: messages[0].user._id,
+        //     senderId: userInfo.uid,
+        //     reciverId: items.uid
+        //   })
+        messages[0].user._id = 1;
+
+        await upDateData('Chats', items.uid, {
+            unseen: true,
+        });
+        await addToArrays(
+            'Chats',
+            items.uid,
+            'userids',
+            userInfo.uid,
+        );
+
+        await addToArrays(
+            'Users',
+            userInfo.uid,
+            'chatted',
+            items.uid,
+        );
+        await addToArrays(
+            'Users',
+            items.uid,
+            'chatted', //array name
+            userInfo.uid,
+        );
+    }
+    // else {
+    //   ToastAndroid.show("To send a message please connected to internet", ToastAndroid.SHORT);
+
+    // }
+
 
 
     return (
         <View style={[DefaultStyles.container, { flex: 1, }]}>
-                 <HumanHeader
-                    leftImgName={require('../../../../assets/arrow-back.png')}
-                    centerImg={require('../../../../assets/boy1.png')}
-                    headerLabel={"Alex Mintz"}
-                    rightImg={require('../../../../assets/videoChat.png')}
-                    phoneImg={require('../../../../assets/ChatPhone.png')}
-                    menuImg={require('../../../../assets/menu.png')}
-                    backgroundColor={"white"}
-                    onPressLeft={() => navigation.goBack()}
-                />
+            <HumanHeader
+                leftImgName={require('../../../../assets/arrow-back.png')}
+                centerImg={items.thumbnail ? { uri: items.thumbnail } : require('../../../../assets/boy1.png')}
+                headerLabel={items?.displayName}
+                rightImg={require('../../../../assets/videoChat.png')}
+                phoneImg={require('../../../../assets/ChatPhone.png')}
+                menuImg={require('../../../../assets/menu.png')}
+                backgroundColor={"white"}
+                onPressLeft={() => navigation.goBack()}
+            />
             <ScrollView>
                 <View style={{ marginTop: wp('25%') }} >
                     <FlatList
@@ -54,11 +152,12 @@ const ChatDetail = ({ navigation }) => {
                             <ChatDetailComp
                                 label="You"
                                 msg={"Hi lucy! how,s your day going"}
+
                             />
 
                         )}
                     />
-                    <View style={styles.PicMainView}>       
+                    <View style={styles.PicMainView}>
                         <View>
                             <Apptext style={styles.labelTxt}>{"Ali Nawaz"}</Apptext>
                         </View>
@@ -86,7 +185,7 @@ const ChatDetail = ({ navigation }) => {
 
                         )}
                     />
-                      <View style={styles.PicMainView}>       
+                    <View style={styles.PicMainView}>
                         <View>
                             <Apptext style={styles.labelTxt}>{"Ali Nawaz"}</Apptext>
                         </View>
@@ -110,16 +209,21 @@ const ChatDetail = ({ navigation }) => {
 
                 <View style={styles.ChatMsgView} >
                     <TextInput
-                        onChangeText={(val) => console.log(val)}
+                        onChangeText={(val) => {
+                            console.log(val)
+                            setTxt(val)
+                        }}
                         // value={"input"}
                         placeholder="Type Messages"
                         style={{
-                            height:wp('14%'),
+                            height: wp('14%'),
                             paddingLeft: wp('5%')
                         }}
                     />
-                    <TouchableOpacity style={styles.ChatSndMsgBtn}>
-                    <Image source={require('../../../../assets/sendBtn.png')} />
+                    <TouchableOpacity
+                        onPress={() => { onSend(isTxt) }}
+                        style={styles.ChatSndMsgBtn}>
+                        <Image source={require('../../../../assets/sendBtn.png')} />
                     </TouchableOpacity>
 
                 </View>
@@ -134,43 +238,43 @@ export default ChatDetail;
 
 const styles = StyleSheet.create({
 
-labelTxt:{
+    labelTxt: {
 
-    fontFamily:'Poppins-Medium',
-    fontSize: 12,
-    marginTop: wp('1%'),
-    marginHorizontal:wp('3%')
+        fontFamily: 'Poppins-Medium',
+        fontSize: 12,
+        marginTop: wp('1%'),
+        marginHorizontal: wp('3%')
     },
-    PicMainView:{
-        marginBottom:wp('2%'),
-        marginHorizontal:wp('25%') 
+    PicMainView: {
+        marginBottom: wp('2%'),
+        marginHorizontal: wp('25%')
     },
-    msgView:{
-        width:wp('70%'),
-        borderRadius:13,
-        backgroundColor:"#2176ff",
-        padding:13,
+    msgView: {
+        width: wp('70%'),
+        borderRadius: 13,
+        backgroundColor: "#2176ff",
+        padding: 13,
         shadowColor: "#000",
         shadowOffset: {
-          width: 0,
-          height: 5,
+            width: 0,
+            height: 5,
         },
         shadowOpacity: 0.34,
         shadowRadius: 6.27,
         elevation: 3,
     },
-    msgTxt:{
-        fontFamily:'Poppins-Regular',
-        fontSize:13,
-        color:DefaultStyles.colors.white
+    msgTxt: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 13,
+        color: DefaultStyles.colors.white
     },
     ChatMsgView: {
         flexDirection: 'row',
-        height:wp('14%') ,
-        marginTop:wp('2%'),
+        height: wp('14%'),
+        marginTop: wp('2%'),
         justifyContent: 'space-between',
         width: wp('90%'),
-        alignItems:'center',
+        alignItems: 'center',
         // position: "absolute",
         // bottom: 0,
         backgroundColor: "#E3E3E3",
@@ -178,14 +282,14 @@ labelTxt:{
         marginHorizontal: '5%',
         alignSelf: 'center',
         marginBottom: 10
-      },
-      ChatSndMsgBtn: {
+    },
+    ChatSndMsgBtn: {
         width: 40, height: 38,
         borderRadius: 6,
-        marginHorizontal:wp('2%'),
+        marginHorizontal: wp('2%'),
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#2176ff'
-      },
+    },
 
 })

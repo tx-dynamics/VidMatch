@@ -39,6 +39,20 @@ export async function saveData(collection, doc, jsonObject) {
     });
 }
 
+export async function upDateData(collection, doc, jsonObject) {
+  await firestore()
+    .collection(collection)
+    .doc(doc)
+    .update(jsonObject)
+    .then(async () => {
+      console.log('Document successfully written!');
+      return true;
+    })
+    .catch(function(error) {
+      console.error('Error writing document: ', error);
+    });
+}
+
 export function getData(collection, doc, objectKey) {
   // check if data exists on the given path
   if (objectKey === undefined) {
@@ -202,6 +216,16 @@ export async function addToArray(collection, doc,value) {
       .update({
         media: firestore.FieldValue.arrayUnion(value),
       });
+}
+
+export async function addToArrays(collection, doc, array, value) {
+  await 
+    firestore()
+    .collection(collection)
+    .doc(doc)
+    .update({
+      [array]: firestore.FieldValue.arrayUnion(value),
+    });
 }
 export async function removeToArray(collection, doc,value) {
   

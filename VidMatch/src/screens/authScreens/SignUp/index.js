@@ -27,7 +27,7 @@ const SignUp = ({ navigation }) => {
     const [mailChk, setMailChk] = useState(false);
     const [passChk, setPassChk] = useState(false);
     const [badFormat, setBadFormat] = useState(false);
-
+    const [isLoading, setLoading] = useState(false)
 
 
     const checkValues = () => {
@@ -78,6 +78,7 @@ const SignUp = ({ navigation }) => {
    
     const signUp = async () => {
             let success = true;
+            setLoading(true)
             await auth()
                 .createUserWithEmailAndPassword(email, password)
                 .then(async user => {
@@ -85,14 +86,15 @@ const SignUp = ({ navigation }) => {
                         email: email,
                         fullName: fName,
                         lastName:lName,
-                        displayName:fName+lName,
+                        displayName:fName + " " + lName,
                         uid:user.user.uid
                     };
 
                     console.log(Details)
                     await saveData('Users', user.user.uid, Details);
                     console.log(user);
-                    // navigation.navigate("Login")
+                    setLoading(false)
+
                     navigation.navigate("SignUpModal")
 
                     Snackbar.show({
@@ -110,6 +112,8 @@ const SignUp = ({ navigation }) => {
                         duration: Snackbar.LENGTH_LONG,
                         backgroundColor:DefaultStyles.colors.primary
                       });
+                    setLoading(false)
+
                     // Alert.alert(error.code)
 
                     
@@ -214,7 +218,7 @@ const SignUp = ({ navigation }) => {
            
             <View style={{ marginTop: wp('9%') }}>
                     <FormButton
-                        buttonTitle={"Sign Up"}
+                        buttonTitle={isLoading ? "Signing Up ...." : "Sign Up"}
                         onPress={() => 
                            { checkValues()
                             ValidateEmail(email)

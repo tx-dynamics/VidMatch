@@ -17,13 +17,15 @@ import FvrtComp from '../../../components/FvrtComp';
 import {DrawerActions, useNavigation} from '@react-navigation/native'
 import { getAllOfCollection,getData, getAllOptions,getListing } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
-
+import { useIsFocused } from '@react-navigation/native';    
 
 
 const Home = ({ navigation }) => {
     const [isVisibe, setVisible] = useState(false)
     const [data, setData] = useState([])
     const [isLoading, setLoading] = useState(false)
+
+        const isFocused = useIsFocused();
 
     const chkData = async () => {
         setLoading(true)
@@ -36,7 +38,7 @@ const Home = ({ navigation }) => {
     
     useEffect(() => {
         chkData()
-    },[])
+    },[isFocused])
     
     return (
         <View style={styles.container}>

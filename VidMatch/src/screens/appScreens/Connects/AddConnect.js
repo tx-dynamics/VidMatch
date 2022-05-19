@@ -14,12 +14,12 @@ import FormButton from '../../../components/FormButton';
 import BackgroundHeader from '../../../components/BackgroundHeader';
 import MatchBox from '../../../components/MatchBox';
 import Snackbar from 'react-native-snackbar';
-import { saveData, saveFvrtsData } from '../../../firebase/utility';
+import { saveData, saveFvrtsData, getData } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
 
 
 
-const AddConnect = ({ navigation,route }) => {
+const AddConnect = ({ navigation, route }) => {
     const DATA = [
         {
             id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -78,42 +78,68 @@ const AddConnect = ({ navigation,route }) => {
         },
 
     ];
+    const { items } = route.params;
+    ////////////////////////////////////////////////////////////////////////////
 
-    const [isTrue, setTrue] = useState(false);
-    const {items}  = route.params;
-    console.log("Received",items)
+    const [isTrue, setTrue] = useState([]);
+    const [isLoading, setLoading] = useState(false);
 
-    const addConnection = async() => {
+    const addConnection = async () => {
         var userInfo = auth().currentUser;
-        
+
         let Details = {
             email: items.email,
             fullName: items.fullName,
-            lastName:items.lastName ,
-            displayName:items.displayName ,
-            uid:items.uid
+            lastName: items.lastName,
+            displayName: items.displayName,
+            uid: items.uid
         };
 
         console.log(Details)
         await saveFvrtsData('Connections', userInfo.uid, Details)
-        .then(async user => {
-            Snackbar.show({
-                text: 'Connection Added Successfully',
-                duration: Snackbar.LENGTH_LONG,
-                backgroundColor:DefaultStyles.colors.secondary
-              });
-        })
-        .catch(function (error) {
-            success = false;
-            console.log(error)
-            Snackbar.show({
-                text: error.code,
-                duration: Snackbar.LENGTH_LONG,
-                backgroundColor:DefaultStyles.colors.primary
-              });
-            
-        });
+            .then(async user => {
+                Snackbar.show({
+                    text: 'Connection Added Successfully',
+                    duration: Snackbar.LENGTH_LONG,
+                    backgroundColor: DefaultStyles.colors.secondary
+                });
+            })
+            .catch(function (error) {
+                success = false;
+                console.log(error)
+                Snackbar.show({
+                    text: error.code,
+                    duration: Snackbar.LENGTH_LONG,
+                    backgroundColor: DefaultStyles.colors.primary
+                });
+
+            });
     }
+
+    const chkData = async () => {
+        setLoading(true)
+        var userInfo = auth().currentUser;
+        let res = await getData("Connections", userInfo.uid)
+        // console.log("Add Conct Scrn", res?.media)
+        const newData = res.media.filter(function (item) {
+            // console.log("shh",item.uid)
+            const itemData = item.uid;
+            const textData = items.uid;
+            return itemData.indexOf(textData) > -1;
+        });
+
+        if (newData[0]?.uid === items.uid) {
+            setTrue(true)
+        }
+        else {
+            setTrue(false)
+        }
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        chkData()
+    }, [])
 
     return (
         <View style={styles.container}>
@@ -125,54 +151,58 @@ const AddConnect = ({ navigation,route }) => {
             <View style={styles.whiteView}>
                 <TouchableOpacity  >
                     {
-                    items?.thumbnail ? 
-                    <Image 
-                    style={styles.imgBox}
-                    source={{uri: items?.thumbnail}}
-                     />
-                     :    
-                    <Image 
-                    style={styles.imgBox}
-                    source={require('../../../Assets/Images/dp.png')}
-                     />}
+                        items?.thumbnail ?
+                            <Image
+                                style={styles.imgBox}
+                                source={{ uri: items?.thumbnail }}
+                            />
+                            :
+                            <Image
+                                style={styles.imgBox}
+                                source={require('../../../Assets/Images/dp.png')}
+                            />}
                     <Apptext style={styles.imgTxt} >{items?.displayName}</Apptext>
                 </TouchableOpacity>
                 {/* <ScrollView> */}
                 <View style={styles.twoTxts}>
                     <Apptext style={styles.cncts} >Connects</Apptext>
                     <Apptext style={styles.VLine}></Apptext>
-                    <Apptext 
-                    style={isTrue === false ? [styles.cncts, {color: "lightgray"}]
-                     : styles.cncts}>Matches</Apptext>
+                    <Apptext
+                        style={isTrue === false ? [styles.cncts, { color: "lightgray" }]
+                            : styles.cncts}>Matches</Apptext>
                 </View>
                 <View style={styles.twoLowerTxts}>
                     <Apptext style={styles.nmbrTxt} >00</Apptext>
-                    <Apptext style={styles.nmbrTxt}>{isTrue ? "00" : "" } </Apptext>
+                    <Apptext style={styles.nmbrTxt}>{isTrue ? "00" : ""} </Apptext>
                 </View>
-              {
-              isTrue === false ? (
-              <TouchableOpacity 
-              onPress={() => {
-               addConnection()   
-               setTrue(true)}}
-               style={styles.addBtn}>
-                <Apptext style={styles.btnTxt}>Add to Your Connection</Apptext>
-                </TouchableOpacity>
-              ) : null    
-            }
+
                 {
-                    isTrue ? (
-                        <TouchableOpacity 
-                        onPress={() => setTrue(false)}
-                        style={[styles.addBtn]}>
-                        <Image style={{marginHorizontal:wp('2%')}} source={require('../../../../assets/msg.png')} />
-                        <Apptext style={styles.btnTxt}>Message</Apptext>
+                 isLoading ? <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
+                 :
+                 isTrue === false ?
+
+                        <TouchableOpacity
+                            onPress={() => {
+                                addConnection()
+                            }}
+                            style={styles.addBtn}>
+                            <Apptext style={styles.btnTxt}>Add to Your Connection</Apptext>
                         </TouchableOpacity>
-                    ) : null
+                        : 
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.navigate("ChatDetail",
+                                    { items: items })
+                            }}
+                            style={[styles.addBtn]}>
+                            <Image style={{ marginHorizontal: wp('2%') }}
+                                source={require('../../../../assets/msg.png')} />
+                            <Apptext style={styles.btnTxt}>Message</Apptext>
+                        </TouchableOpacity>
                 }
-              
+
                 <Apptext style={styles.HLine}> </Apptext>
-               
+
             </View>
 
         </View>
@@ -206,7 +236,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Bold',
         fontSize: 18,
         marginTop: wp('3%'),
-        alignSelf:'center'
+        alignSelf: 'center'
     },
     twoTxts: {
         flexDirection: 'row',
@@ -229,27 +259,27 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
         color: DefaultStyles.colors.black
     },
-    addBtn:{
-        flexDirection:'row',
-        width:wp('82%'),
-        height:wp('16%'),
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:DefaultStyles.colors.secondary,
-        borderRadius:11,
-        alignSelf:'center',
-        marginTop:wp('6%'),
-        marginBottom:wp('6%')
+    addBtn: {
+        flexDirection: 'row',
+        width: wp('82%'),
+        height: wp('16%'),
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: DefaultStyles.colors.secondary,
+        borderRadius: 11,
+        alignSelf: 'center',
+        marginTop: wp('6%'),
+        marginBottom: wp('6%')
     },
-    btnTxt:{
-        fontFamily:'Poppins-Regular',
-        fontSize:14,
-        color:"white"
+    btnTxt: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 14,
+        color: "white"
     },
     VLine: {
         width: 0.5,
         height: wp('17%'),
-        marginTop:wp('1%'),
+        marginTop: wp('1%'),
         backgroundColor: DefaultStyles.colors.gray,
     },
     HLine: {
@@ -276,7 +306,7 @@ const styles = StyleSheet.create({
     },
     achTxt: {
         fontFamily: 'Poppins-Regular',
-        fontSize: 14,marginTop:wp('1%')
+        fontSize: 14, marginTop: wp('1%')
     },
     rcnt: {
         fontSize: 12,

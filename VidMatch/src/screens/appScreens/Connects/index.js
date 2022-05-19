@@ -76,20 +76,18 @@ const Connects = ({ navigation, route }) => {
     const [isLoading, setLoading] = useState(false)
     const [filteredData, setfilteredData] = useState([]);
     const [search, setsearch] = useState('');
+    const [isShow, setShow] = useState(false)
 
     const chkData = async () => {
         setLoading(true)
-        // let res = await getAllOfCollection("Users")
-        
         var userInfo = auth().currentUser;
         let res = await getAllOptions("Users")
-        console.log("Connects Screen",res)
-        setData(res)
-        // res.map(async(val) => {
-        //     // let datas = await getListing("Users", val.uid)
-        //     console.log("datas",val.uid)
-        // })
-
+        const newData = res.filter(function (item) {
+            const itemData = item.uid;
+            const textData = userInfo.uid;
+            return itemData.indexOf(textData) <= -1;
+        });
+        setData(newData)
         setLoading(false)
     }
     
@@ -133,15 +131,18 @@ const Connects = ({ navigation, route }) => {
          <View style={styles.MainContainer}>
          <TouchableOpacity style={styles.searchBar}>
                 <Image style={{marginHorizontal:18}} source={require('../../../../assets/search.png')} />
-                <TextInput style={{width:wp('70%'), padding: 10, color: 'grey' }}
+                <TextInput style={{width:wp('70%'), padding: 10, color: 'black' }}
                     placeholder='Alex'
-                    // style={{}}
-                    onChangeText={(val) => searchFilterFunction(val)}    
+                    onChangeText={(val) => 
+                    {searchFilterFunction(val)
+                    // setShow(true)
+                }
+                }    
                 />
             </TouchableOpacity>
            
             <View style={{ marginTop: wp('6%') }} >
-            {isLoading ? 
+            {isLoading ?  
                    <ActivityIndicator size={"large"} color={DefaultStyles.colors.primary} />
                    : 
                     <FlatList
