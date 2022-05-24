@@ -144,6 +144,20 @@ export async function saveInitialData(collection, userId) {
        alert(error);
      });
  }
+
+ export async function saveInitialChat(collection, userId) {
+  await firestore()
+     .collection(collection)
+     .doc(userId)
+     .set({})
+     .then(function() {
+       // alert("Data saved succesfuly");
+     })
+     .catch(function(error) {
+       alert(error);
+     });
+ }
+
  export async function saveInitialDates(collection, userId) {
   await firestore()
      .collection(collection)
@@ -182,11 +196,8 @@ export async function passwordReset(email) {
 }
 
 export async function saveFvrtsData(collection, doc, jsonObject, cond) {
-  console.log("jsonObject",cond)
   
   if (cond == "update" ) {
-    console.log("Update")
-    console.log(jsonObject)
     await firestore().collection(collection)
       .doc(doc)
       .set({
@@ -197,7 +208,6 @@ export async function saveFvrtsData(collection, doc, jsonObject, cond) {
       // });
   }
   else{
-    console.log("Insert")
     firestore().collection(collection).doc(doc).set({media:firestore.FieldValue.arrayUnion(jsonObject)}, { merge: true })
     .then(function () {
       async () => {

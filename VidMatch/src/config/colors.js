@@ -2,6 +2,7 @@ export default {
   primary: "#db4754",
   secondary: "#09154a",
   sky:'#dbf7ff',
+  lightBlue: '#2176FF',
   grash:'#f0f0f0',
   bottomBoxClr:'#878787',
   red:"#F33333",

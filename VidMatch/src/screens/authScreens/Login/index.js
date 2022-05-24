@@ -13,7 +13,7 @@ import FormButton from '../../../components/FormButton';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import { setUser } from '../../../redux/actions/authAction';
-import { getData } from '../../../firebase/utility';
+import { getData, saveInitialData, saveInitialChat } from '../../../firebase/utility';
 import Snackbar from 'react-native-snackbar';
 import auth from '@react-native-firebase/auth';
 
@@ -78,14 +78,34 @@ const SignIn = ({ navigation }) => {
                 console.log(user1)
                 if (user1.uid) {
                     dispatch(setUser(true))
-                    // navigation.replace("Drawer")
-                    setLoading(false)
+                    let connections = await getData('Connections', user.user.uid);
+                    if (typeof connections.media === "undefined") {
+                        console.log("Undefined")
+                        await saveInitialData('Connections', user.user.uid)
+                    }
+                    else {
+                        console.log("Ok to go ")
+                    }
+
+                    let chats = await getData('Chats', user.user.uid);
+                    
+                    console.log("chats", chats)
+                    if (chats === false) {
+                        console.log("Chat Undefined")
+                        await saveInitialChat('Chats', user.user.uid)
+                    }
+                    else {
+                        console.log("Ok to go Chat ")
+                    }
+
                     Snackbar.show({
                         text: 'Login Successful',
                         duration: Snackbar.LENGTH_LONG,
                         backgroundColor:DefaultStyles.colors.secondary
                       });
-                }
+                      setLoading(false)
+                
+                    }
                 else {
                     console.log("Error")
                 }

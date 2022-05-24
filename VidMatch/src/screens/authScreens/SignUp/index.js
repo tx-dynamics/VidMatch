@@ -12,7 +12,7 @@ import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 import auth from '@react-native-firebase/auth';
 import Snackbar from 'react-native-snackbar';
-import { saveData } from '../../../firebase/utility';
+import { saveData, saveInitialData, saveInitialChat, getData } from '../../../firebase/utility';
 
 
 
@@ -92,10 +92,28 @@ const SignUp = ({ navigation }) => {
 
                     console.log(Details)
                     await saveData('Users', user.user.uid, Details);
-                    console.log(user);
-                    setLoading(false)
+                    let connections = await getData('Connections', user.user.uid);
+                    if (typeof connections.media === "undefined") {
+                        console.log("Undefined")
+                        await saveInitialData('Connections', user.user.uid)
+                    }
+                    else {
+                        console.log("Ok to go ")
+                    }
+                    
+                    let chats = await getData('Chats', user.user.uid);
+                    
+                    console.log("chats", chats)
+                    if (chats === false) {
+                        console.log("Chat Undefined")
+                        await saveInitialChat('Chats', user.user.uid)
+                    }
+                    else {
+                        console.log("Ok to go Chat ")
+                    }
 
                     navigation.navigate("SignUpModal")
+                    setLoading(false)
 
                     Snackbar.show({
                         text: 'Account Created',

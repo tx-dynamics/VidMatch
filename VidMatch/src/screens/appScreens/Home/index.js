@@ -32,7 +32,8 @@ const Home = ({ navigation }) => {
         var userInfo = auth().currentUser;
         let res = await getData("Connections", userInfo.uid)
         setData(res?.media)
-        console.log(res)
+        console.log("media",res?.media)
+        console.log("Home Data",res, userInfo.uid)
         setLoading(false)
     }
     
@@ -150,7 +151,7 @@ const Home = ({ navigation }) => {
                    : 
                    <FlatList
                         data={data}
-                        keyExtractor={(item) => item?.id}
+                        keyExtractor={(item) => item?.FrndUid}
                         ListEmptyComponent={() => {
                             return (
                                 <Apptext style={{ alignSelf: "center", marginTop: 50 }}>

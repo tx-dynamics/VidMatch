@@ -16,6 +16,7 @@ import MatchBox from '../../../components/MatchBox';
 import Snackbar from 'react-native-snackbar';
 import { saveData, saveFvrtsData, getData } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
+import { useIsFocused } from '@react-navigation/native';
 
 
 
@@ -78,31 +79,41 @@ const AddConnect = ({ navigation, route }) => {
         },
 
     ];
+
+    const isFocused = useIsFocused();
     const { items } = route.params;
     ////////////////////////////////////////////////////////////////////////////
 
-    const [isTrue, setTrue] = useState([]);
+    const [isTrue, setTrue] = useState(false);
     const [isLoading, setLoading] = useState(false);
+    const [isChk, setChk] = useState(false);
+    const [isMsgChk, setMsgChk] = useState(false);
+    const [isAdded, setAdded] = useState(false);
+    const [isReqs, setReqs] = useState(false);
+
+
 
     const addConnection = async () => {
         var userInfo = auth().currentUser;
-
         let Details = {
             email: items.email,
             fullName: items.fullName,
             lastName: items.lastName,
             displayName: items.displayName,
-            uid: items.uid
+            FrndUid: items.uid,
+            uid: userInfo.uid,
+
         };
 
-        console.log(Details)
-        await saveFvrtsData('Connections', userInfo.uid, Details)
+        await saveFvrtsData('RequestList', userInfo.uid, Details)
+        await saveFvrtsData('RequestList', items.uid, Details)
             .then(async user => {
                 Snackbar.show({
                     text: 'Connection Added Successfully',
                     duration: Snackbar.LENGTH_LONG,
                     backgroundColor: DefaultStyles.colors.secondary
                 });
+                setChk(true)
             })
             .catch(function (error) {
                 success = false;
@@ -116,30 +127,90 @@ const AddConnect = ({ navigation, route }) => {
             });
     }
 
+    const addFrnd = async () => {
+        var addedUser = auth().currentUser;
+        let userinfo = await getData('Users', addedUser.uid);
+        let Details = {
+            email: userinfo?.email,
+            fullName: userinfo?.fullName,
+            lastName: userinfo?.lastName,
+            displayName: userinfo?.displayName,
+            FrndUid: userinfo?.uid
+        };
+        await saveFvrtsData('Connections', items?.uid, Details)
+            .then(async user => {
+                console.log("Friend Added As Well")
+                setMsgChk(true)
+            })
+            .catch(function (error) {
+                success = false;
+                console.log(error, "Friend Not Added")
+            });
+    }
+
     const chkData = async () => {
         setLoading(true)
         var userInfo = auth().currentUser;
         let res = await getData("Connections", userInfo.uid)
-        // console.log("Add Conct Scrn", res?.media)
-        const newData = res.media.filter(function (item) {
-            // console.log("shh",item.uid)
-            const itemData = item.uid;
+
+        const newData = res?.media?.filter(function (item) {
+            const itemData = item.FrndUid;
             const textData = items.uid;
             return itemData.indexOf(textData) > -1;
         });
-
-        if (newData[0]?.uid === items.uid) {
-            setTrue(true)
+        if (newData.length > 0 ) {
+            newData?.map((val) => {
+                    if (val.FrndUid === items.uid) {
+                        setAdded(true)
+                        setLoading(false)
+                    }
+                    else {
+                        setAdded(false)
+                        setLoading(false)
+        
+                    }
+                })
         }
-        else {
-            setTrue(false)
+        else{
+            chkFrnd()
+            setLoading(false)
+        }
+    
+        setLoading(false)
+    }
+
+    const chkFrnd = async () => {
+        console.log("inside chk frnd")
+        setLoading(true)
+        var userInfo = auth().currentUser;
+        let res = await getData("RequestList", userInfo.uid)
+        const newData = res?.media?.filter(function (item) {
+            const itemData = item.FrndUid;
+            const textData = items.uid;
+            return itemData.indexOf(textData) !== -1;
+        });
+        if (newData.length > 0 ) {
+            newData?.map((val) => {
+            if (val.FrndUid === items.uid) {
+                setTrue(true)
+                setLoading(false)
+            }
+            else {
+                setTrue(false)
+                setLoading(false)
+            }
+                })
+        }
+        else{
+            setLoading(false)
         }
         setLoading(false)
     }
 
     useEffect(() => {
         chkData()
-    }, [])
+        // chkFrnd()
+    }, [isChk])
 
     return (
         <View style={styles.container}>
@@ -177,35 +248,87 @@ const AddConnect = ({ navigation, route }) => {
                 </View>
 
                 {
-                 isLoading ? <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
-                 :
-                 isTrue === false ?
+                    isLoading ? <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
+                        :
+                        isTrue ?
+                            <TouchableOpacity
+                                onPress={() => {
 
-                        <TouchableOpacity
-                            onPress={() => {
-                                addConnection()
-                            }}
-                            style={styles.addBtn}>
-                            <Apptext style={styles.btnTxt}>Add to Your Connection</Apptext>
-                        </TouchableOpacity>
-                        : 
-                        <TouchableOpacity
-                            onPress={() => {
-                                navigation.navigate("ChatDetail",
-                                    { items: items })
-                            }}
-                            style={[styles.addBtn]}>
-                            <Image style={{ marginHorizontal: wp('2%') }}
-                                source={require('../../../../assets/msg.png')} />
-                            <Apptext style={styles.btnTxt}>Message</Apptext>
-                        </TouchableOpacity>
+                                }}
+                                style={[styles.addBtn, {
+                                    width: wp('80%'),
+                                    backgroundColor: DefaultStyles.colors.secondary
+                                }]}>
+                                <Apptext style={styles.btnTxt}>Pending Request ...</Apptext>
+                            </TouchableOpacity>
+                            :
+                            <TouchableOpacity
+                                onPress={() => {
+                                    addConnection()
+                                }}
+                                style={[styles.addBtn, { width: wp('90%') }]}>
+                                <Apptext style={styles.btnTxt}>Add to Your Connection</Apptext>
+                            </TouchableOpacity>
+
+
                 }
+
+                {isReqs ?
+                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                        <TouchableOpacity
+                            onPress={() => addFrnd()}
+                            style={[styles.addBtn, { backgroundColor: DefaultStyles.colors.secondary }]}>
+                           
+                            <Apptext style={styles.btnTxt}>Accept Request</Apptext>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => {
+
+                            }}
+                            style={[styles.addBtn, { backgroundColor: DefaultStyles.colors.primary }]}>
+                            <Apptext style={styles.btnTxt}>Decline Request</Apptext>
+                        </TouchableOpacity>
+                    </View> : null}
+
+                {isAdded ?
+                    <TouchableOpacity
+                        style={[styles.addBtn, {
+                            width: wp('90%'),
+                            backgroundColor: DefaultStyles.colors.secondary
+                        }]}>
+                        <Image style={{ marginHorizontal: wp('2%') }}
+                            source={require('../../../../assets/msg.png')} />
+                        <Apptext style={styles.btnTxt}>Added</Apptext>
+                    </TouchableOpacity>
+                    : null}
+
+                {/* {isOptions ?
+                     <TouchableOpacity
+                     style={[styles.addBtn, {
+                         width: wp('90%'),
+                         backgroundColor: DefaultStyles.colors.secondary
+                     }]}>
+                     <Image style={{ marginHorizontal: wp('2%') }}
+                         source={require('../../../../assets/msg.png')} />
+                     <Apptext style={styles.btnTxt}>Added</Apptext>
+                 </TouchableOpacity> 
+                    : 
+                        <TouchableOpacity
+                        onPress={() => {
+
+                        }}
+                        style={[styles.addBtn, {width:wp('80%'),
+                         backgroundColor: DefaultStyles.colors.secondary }]}>
+                        <Apptext style={styles.btnTxt}>Pending Request ...</Apptext>
+                    </TouchableOpacity>
+                } */}
+
 
                 <Apptext style={styles.HLine}> </Apptext>
 
-            </View>
+            </View >
 
-        </View>
+        </View >
     )
 }
 
@@ -261,7 +384,7 @@ const styles = StyleSheet.create({
     },
     addBtn: {
         flexDirection: 'row',
-        width: wp('82%'),
+        width: wp('40%'),
         height: wp('16%'),
         alignItems: 'center',
         justifyContent: 'center',

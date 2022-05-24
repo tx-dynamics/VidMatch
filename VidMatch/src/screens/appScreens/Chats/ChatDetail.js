@@ -6,10 +6,11 @@ import Feather from 'react-native-vector-icons/Feather';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import ChatDetailComp from '../../../components/ChatDetailComp';
 import HumanHeader from '../../../components/HumanHeader';
-import { getData, addToArrays,upDateData, saveData } from '../../../firebase/utility';
+import { getData, addToArrays, upDateData, saveData } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
 import Snackbar from 'react-native-snackbar';
 import firestore from '@react-native-firebase/firestore';
+import { GiftedChat, Bubble, InputToolbar, Send } from 'react-native-gifted-chat';
 
 
 const ChatDetail = ({ navigation, route }) => {
@@ -27,15 +28,66 @@ const ChatDetail = ({ navigation, route }) => {
 
     ];
     ///////////////////////////////////////////////////////////////////////////////////////////
+
     const items = route.params.items;
     const [messages, setMessages] = useState([]);
     const [isTxt, setTxt] = useState([]);
-    // console.log("Rcvd", items)
+    console.log("Rcvd", items)
+    var userInfo = auth().currentUser;
+    console.log("Crnt USer", userInfo.uid)
 
 
-    // useEffect(() => {
-    //     getMessages()
-    // }, []);
+    const getMessages = async () => {
+        let messages = await getData(
+            'Chats',
+            auth().currentUser.uid,
+            items.FrndUid,
+        );
+        if (messages) {
+            await setMessages(messages);
+        } else {
+            return 0;
+        }
+
+        await firestore()
+            .collection('Chats')
+            .doc(auth().currentUser.uid)
+            .onSnapshot(async doc => {
+                setMessages(doc.data()[items.FrndUid].reverse());
+            });
+        //console.log('OK OK', this.state.messages);
+    };
+
+    const onSend = async (messages = []) => {
+        const msg = messages[0];
+
+        setMessages(previousMessages => GiftedChat.append(previousMessages, msg));
+        // setMessages(previousState =>
+        //   GiftedChat.append(previousState.messages, messages),
+        // );
+
+        messages[0].createdAt = Date.parse(messages[0].createdAt);
+        //messages[0].unssen = true;
+        await addToArrays(
+            'Chats',
+            auth().currentUser.uid,
+            items.FrndUid,
+            messages[0],
+        );
+        messages[0].user._id = 2;
+        await addToArrays(
+            'Chats',
+            items.FrndUid,
+            auth().currentUser.uid,
+            messages[0],
+        );
+        messages[0].user._id = 1;
+    };
+
+
+    useEffect(() => {
+        getMessages()
+    }, []);
 
     // const getMessages = async () => {
     //     var userInfo = auth().currentUser;
@@ -62,65 +114,83 @@ const ChatDetail = ({ navigation, route }) => {
     //     //console.log('OK OK', this.state.messages);
     // };
 
-    const onSend = async (messages = []) => {
-        var userInfo = auth().currentUser;
+    // const onSend = async (messages = []) => {
+    //     var userInfo = auth().currentUser;
 
-        // if (this.state.isConnected) {
-        //   this.setState(previousState => ({
-        //     messages: GiftedChat.append(previousState.messages, messages),
-        //   }));
-        // messages[0].createdAt = Date.parse(messages[0].createdAt);
-        //messages[0].unssen = true;
-        await addToArrays(
-            'Chats',
-            userInfo.uid,
-            items.uid,
-            messages[0],
-        );
-        messages[0].user._id = 2;
-        await addToArrays(
-            'Chats',
-            items.uid,
-            userInfo.uid,
-            messages[0],
-        );
-        //   await saveData('notifications', items.uid, {
-        //     createdAt: messages[0].createdAt,
-        //     text: messages[0].text,
-        //     _id: messages[0].user._id,
-        //     senderId: userInfo.uid,
-        //     reciverId: items.uid
-        //   })
-        messages[0].user._id = 1;
+    //     //   this.setState(previousState => ({
+    //     //     messages: GiftedChat.append(previousState.messages, messages),
+    //     //   }));
+    //     messages[0].createdAt = Date.parse(messages[0].createdAt);
+    //     //messages[0].unssen = true;
+    //     await addToArrays(
+    //         'Chats',
+    //         userInfo.uid,
+    //         items.uid,
+    //         messages[0],
+    //     );
+    //     messages[0].user._id = 2;
+    //     await addToArrays(
+    //         'Chats',
+    //         items.uid,
+    //         userInfo.uid,
+    //         messages[0],
+    //     );
+    //     //   await saveData('notifications', items.uid, {
+    //     //     createdAt: messages[0].createdAt,
+    //     //     text: messages[0].text,
+    //     //     _id: messages[0].user._id,
+    //     //     senderId: userInfo.uid,
+    //     //     reciverId: items.uid
+    //     //   })
+    //     messages[0].user._id = 1;
 
-        await upDateData('Chats', items.uid, {
-            unseen: true,
-        });
-        await addToArrays(
-            'Chats',
-            items.uid,
-            'userids',
-            userInfo.uid,
-        );
+    //     await upDateData('Chats', items.uid, {
+    //         unseen: true,
+    //     });
+    //     await addToArrays(
+    //         'Chats',
+    //         items.uid,
+    //         'userids',
+    //         userInfo.uid,
+    //     );
 
-        await addToArrays(
-            'Users',
-            userInfo.uid,
-            'chatted',
-            items.uid,
-        );
-        await addToArrays(
-            'Users',
-            items.uid,
-            'chatted', //array name
-            userInfo.uid,
-        );
-    }
-    // else {
-    //   ToastAndroid.show("To send a message please connected to internet", ToastAndroid.SHORT);
-
+    //     await addToArrays(
+    //         'Users',
+    //         userInfo.uid,
+    //         'chatted',
+    //         items.uid,
+    //     );
+    //     await addToArrays(
+    //         'Users',
+    //         items.uid,
+    //         'chatted', //array name
+    //         userInfo.uid,
+    //     );
     // }
 
+
+    const renderSend = props => {
+        return (
+          <Send {...props}>
+            <View
+            style={{
+             backgroundColor:DefaultStyles.colors.lightBlue,
+             width:40, height:40,borderRadius:10,
+            //  marginBottom:3,
+             marginHorizontal:5,
+             alignItems:'center', justifyContent:'center' }}>
+            <Image
+              resizeMode="contain"
+              style={{
+            //   tintColor:DefaultStyles.colors.lightBlue,
+              width: wp(15), height: hp(3.7)
+            }}
+              source={require('../../../../assets/sendBtn.png')}
+            />
+            </View>
+          </Send>
+        );
+      };
 
 
     return (
@@ -135,7 +205,62 @@ const ChatDetail = ({ navigation, route }) => {
                 backgroundColor={"white"}
                 onPressLeft={() => navigation.goBack()}
             />
-            <ScrollView>
+
+            <GiftedChat
+                messages={messages}
+                alwaysShowSend={true}
+                onSend={messages => onSend(messages)}
+                renderSend={renderSend}
+                user={{
+                    _id: 1,
+                }}
+                renderBubble={props => {
+                    return (
+                        <Bubble
+                            {...props}
+                            wrapperStyle={{
+                                right: {
+                                    paddingRight:10,
+                                    paddingTop:5,
+                                    paddingLeft:10,
+                                    backgroundColor: DefaultStyles.colors.lightBlue,
+                                    marginBottom:20
+                                },
+                                left: {
+                                    backgroundColor: '#fff',
+                                    paddingRight:10,
+                                    paddingTop:5,
+                                    paddingLeft:10
+                                },
+                            }}
+                        />
+                    );
+                }}
+                renderInputToolbar={props => {
+                    return (
+                        <InputToolbar
+                            {...props}
+                            containerStyle={{
+                            marginLeft:wp('7%'),borderRadius:10,
+                            maxWidth:'94%',alignSelf:'center',
+                            padding:4, 
+                            backgroundColor:'#D8D8D8', }}
+                            textInputStyle={{ color: 'black' }}
+                        />
+                    );
+                }}
+            />
+            <View style={{height:wp('3%')}}>
+            </View>
+            {/* <ScrollView>
+                <GiftedChat
+                    messages={messages}
+                    isAnimated={true}
+                    onSend={messages => onSend(messages)}
+                    user={{
+                        _id: 1,
+                    }}
+                />
                 <View style={{ marginTop: wp('25%') }} >
                     <FlatList
                         data={DATA}
@@ -227,7 +352,7 @@ const ChatDetail = ({ navigation, route }) => {
                     </TouchableOpacity>
 
                 </View>
-            </KeyboardAvoidingView>
+            </KeyboardAvoidingView> */}
         </View>
         // </View>
     )
