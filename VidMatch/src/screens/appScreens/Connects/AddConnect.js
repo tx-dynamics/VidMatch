@@ -4,6 +4,7 @@ import {
     TextInput, Alert, Image, StyleSheet, ScrollView,
 }
     from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -14,9 +15,13 @@ import FormButton from '../../../components/FormButton';
 import BackgroundHeader from '../../../components/BackgroundHeader';
 import MatchBox from '../../../components/MatchBox';
 import Snackbar from 'react-native-snackbar';
-import { saveData, saveFvrtsData, getData } from '../../../firebase/utility';
+import { saveData,getListing,saveFav, removeToArray, saveFvrtsData, getData, saveInitialData } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
 import { useIsFocused } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { useDispatch } from "react-redux";
+import { setItemLikes,setReqLists } from '../../../redux/actions/authAction';
+
 
 
 
@@ -80,6 +85,12 @@ const AddConnect = ({ navigation, route }) => {
 
     ];
 
+
+    let dispatch = useDispatch();
+    const FavItems = useSelector((state) => state.auth.ItemLikes)
+    const reqItems = useSelector((state) => state.auth.ReqLists)
+
+
     const isFocused = useIsFocused();
     const { items } = route.params;
     ////////////////////////////////////////////////////////////////////////////
@@ -87,7 +98,6 @@ const AddConnect = ({ navigation, route }) => {
     const [isTrue, setTrue] = useState(false);
     const [isLoading, setLoading] = useState(false);
     const [isChk, setChk] = useState(false);
-    const [isMsgChk, setMsgChk] = useState(false);
     const [isAdded, setAdded] = useState(false);
     const [isReqs, setReqs] = useState(false);
 
@@ -113,7 +123,7 @@ const AddConnect = ({ navigation, route }) => {
                     duration: Snackbar.LENGTH_LONG,
                     backgroundColor: DefaultStyles.colors.secondary
                 });
-                setChk(true)
+                setChk(!isChk)
             })
             .catch(function (error) {
                 success = false;
@@ -128,24 +138,166 @@ const AddConnect = ({ navigation, route }) => {
     }
 
     const addFrnd = async () => {
-        var addedUser = auth().currentUser;
-        let userinfo = await getData('Users', addedUser.uid);
+        var userInfo = auth().currentUser;
+        // let userinfo = await getData('Users', addedUser.uid);
         let Details = {
-            email: userinfo?.email,
-            fullName: userinfo?.fullName,
-            lastName: userinfo?.lastName,
-            displayName: userinfo?.displayName,
-            FrndUid: userinfo?.uid
+            email: items.email,
+            fullName: items.fullName,
+            lastName: items.lastName,
+            displayName: items.displayName,
+            FrndUid: items.uid,
+            uid: userInfo.uid,
         };
-        await saveFvrtsData('Connections', items?.uid, Details)
+        await saveFvrtsData('Connections', userInfo.uid, Details)
             .then(async user => {
-                console.log("Friend Added As Well")
-                setMsgChk(true)
+                realRemove()
             })
-            .catch(function (error) {
-                success = false;
-                console.log(error, "Friend Not Added")
-            });
+    }
+    
+    const getFvListing = async() => {
+        const userInfo = auth().currentUser;
+        console.log("User Id", userInfo.uid)
+        console.log("Item Id", items.uid)
+
+        let res = await getListing("RequestList", userInfo.uid)
+        let rest = await getListing("RequestList", items.uid)
+        dispatch(setItemLikes(res.media))
+        dispatch(setReqLists(rest.media))
+        if (FavItems === undefined) {
+            console.log("Undefined found")    
+        }
+        else{
+            console.log("FavItems",FavItems, reqItems)        
+        }
+    }
+
+    const realRemove = async() => {
+        const userInfo = auth().currentUser;
+        let Details = {
+            email: items.email,
+            fullName: items.fullName,
+            lastName: items.lastName,
+            displayName: items.displayName,
+            FrndUid: items.uid,
+            uid: userInfo.uid,
+        };
+
+        let exist ;
+        let indexes ;
+        if (typeof FavItems === "undefined") {
+            console.log("Undefined")
+        }
+        else{
+            FavItems.map((val, index) => 
+            {
+                if (items.uid === val.uid) {
+                    console.log("exists")
+                    console.log("index", index)
+                    exist = true;
+                    indexes = index;
+                }     
+            })
+        }
+    if (exist === true) {
+        console.log(indexes)
+        FavItems.splice(indexes,1)
+        await firestore().collection("RequestList").doc(userInfo.uid).delete().
+        then(async() => {
+            console.log("Favitems",FavItems)
+            await saveFav("RequestList",userInfo.uid, FavItems)
+            setChk(!isChk)
+            removeFrnd()
+        })
+    }
+    else{
+        console.log("Else FavItems",FavItems)
+        // FavItems.push(Details)
+        // await saveFav("RequestList",userInfo.uid, FavItems)
+    }
+    }
+
+
+    const removeFrnd = async () => { 
+        const userInfo = auth().currentUser;
+        let Details = {
+            email: items.email,
+            fullName: items.fullName,
+            lastName: items.lastName,
+            displayName: items.displayName,
+            FrndUid: items.uid,
+            uid: userInfo.uid,
+        };
+
+        let exist ;
+        let indexes ;
+        if (typeof reqItems === "undefined") {
+            console.log("Undefined")
+        }
+        else{
+            reqItems.map((val, index) => 
+            {
+                if (items.uid === val.uid) {
+                    console.log("exists")
+                    console.log("index", index)
+                    exist = true;
+                    indexes = index;
+                }     
+            })
+        }
+    if (exist === true) {
+        console.log(indexes)
+        reqItems.splice(indexes,1)
+        await firestore().collection("RequestList").doc(items.uid).delete().
+        then(async() => {
+            console.log("Favitems",reqItems)
+            await saveFav("RequestList",items.uid, reqItems)
+            setChk(!isChk)
+            setTrue(false)
+            setReqs(false)
+        })
+    }
+    else{
+        console.log("Else Reqitems",reqItems)
+        // reqItems.push(Details)
+        // await saveFav("RequestList",items.uid, reqItems)
+    }
+
+        // var userInfo = auth().currentUser;
+        // let Details = {
+        //     email: items.email,
+        //     fullName: items.fullName,
+        //     lastName: items.lastName,
+        //     displayName: items.displayName,
+        //     FrndUid: items.uid,
+        //     uid: userInfo.uid,
+        // };
+        // // console.log("dtls", Details)
+        // await firestore().collection('RequestList').doc(items.uid).set({
+        //     media: firestore.FieldValue.arrayRemove(Details),
+        //   })
+        // // .set({media:[]})
+        // await firestore().collection('RequestList').doc(userInfo.uid).set({
+        //     media: firestore.FieldValue.arrayRemove(Details),
+        //   })
+        //     .then(async user => {
+        //         console.log("Friend Removed As Well")
+        //         setTrue(false)
+        //         setReqs(false)
+        //         Snackbar.show({
+        //             text: 'Connection Request Declined',
+        //             duration: Snackbar.LENGTH_LONG,
+        //             backgroundColor: DefaultStyles.colors.primary
+        //         });
+        //     })
+        //     .catch(function (error) {
+        //         success = false;
+        //         console.log(error, "Friend Not Added")
+        //         Snackbar.show({
+        //             text: error.code,
+        //             duration: Snackbar.LENGTH_LONG,
+        //             backgroundColor: DefaultStyles.colors.secondary
+        //         });
+        //     });
     }
 
     const chkData = async () => {
@@ -158,56 +310,106 @@ const AddConnect = ({ navigation, route }) => {
             const textData = items.uid;
             return itemData.indexOf(textData) > -1;
         });
-        if (newData.length > 0 ) {
+        if (newData.length > 0) {
             newData?.map((val) => {
-                    if (val.FrndUid === items.uid) {
-                        setAdded(true)
-                        setLoading(false)
-                    }
-                    else {
-                        setAdded(false)
-                        setLoading(false)
-        
-                    }
-                })
+                if (val.FrndUid === items.uid) {
+                    setAdded(true)
+                    setLoading(false)
+                    // console.log("Added")
+                }
+                else {
+                    // console.log("Not Add")
+                    setAdded(false)
+                    setLoading(false)
+
+                }
+            })
         }
-        else{
+        else {
             chkFrnd()
             setLoading(false)
         }
-    
+
         setLoading(false)
     }
 
     const chkFrnd = async () => {
-        console.log("inside chk frnd")
         setLoading(true)
+        // console.log("inside chk frnd")
         var userInfo = auth().currentUser;
-        let res = await getData("RequestList", userInfo.uid)
-        const newData = res?.media?.filter(function (item) {
+        let res = await getData("RequestList", items.uid)
+        let rest = await getData("RequestList", userInfo.uid)
+
+        const newestData = rest?.media?.filter(function (item) {
             const itemData = item.FrndUid;
             const textData = items.uid;
             return itemData.indexOf(textData) !== -1;
         });
-        if (newData.length > 0 ) {
-            newData?.map((val) => {
-            if (val.FrndUid === items.uid) {
-                setTrue(true)
-                setLoading(false)
-            }
-            else {
-                setTrue(false)
-                setLoading(false)
-            }
-                })
-        }
-        else{
+        // console.log("Newest Data", newestData)
+        // console.log("res", res.media)
+        const newData = res?.media?.filter(function (item) {
+            const itemData = item.FrndUid;
+            const textData = items.uid;
+            return (itemData, textData);
+        });
+        // console.log("chk newData", newData)
+
+        if (typeof newestData === "undefined") {
+            // console.log("Undefined Reqs List")
             setLoading(false)
         }
+        else {
+            // console.log("Rcvd")
+            newData?.map((val) => {
+                // console.log("chk newData", newData)
+                console.log(val.uid, userInfo.uid)
+                if (val.FrndUid === items.uid && val.uid === userInfo.uid) {
+                    setTrue(true)
+                    setLoading(false)
+                    // console.log("in")
+                }
+                else if (val.FrndUid === items.uid && val.uid !== userInfo.uid) {
+                    setTrue(false)
+                    setReqs(false)
+                    setLoading(false)
+                    // console.log("else if")
+                }
+                else {
+                    // console.log("out")
+                    setTrue(false)
+                    setReqs(true)
+                    setLoading(false)
+                }
+            })
+
+        }
+
         setLoading(false)
     }
 
+    const chkReqs = async () => {
+        setLoading(true)
+        const userInfo = auth().currentUser;
+        let connections = await getData('RequestList', items.uid);
+        let ScndConnections = await getData('RequestList', userInfo.uid);
+        if (connections === false && ScndConnections === false) {
+            console.log("Undefined")
+            await saveInitialData('RequestList', items.uid)
+            await saveInitialData('RequestList', userInfo.uid)
+            setLoading(false)
+        }
+        else {
+
+            // console.log("Ok to go ")
+            setLoading(false)
+        }
+        setLoading(false)
+
+    }
+
     useEffect(() => {
+        getFvListing()
+        chkReqs()
         chkData()
         // chkFrnd()
     }, [isChk])
@@ -261,34 +463,37 @@ const AddConnect = ({ navigation, route }) => {
                                 }]}>
                                 <Apptext style={styles.btnTxt}>Pending Request ...</Apptext>
                             </TouchableOpacity>
-                            :
-                            <TouchableOpacity
-                                onPress={() => {
-                                    addConnection()
-                                }}
-                                style={[styles.addBtn, { width: wp('90%') }]}>
-                                <Apptext style={styles.btnTxt}>Add to Your Connection</Apptext>
-                            </TouchableOpacity>
-
-
+                            : isReqs === false && isTrue === false && isAdded === false ?
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        addConnection()
+                                    }}
+                                    style={[styles.addBtn, { width: wp('90%') }]}>
+                                    <Apptext style={styles.btnTxt}>Add to Your Connection</Apptext>
+                                </TouchableOpacity>
+                                :
+                                null
                 }
 
-                {isReqs ?
-                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-                        <TouchableOpacity
-                            onPress={() => addFrnd()}
-                            style={[styles.addBtn, { backgroundColor: DefaultStyles.colors.secondary }]}>
-                           
-                            <Apptext style={styles.btnTxt}>Accept Request</Apptext>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => {
+                {
+                    isLoading ? <ActivityIndicator size={"small"} color={"transparent"} />
+                        :
+                        isReqs ?
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                                <TouchableOpacity
+                                    onPress={() => addFrnd()}
+                                    style={[styles.addBtn, { backgroundColor: DefaultStyles.colors.secondary }]}>
 
-                            }}
-                            style={[styles.addBtn, { backgroundColor: DefaultStyles.colors.primary }]}>
-                            <Apptext style={styles.btnTxt}>Decline Request</Apptext>
-                        </TouchableOpacity>
-                    </View> : null}
+                                    <Apptext style={styles.btnTxt}>Accept Request</Apptext>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        realRemove()
+                                    }}
+                                    style={[styles.addBtn, { backgroundColor: DefaultStyles.colors.primary }]}>
+                                    <Apptext style={styles.btnTxt}>Decline Request</Apptext>
+                                </TouchableOpacity>
+                            </View> : null}
 
                 {isAdded ?
                     <TouchableOpacity
