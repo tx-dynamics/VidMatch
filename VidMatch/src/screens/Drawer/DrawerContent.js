@@ -18,22 +18,12 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import Apptext from "../../components/Apptext";
+import { useSelector } from 'react-redux';
 
 
 function DrawerContent({ navigation, userImg, username, userEmail }) {
-  const backimg = require("../../../assets/arrow-back.png");
-  const [back1, setback1] = useState();
-  const [back2, setback2] = useState();
-  const [back3, setback3] = useState();
-  const [back4, setback4] = useState();
-  const [back5, setback5] = useState();
-  const [back6, setback6] = useState();
-  const [back7, setback7] = useState();
-  const [back8, setback8] = useState();
-  const [back9, setback9] = useState();
-  const [back10, setback10] = useState();
-  const [back11, setback11] = useState();
-  const [back12, setback12] = useState();
+
+    const Userdata = useSelector((state) => state.auth.userData)
 
   return (
   <View style={styles.container} >
@@ -54,9 +44,13 @@ function DrawerContent({ navigation, userImg, username, userEmail }) {
     <Image style={styles.golBox} source={require('../../../assets/blurBoy.png')} />
     </TouchableOpacity>
     <View style={{}}>
-    <Apptext style={styles.hanaTxt} >Hanna Spratt</Apptext>
+    <Apptext style={styles.hanaTxt} >{Userdata.displayName ? Userdata.displayName : "Hanna Spratt"}</Apptext>
     </View>
-    <TouchableOpacity style={styles.add} >
+    <TouchableOpacity
+    onPress={() => {
+        navigation.navigate("EditProfile")
+    }}
+    style={styles.add} >
         <Image source={require('../../../assets/pencilUser.png')} />
     </TouchableOpacity>
     </TouchableOpacity>

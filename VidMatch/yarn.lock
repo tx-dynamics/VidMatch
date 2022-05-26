@@ -1741,6 +1741,11 @@
     "@typescript-eslint/types" "4.33.0"
     "eslint-visitor-keys" "^2.0.0"
 
+"@ungap/url-search-params@^0.2.2":
+  "integrity" "sha512-qQsguKXZVKdCixOHX9jqnX/K/1HekPDpGKyEcXHT+zR6EjGA7S4boSuelL4uuPv6YfhN0n8c4UxW+v/Z3gM2iw=="
+  "resolved" "https://registry.npmjs.org/@ungap/url-search-params/-/url-search-params-0.2.2.tgz"
+  "version" "0.2.2"
+
 "@xmldom/xmldom@~0.7.0":
   "integrity" "sha512-V3BIhmY36fXZ1OtVcI9W+FxQqxVLsPKcNjWigIaa81dLC9IolJl5Mt4Cvhmr0flUnjSpTdrbMTSbXqYqV5dT6A=="
   "resolved" "https://registry.npmjs.org/@xmldom/xmldom/-/xmldom-0.7.5.tgz"
@@ -2778,6 +2783,11 @@
   "resolved" "https://registry.npmjs.org/csstype/-/csstype-3.0.10.tgz"
   "version" "3.0.10"
 
+"data-uri-to-buffer@^3.0.1":
+  "integrity" "sha512-WboRycPNsVw3B3TL559F7kuBUM4d8CgMEvk6xEJlOp7OBPjt6G7z8WMWlD2rOFZLk6OYfFIUGsCOWzcQH9K2og=="
+  "resolved" "https://registry.npmjs.org/data-uri-to-buffer/-/data-uri-to-buffer-3.0.1.tgz"
+  "version" "3.0.1"
+
 "data-urls@^2.0.0":
   "integrity" "sha512-X5eWTSXO/BJmpdIKCRuKUgSCgAN0OwliVK3yPKbwIWU1Tdw5BRajxlzMidvh+gwko9AfQ9zIj52pzF91Q3YAvQ=="
   "resolved" "https://registry.npmjs.org/data-urls/-/data-urls-2.0.0.tgz"
@@ -3544,6 +3554,11 @@
     "setimmediate" "^1.0.5"
     "ua-parser-js" "^0.7.18"
 
+"fetch-blob@^2.1.1":
+  "integrity" "sha512-YKqtUDwqLyfyMnmbw8XD6Q8j9i/HggKtPEI+pZ1+8bvheBu78biSmNaXWusx1TauGqtUUGx/cBb1mKdq2rLYow=="
+  "resolved" "https://registry.npmjs.org/fetch-blob/-/fetch-blob-2.1.2.tgz"
+  "version" "2.1.2"
+
 "file-entry-cache@^6.0.1":
   "integrity" "sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg=="
   "resolved" "https://registry.npmjs.org/file-entry-cache/-/file-entry-cache-6.0.1.tgz"
@@ -4017,6 +4032,15 @@
   "integrity" "sha512-47xSUiQioGaB96nqtp5/q55m0aBQSQdyIloMOc/x+QVTDZLNmXE892IIDrJ0hM1A5vcNUDD5tDffkSP5lCaIIA=="
   "resolved" "https://registry.npmjs.org/image-size/-/image-size-0.6.3.tgz"
   "version" "0.6.3"
+
+"imdb-api@^4.4.1":
+  "integrity" "sha512-bd2beJWHLDlB7iGsCNcGfQR0ioDCgUdOo42vDP/laTdEHrkzp7Dnj4ysXBp74mBJj1AMZntdoeBbmwEBpfamEg=="
+  "resolved" "https://registry.npmjs.org/imdb-api/-/imdb-api-4.4.1.tgz"
+  "version" "4.4.1"
+  dependencies:
+    "@ungap/url-search-params" "^0.2.2"
+    "ky" "^0.24.0"
+    "ky-universal" "^0.8.2"
 
 "import-fresh@^2.0.0":
   "integrity" "sha1-2BNVwVYS04bGH53dOSLUMEgipUY="
@@ -5102,6 +5126,19 @@
   "resolved" "https://registry.npmjs.org/kleur/-/kleur-3.0.3.tgz"
   "version" "3.0.3"
 
+"ky-universal@^0.8.2":
+  "integrity" "sha512-xe0JaOH9QeYxdyGLnzUOVGK4Z6FGvDVzcXFTdrYA1f33MZdEa45sUDaMBy98xQMcsd2XIBrTXRrRYnegcSdgVQ=="
+  "resolved" "https://registry.npmjs.org/ky-universal/-/ky-universal-0.8.2.tgz"
+  "version" "0.8.2"
+  dependencies:
+    "abort-controller" "^3.0.0"
+    "node-fetch" "3.0.0-beta.9"
+
+"ky@^0.24.0", "ky@>=0.17.0":
+  "integrity" "sha512-/vpuQguwV30jErrqLpoaU/YJAFALrUkqqWLILnSoBOj5/O/LKzro/pPNtxbLgY6m4w5XNM6YZ3v7/or8qLlFuw=="
+  "resolved" "https://registry.npmjs.org/ky/-/ky-0.24.0.tgz"
+  "version" "0.24.0"
+
 "leven@^3.1.0":
   "integrity" "sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A=="
   "resolved" "https://registry.npmjs.org/leven/-/leven-3.1.0.tgz"
@@ -5832,6 +5869,14 @@
   dependencies:
     "whatwg-url" "^5.0.0"
 
+"node-fetch@3.0.0-beta.9":
+  "integrity" "sha512-RdbZCEynH2tH46+tj0ua9caUHVWrd/RHnRfvly2EVdqGmI3ndS1Vn/xjm5KuGejDt2RNDQsVRLPNd2QPwcewVg=="
+  "resolved" "https://registry.npmjs.org/node-fetch/-/node-fetch-3.0.0-beta.9.tgz"
+  "version" "3.0.0-beta.9"
+  dependencies:
+    "data-uri-to-buffer" "^3.0.1"
+    "fetch-blob" "^2.1.1"
+
 "node-int64@^0.4.0":
   "integrity" "sha1-h6kGXNs1XTGC2PlM4RGIuCXGijs="
   "resolved" "https://registry.npmjs.org/node-int64/-/node-int64-0.4.0.tgz"
@@ -6537,6 +6582,11 @@
     "react-native-typing-animation" "^0.1.7"
     "uuid" "3.4.0"
 
+"react-native-image-crop-picker@^0.37.3":
+  "integrity" "sha512-ih+0pWWRUNEFQyaHwGbH9rqJNOb7EBYMwKJhTY0VmsKIA9E+usfwMmQXAFIfOnee7fTn0A2vOXkBCPQZwyvnQw=="
+  "resolved" "https://registry.npmjs.org/react-native-image-crop-picker/-/react-native-image-crop-picker-0.37.3.tgz"
+  "version" "0.37.3"
+
 "react-native-iphone-x-helper@^1.2.1", "react-native-iphone-x-helper@^1.3.1":
   "integrity" "sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg=="
   "resolved" "https://registry.npmjs.org/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz"
@@ -6680,7 +6730,7 @@
     "prop-types" "^15.6.0"
     "react-timer-mixin" "^0.13.4"
 
-"react-native@*", "react-native@^0.49.1", "react-native@>=0.35", "react-native@>=0.41.2", "react-native@>=0.42.0", "react-native@>=0.44.1", "react-native@>=0.50.0", "react-native@>=0.55", "react-native@>=0.59.0", "react-native@>=0.60", "react-native@0.67.2":
+"react-native@*", "react-native@^0.49.1", "react-native@>=0.35", "react-native@>=0.40.0", "react-native@>=0.41.2", "react-native@>=0.42.0", "react-native@>=0.44.1", "react-native@>=0.50.0", "react-native@>=0.55", "react-native@>=0.59.0", "react-native@>=0.60", "react-native@0.67.2":
   "integrity" "sha512-grEtpOLLvtSg8Bivg0ffVRCjTkresqMt7Jdog/geF6VAYhb4RnLaaUCWvyrfyB9buf135FKnqg5BIuve/XQNXA=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.67.2.tgz"
   "version" "0.67.2"

@@ -18,14 +18,20 @@ import {DrawerActions, useNavigation} from '@react-navigation/native'
 import { getAllOfCollection,getData, getAllOptions,getListing } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
 import { useIsFocused } from '@react-navigation/native';    
-
+import { setUserData } from '../../../redux/actions/authAction';
+import { useSelector } from 'react-redux';
+import { useDispatch } from "react-redux";
 
 const Home = ({ navigation }) => {
+
+    let dispatch = useDispatch();
+//////////////////////////////////////////////////////////////////////
+
     const [isVisibe, setVisible] = useState(false)
     const [data, setData] = useState([])
     const [isLoading, setLoading] = useState(false)
 
-        const isFocused = useIsFocused();
+    const isFocused = useIsFocused();
 
     const chkData = async () => {
         setLoading(true)
@@ -36,7 +42,8 @@ const Home = ({ navigation }) => {
         console.log("Home Data",res, userInfo.uid)
         setLoading(false)
     }
-    
+  
+
     useEffect(() => {
         chkData()
     },[isFocused])

@@ -23,6 +23,7 @@ import RecentMatch from "./appScreens/VideoMatch/RecentMatch";
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import DrawerContent from  "../screens/Drawer/DrawerContent";
 import ElsePayment from "./appScreens/PaymentScreens/ElsePayment";
+import EditProfile from "./appScreens/Profile/EditProfile";
 
 
 const Tab = createBottomTabNavigator();
@@ -99,6 +100,9 @@ const GeneralNavigator = () => {
             <StackNavigator.Screen name="Premium" component={Premium} />
          
             <StackNavigator.Screen name="RecentMatch" component={RecentMatch} />
+            <StackNavigator.Screen name="EditProfile" component={EditProfile} />
+
+            
 
         </StackNavigator.Navigator>
     )

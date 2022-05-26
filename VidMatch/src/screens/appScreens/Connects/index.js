@@ -148,6 +148,7 @@ const Connects = ({ navigation, route }) => {
                     <FlatList
                         data={data}
                         keyExtractor={(item) => item?.uid}
+                        style={{maxHeight:'100%'}}
                         showsVerticalScrollIndicator={false}
                         ListEmptyComponent={() => {
                             return (

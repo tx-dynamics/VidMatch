@@ -12,7 +12,7 @@ import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
-import { setUser } from '../../../redux/actions/authAction';
+import { setUser, setUserData } from '../../../redux/actions/authAction';
 import { getData, saveInitialData, saveInitialChat } from '../../../firebase/utility';
 import Snackbar from 'react-native-snackbar';
 import auth from '@react-native-firebase/auth';
@@ -78,6 +78,7 @@ const SignIn = ({ navigation }) => {
                 console.log(user1)
                 if (user1.uid) {
                     dispatch(setUser(true))
+                    dispatch(setUserData(userinfo))
                     let connections = await getData('Connections', user.user.uid);
                     if (typeof connections.media === "undefined") {
                         console.log("Undefined")
@@ -251,7 +252,7 @@ const SignIn = ({ navigation }) => {
             </View>
             <View style={{ marginTop: wp('10%') }}>
                     <FormButton
-                        buttonTitle={isLoading ? "Loging In ...." : "Login"}
+                        buttonTitle={isLoading ? "Logging In ...." : "Login"}
                         onPress={() => {
                             checkValues()
                             ValidateEmail(email)

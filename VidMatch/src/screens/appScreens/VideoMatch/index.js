@@ -23,7 +23,7 @@ import Card from '../../../components/Card';
 import IconButton from '../../../components/IconButton';
 import OverlayLabel from '../../../components/OverlayLabel';
 import photoCards from '../../../components/photoCards';
-
+import imdb from 'imdb-api'
 
 
 const DATA = [
@@ -74,7 +74,11 @@ const DATA = [
 
 export default VideoMatch = ({ navigation }) => {
 
-
+  // imdb.get({name: 'The Toxic Avenger'}, 
+  // {apiKey: 'foo', timeout: 30000})
+  // .then(console.log)
+  // .catch(console.log);
+  
   const [isItem, setSelectedItem] = useState([]);
   const useSwiper = useRef(null).current
   const handleOnSwipedLeft = () => useSwiper.swipeLeft()

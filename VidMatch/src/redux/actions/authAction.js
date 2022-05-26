@@ -7,3 +7,6 @@ export const setItemLikes = (data) => async (dispatch) => {
 export const setReqLists = (data) => async (dispatch) => {
     dispatch({type: "reqLists" , payload : data})
 }
+export const setUserData = (data) => async (dispatch) => {
+    dispatch({type: "userList" , payload : data})
+}

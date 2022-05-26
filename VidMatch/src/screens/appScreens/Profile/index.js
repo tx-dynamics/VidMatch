@@ -15,10 +15,14 @@ import FormButton from '../../../components/FormButton';
 import BackgroundHeader from '../../../components/BackgroundHeader';
 import MatchBox from '../../../components/MatchBox';
 import {DrawerActions, useNavigation} from '@react-navigation/native'
+import { getData } from '../../../firebase/utility';
+import auth from '@react-native-firebase/auth';
+import { setUserData } from '../../../redux/actions/authAction';
+import { useSelector } from 'react-redux';
+import { useDispatch } from "react-redux";
 
 
 const Profile = ({ navigation }) => {
-
     const DATA = [
         {
             id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -78,6 +82,8 @@ const Profile = ({ navigation }) => {
 
     ];
 
+    const Userdata = useSelector((state) => state.auth.userData)
+
     return (
         <View style={styles.container}>
             <BackgroundHeader
@@ -92,7 +98,7 @@ const Profile = ({ navigation }) => {
             <View style={styles.whiteView}>
                 <TouchableOpacity style={styles.imgBox} >
                     <Image source={require('../../../../assets/blurBoy.png')} />
-                    <Apptext style={styles.imgTxt} >Hanna Spratt</Apptext>
+                    <Apptext style={styles.imgTxt} >{Userdata?.displayName ? Userdata?.displayName : "Hanna Spratt"}</Apptext>
                 </TouchableOpacity>
                 {/* <ScrollView> */}
                 <View style={styles.twoTxts}>
@@ -169,6 +175,8 @@ const styles = StyleSheet.create({
     imgTxt: {
         fontFamily: 'Poppins-Bold',
         fontSize: 18,
+        width:wp('40%'),
+        textAlign:'left',
         // backgroundColor:"red",
         marginTop: wp('3%')
     },

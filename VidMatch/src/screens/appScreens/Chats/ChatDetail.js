@@ -6,7 +6,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import ChatDetailComp from '../../../components/ChatDetailComp';
 import HumanHeader from '../../../components/HumanHeader';
-import { getData, addToArrays, upDateData, saveData } from '../../../firebase/utility';
+import { getData, addToArrays, upDateData, saveData, saveInitialChat } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
 import Snackbar from 'react-native-snackbar';
 import firestore from '@react-native-firebase/firestore';
@@ -84,9 +84,22 @@ const ChatDetail = ({ navigation, route }) => {
         messages[0].user._id = 1;
     };
 
+    const chkFrndExist = async() => {
+    const userInfo = auth().currentUser;
+    let chats = await getData('Chats', items.FrndUid);
+    console.log("chats", chats)
+    if (chats === false) {
+        console.log("Chat Undefined")
+        await saveInitialChat('Chats', items.FrndUid)
+    }
+    else {
+        console.log("Ok to go Chat ")
+    }
+}
 
     useEffect(() => {
         getMessages()
+        chkFrndExist()
     }, []);
 
     // const getMessages = async () => {

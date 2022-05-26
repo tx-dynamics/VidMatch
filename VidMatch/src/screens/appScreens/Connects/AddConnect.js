@@ -100,6 +100,7 @@ const AddConnect = ({ navigation, route }) => {
     const [isChk, setChk] = useState(false);
     const [isAdded, setAdded] = useState(false);
     const [isReqs, setReqs] = useState(false);
+    const [connectNumber, setConnectNumber] = useState('');
 
 
 
@@ -112,14 +113,22 @@ const AddConnect = ({ navigation, route }) => {
             displayName: items.displayName,
             FrndUid: items.uid,
             uid: userInfo.uid,
-
         };
+
+        // let Details1 = {
+        //     email: items.email,
+        //     fullName: items.fullName,
+        //     lastName: items.lastName,
+        //     displayName: items.displayName,
+        //     FrndUid: userInfo.uid,
+        //     uid: items.uid,
+        // };
 
         await saveFvrtsData('RequestList', userInfo.uid, Details)
         await saveFvrtsData('RequestList', items.uid, Details)
             .then(async user => {
                 Snackbar.show({
-                    text: 'Connection Added Successfully',
+                    text: 'Connection Request Sent',
                     duration: Snackbar.LENGTH_LONG,
                     backgroundColor: DefaultStyles.colors.secondary
                 });
@@ -148,7 +157,21 @@ const AddConnect = ({ navigation, route }) => {
             FrndUid: items.uid,
             uid: userInfo.uid,
         };
+
+        let dt = await getData('Users', userInfo.uid)
+        console.log("dt",dt)
+        let Details1 = {
+            email: dt?.email,
+            fullName: dt?.fullName,
+            lastName: dt?.lastName,
+            displayName: dt?.displayName,
+            FrndUid: userInfo?.uid,
+            uid: items?.uid,
+
+        };
+
         await saveFvrtsData('Connections', userInfo.uid, Details)
+        await saveFvrtsData('Connections', items.uid, Details1)
             .then(async user => {
                 realRemove()
             })
@@ -304,6 +327,10 @@ const AddConnect = ({ navigation, route }) => {
         setLoading(true)
         var userInfo = auth().currentUser;
         let res = await getData("Connections", userInfo.uid)
+        
+        let rest = await getData("Connections", items.uid)
+        // console.log("Rest", rest?.media)
+        setConnectNumber(rest?.media?.length)
 
         const newData = res?.media?.filter(function (item) {
             const itemData = item.FrndUid;
@@ -445,7 +472,7 @@ const AddConnect = ({ navigation, route }) => {
                             : styles.cncts}>Matches</Apptext>
                 </View>
                 <View style={styles.twoLowerTxts}>
-                    <Apptext style={styles.nmbrTxt} >00</Apptext>
+                    <Apptext style={styles.nmbrTxt} >{connectNumber ? connectNumber : "00" }</Apptext>
                     <Apptext style={styles.nmbrTxt}>{isTrue ? "00" : ""} </Apptext>
                 </View>
 
