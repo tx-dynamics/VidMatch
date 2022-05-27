@@ -178,6 +178,7 @@ const AddConnect = ({ navigation, route }) => {
     }
     
     const getFvListing = async() => {
+        setLoading(true)
         const userInfo = auth().currentUser;
         console.log("User Id", userInfo.uid)
         console.log("Item Id", items.uid)
@@ -188,8 +189,11 @@ const AddConnect = ({ navigation, route }) => {
         dispatch(setReqLists(rest.media))
         if (FavItems === undefined) {
             console.log("Undefined found")    
+            setLoading(false)
+            
         }
         else{
+            setLoading(false)
             console.log("FavItems",FavItems, reqItems)        
         }
     }
@@ -357,7 +361,7 @@ const AddConnect = ({ navigation, route }) => {
             setLoading(false)
         }
 
-        setLoading(false)
+        // setLoading(false)
     }
 
     const chkFrnd = async () => {
@@ -411,7 +415,7 @@ const AddConnect = ({ navigation, route }) => {
 
         }
 
-        setLoading(false)
+        // setLoading(false)
     }
 
     const chkReqs = async () => {
@@ -430,7 +434,7 @@ const AddConnect = ({ navigation, route }) => {
             // console.log("Ok to go ")
             setLoading(false)
         }
-        setLoading(false)
+        // setLoading(false)
 
     }
 
@@ -528,9 +532,9 @@ const AddConnect = ({ navigation, route }) => {
                             width: wp('90%'),
                             backgroundColor: DefaultStyles.colors.secondary
                         }]}>
-                        <Image style={{ marginHorizontal: wp('2%') }}
-                            source={require('../../../../assets/msg.png')} />
-                        <Apptext style={styles.btnTxt}>Added</Apptext>
+                        {/* <Image style={{ marginHorizontal: wp('2%') }}
+                            source={require('../../../../assets/msg.png')} /> */}
+                        <Apptext style={styles.btnTxt}>Connection Added</Apptext>
                     </TouchableOpacity>
                     : null}
 

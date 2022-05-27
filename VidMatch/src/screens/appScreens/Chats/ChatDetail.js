@@ -243,7 +243,8 @@ const ChatDetail = ({ navigation, route }) => {
                                     backgroundColor: '#fff',
                                     paddingRight:10,
                                     paddingTop:5,
-                                    paddingLeft:10
+                                    paddingLeft:10,
+                                    marginBottom:20
                                 },
                             }}
                         />

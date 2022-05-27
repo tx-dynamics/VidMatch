@@ -73,12 +73,14 @@ const DATA = [
 
 
 export default VideoMatch = ({ navigation }) => {
-
-  // imdb.get({name: 'The Toxic Avenger'}, 
-  // {apiKey: 'foo', timeout: 30000})
-  // .then(console.log)
-  // .catch(console.log);
   
+  
+  const imdb = require('imdb-api')
+  imdb.get({name: 'The Toxic Avenger'},{apiKey: '7e730b7', timeout: 30000})
+ .then(console.log(JSON.stringify(imdb)))
+ .catch(console.log);
+
+
   const [isItem, setSelectedItem] = useState([]);
   const useSwiper = useRef(null).current
   const handleOnSwipedLeft = () => useSwiper.swipeLeft()

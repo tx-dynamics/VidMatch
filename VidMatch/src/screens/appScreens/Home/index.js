@@ -25,6 +25,8 @@ import { useDispatch } from "react-redux";
 const Home = ({ navigation }) => {
 
     let dispatch = useDispatch();
+    const Userdata = useSelector((state) => state.auth.userData)
+    console.log(Userdata)
 //////////////////////////////////////////////////////////////////////
 
     const [isVisibe, setVisible] = useState(false)
@@ -159,6 +161,8 @@ const Home = ({ navigation }) => {
                    <FlatList
                         data={data}
                         keyExtractor={(item) => item?.FrndUid}
+                        showsVerticalScrollIndicator={false}
+                        style={{maxHeight:'95%'}}
                         ListEmptyComponent={() => {
                             return (
                                 <Apptext style={{ alignSelf: "center", marginTop: 50 }}>

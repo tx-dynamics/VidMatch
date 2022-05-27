@@ -83,6 +83,23 @@ const Profile = ({ navigation }) => {
     ];
 
     const Userdata = useSelector((state) => state.auth.userData)
+    ////////////////////////////////////////////////////////////////////////////////////
+
+    const [connectNumber, setConnectNumber] = useState('');
+    const [isLoading, setLoading] = useState(false);
+
+    const chkData = async () => {
+        setLoading(true)
+        var userInfo = auth().currentUser;
+        let res = await getData("Connections", userInfo.uid)        
+        setConnectNumber(res?.media?.length)
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        chkData()
+    },[])
+
 
     return (
         <View style={styles.container}>
@@ -96,8 +113,10 @@ const Profile = ({ navigation }) => {
                 
             />
             <View style={styles.whiteView}>
-                <TouchableOpacity style={styles.imgBox} >
-                    <Image source={require('../../../../assets/blurBoy.png')} />
+                <TouchableOpacity>
+                    <Image style={styles.imgBox}
+                    source={Userdata?.thumbnail ? { uri : Userdata.thumbnail } :
+                     require('../../../../assets/blurBoy.png')} />
                     <Apptext style={styles.imgTxt} >{Userdata?.displayName ? Userdata?.displayName : "Hanna Spratt"}</Apptext>
                 </TouchableOpacity>
                 {/* <ScrollView> */}
@@ -106,10 +125,14 @@ const Profile = ({ navigation }) => {
                     <Apptext style={styles.VLine}></Apptext>
                     <Apptext style={styles.cncts}>Matches</Apptext>
                 </View>
+                { isLoading ? 
+                <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
+                :
                 <View style={styles.twoLowerTxts}>
-                    <Apptext style={styles.nmbrTxt} >01</Apptext>
+                    <Apptext style={styles.nmbrTxt} >{connectNumber ? connectNumber : "00"}</Apptext>
                     <Apptext style={styles.nmbrTxt}>07</Apptext>
                 </View>
+                }
                 <Apptext style={styles.HLine}> </Apptext>
                 <View style={styles.DirectionView}>
                     <TouchableOpacity style={styles.buttonView}>
@@ -170,15 +193,17 @@ const styles = StyleSheet.create({
         borderWidth: 0.2,
         borderColor: "lightgray",
         borderRadius: 20,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        // backgroundColor:"red"
     },
     imgTxt: {
         fontFamily: 'Poppins-Bold',
         fontSize: 18,
-        width:wp('40%'),
-        textAlign:'left',
+        width:wp('50%'),
+        textAlign:'center',
         // backgroundColor:"red",
-        marginTop: wp('3%')
+        marginTop: wp('3%'),
+        alignSelf:'center'
     },
     twoTxts: {
         flexDirection: 'row',

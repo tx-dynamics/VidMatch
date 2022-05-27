@@ -19,6 +19,8 @@ import { getData, saveData } from '../../../firebase/utility';
 import Snackbar from 'react-native-snackbar';
 import auth from '@react-native-firebase/auth';
 import Header from '../../../components/Header';
+import ImagePicker from "react-native-image-crop-picker";
+import storage from '@react-native-firebase/storage';
 
 
 
@@ -26,7 +28,7 @@ const EditProfile = ({ navigation }) => {
 
     let dispatch = useDispatch();
     const Userdata = useSelector((state) => state.auth.userData)
-//////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
     const [email, setEmail] = useState('');
     const [fName, setFName] = useState('');
     const [lName, setLName] = useState('');
@@ -34,6 +36,7 @@ const EditProfile = ({ navigation }) => {
     const [lChk, setLChk] = useState(false);
     const [isLoading, setLoading] = useState(false);
     const [isChk, setChk] = useState(false);
+    const [profilePath, setProfileUrl] = useState('');
 
 
     const checkValues = () => {
@@ -43,10 +46,10 @@ const EditProfile = ({ navigation }) => {
             setLChk(true)
         }
         else if (fName === "") {
-            setFChk(false)
+            setFChk(true)
         }
         else if (lName === "") {
-            setLChk(false)
+            setLChk(true)
         }
         else {
             console.log("submit?")
@@ -55,39 +58,105 @@ const EditProfile = ({ navigation }) => {
         setLoading(false)
     }
 
-    const submitData = async() => {
+    const submitData = async () => {
         const userinfo = auth().currentUser;
         let Details = {
             email: email ? email : Userdata.email,
             fullName: fName ? fName : Userdata.fullName,
-            lastName:lName ? lName : Userdata.lastName, 
-            displayName:fName  + " " + lName ,
-            uid:userinfo.uid
+            lastName: lName ? lName : Userdata.lastName,
+            displayName: fName + " " + lName,
+            uid: userinfo.uid,
+            thumbnail: profilePath ? profilePath : null
         };
         console.log(Details)
         await saveData('Users', userinfo.uid, Details)
-        .then((val) => {
-            Snackbar.show({
-                text: 'Data Saved Successfully',
-                duration: Snackbar.LENGTH_LONG,
-                backgroundColor: DefaultStyles.colors.secondary
-            });
-            setChk(true)
-            navigation.navigate("Home")
-        })
+            .then((val) => {
+                Snackbar.show({
+                    text: 'Data Saved Successfully',
+                    duration: Snackbar.LENGTH_LONG,
+                    backgroundColor: DefaultStyles.colors.secondary
+                });
+                setChk(true)
+                navigation.navigate("Home")
+            })
     }
 
-    const fetchData = async() => {
+    const fetchData = async () => {
         const userinfo = auth().currentUser;
         let res = await getData('Users', userinfo.uid)
-        setEmail(res.email)
-        setFName(res.fullName)
-        setLName(res.lastName)
+        setEmail(res?.email)
+        setFName(res?.fullName)
+        setLName(res?.lastName)
+        setProfileUrl(res?.thumbnail)
         dispatch(setUserData(res))
     }
     useEffect(() => {
         fetchData()
-    },[isChk])
+    }, [isChk])
+
+    const handleChoosePhoto = () => {
+        const userinfo = auth().currentUser;
+        ImagePicker.openPicker({
+            width: 300,
+            height: 400,
+            compressImageQuality: 1,
+            cropping: true,
+            writeTempFile: true,
+        }).then(async (image) => {
+            console.log(image)
+            try {
+                const response = await fetch(image.path);
+                const blob = await response.blob();
+                const ref = storage().ref(`/files/image/${image.path}`);
+                // .child(uuid.v4());
+                const task = ref.put(blob);
+                return new Promise((resolve, reject) => {
+
+                    setLoading(true)
+                    task.on(
+                        'state_changed',
+                        () => { },
+                        err => {
+                            reject(err);
+                            console.log("Didn't pick")
+                        },
+
+                        async () => {
+                            const url = await task.snapshot.ref.getDownloadURL();
+                            console.log("File available at", url)
+                            resolve(url);
+                            let Details = {
+                                email: email ? email : Userdata.email,
+                                fullName: fName ? fName : Userdata.fullName,
+                                lastName: lName ? lName : Userdata.lastName,
+                                displayName: fName + " " + lName,
+                                uid: userinfo.uid,
+                                thumbnail: url
+                            };
+                            await saveData('Users', userinfo.uid, Details);
+                            Snackbar.show({
+                                text: 'Image Uploaded Successfully',
+                                duration: Snackbar.LENGTH_LONG,
+                                backgroundColor: DefaultStyles.colors.secondary
+                            });
+                            setProfileUrl(url ? url : null)
+                            fetchData();
+                            setLoading(false)
+
+                        },
+
+                    );
+                });
+            } catch (err) {
+                console.log('uploadImage error: ' + err.message);
+                Snackbar.show({
+                    text: err.message,
+                    duration: Snackbar.LENGTH_LONG,
+                    backgroundColor: DefaultStyles.colors.primary
+                });
+            }
+        });
+    }
 
     return (
         <View style={styles.container}>
@@ -100,9 +169,21 @@ const EditProfile = ({ navigation }) => {
             <ScrollView >
                 <View style={styles.MainContainer}>
 
-                    <TouchableOpacity>
-                        <Image style={styles.imgCircle} source={require('../../../../assets/boyBack.jpg')} />
+                    <TouchableOpacity onPress={() => {
+                        handleChoosePhoto()
+                    }}>
+                        {profilePath ?
+                            <Image style={styles.imgCircle} source={{ uri: profilePath }} />
+                            :
+                            <Image style={styles.imgCircle}
+                                source={require('../../../../assets/boyBack.jpg')} />
+                        }
+
                     </TouchableOpacity>
+                    {isLoading ? (
+
+                        <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
+                    ) : null}
 
                     <View style={{ marginTop: wp('1%') }}>
                         <FormInput
