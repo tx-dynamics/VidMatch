@@ -29,7 +29,9 @@ function InboxComp({
 
           </TouchableOpacity> */}
                 <TouchableOpacity style={{marginLeft:wp('1%')}}>
-                    <ImageBackground style={styles.inboxImg} source={imgName}>
+                    <ImageBackground 
+                    imageStyle={{borderRadius:40}}
+                    style={styles.inboxImg} source={imgName}>
                       
                     </ImageBackground>
                 </TouchableOpacity>
@@ -75,6 +77,7 @@ const styles = StyleSheet.create({
   inboxName: {
     fontSize:15,
     width: wp('56%'),
+    // backgroundColor:"red",
     marginLeft: wp('3%'),
     marginTop: wp('1%')
   },

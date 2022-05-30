@@ -12,20 +12,23 @@ import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 import LinearGradient from 'react-native-linear-gradient';
 import { useDispatch } from "react-redux";
-import { setUser } from '../../../redux/actions/authAction';
+import { setUser, setUserData } from '../../../redux/actions/authAction';
 import auth from '@react-native-firebase/auth';
 import Snackbar from 'react-native-snackbar';
 
 
-const SignUpModal = ({ navigation }) => {
-
+const SignUpModal = ({ navigation, route }) => {
     let dispatch = useDispatch();
 
+    const items = route.params.items;
+    console.log("rcvd on modal", items)
+    //////////////////////////////////////////////////////////////////////////////////
     const chkUser = () => {
         var user1 = auth().currentUser;
         console.log(user1)
         if (user1.uid) {
             dispatch(setUser(true))
+            dispatch(setUserData(items))
             Snackbar.show({
                 text: 'Login Successful',
                 duration: Snackbar.LENGTH_LONG,

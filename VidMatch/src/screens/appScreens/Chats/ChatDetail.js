@@ -210,8 +210,8 @@ const ChatDetail = ({ navigation, route }) => {
         <View style={[DefaultStyles.container, { flex: 1, }]}>
             <HumanHeader
                 leftImgName={require('../../../../assets/arrow-back.png')}
-                centerImg={items.thumbnail ? { uri: items.thumbnail } : require('../../../../assets/boy1.png')}
-                headerLabel={items?.displayName}
+                centerImg={items.thumbnail ? { uri: items.thumbnail } : require('../../../../assets/empty-img.jpg')}
+                headerLabel={items?.displayName.length >= 20 ? items.displayName.substring(0,13) + "..." : items?.displayName }
                 rightImg={require('../../../../assets/videoChat.png')}
                 phoneImg={require('../../../../assets/ChatPhone.png')}
                 menuImg={require('../../../../assets/menu.png')}

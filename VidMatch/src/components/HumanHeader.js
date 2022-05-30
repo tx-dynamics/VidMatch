@@ -42,7 +42,7 @@ function HumanHeader({
       ) : null}
       </TouchableOpacity>
       <View style={styles.imgView} >
-      <Image style={{width:48, height:48}} source={centerImg} />
+      <Image style={{width:48, height:48, borderRadius:40}} source={centerImg} />
       <Apptext style={styles.headerLabel} >{headerLabel}</Apptext>
       </View>
       <TouchableOpacity style={styles.space} onPress={onPressRight}>

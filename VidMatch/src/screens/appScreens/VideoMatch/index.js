@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet, Text, View, Dimensions,
   Image, Animated, PanResponder, StatusBar,
@@ -23,7 +23,10 @@ import Card from '../../../components/Card';
 import IconButton from '../../../components/IconButton';
 import OverlayLabel from '../../../components/OverlayLabel';
 import photoCards from '../../../components/photoCards';
-import imdb from 'imdb-api'
+import Snackbar from 'react-native-snackbar';
+import { Base } from '../../../Constants/Base';
+import DefaultStyles from '../../../config/Styles';
+import { setUserData } from '../../../redux/actions/authAction';
 
 
 const DATA = [
@@ -73,21 +76,18 @@ const DATA = [
 
 
 export default VideoMatch = ({ navigation }) => {
-  
-  
-  const imdb = require('imdb-api')
-  imdb.get({name: 'The Toxic Avenger'},{apiKey: '7e730b7', timeout: 30000})
- .then(console.log(JSON.stringify(imdb)))
- .catch(console.log);
-
-
-  const [isItem, setSelectedItem] = useState([]);
   const useSwiper = useRef(null).current
   const handleOnSwipedLeft = () => useSwiper.swipeLeft()
   const handleOnSwipedTop = () => useSwiper.swipeTop()
   const handleOnSwipedRight = () => useSwiper.swipeRight()
+/////////////////////////////////////////////////////////////////////////////////////////
+  
+  const [isItem, setSelectedItem] = useState([]);
+  const [isLoading, setLoading] = useState(false);
+  const [isData, setData] = useState([]);
 
 
+///////////////////////////////////////////////////////////////////////////////////////
   const addCategories = async (item) => {
     var selectedIdss = [...isItem]
     if (selectedIdss.includes(item.id)) {
@@ -99,6 +99,38 @@ export default VideoMatch = ({ navigation }) => {
     }
     await setSelectedItem(selectedIdss)
   }
+
+  const getMovies = () => {
+    setLoading(true)
+    // console.log(Base.baseURL + '/get/basic?country=us&tmdb_id=movie%2F120&output_language=en')
+    fetch(Base.baseURL + '/get/basic?country=us&tmdb_id=movie%2F120&output_language=en', {
+      method: 'GET',
+      headers: {
+        'X-RapidAPI-Host': 'streaming-availability.p.rapidapi.com',
+        'X-RapidAPI-Key': 'aa6c2236d0mshda8d5ebbb6ed9bep1e783djsn6667425d7b69'
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setData(data)
+        console.log("Data agya", data.posterURLs)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error(err);
+        Snackbar.show({
+          text: err,
+          duration: Snackbar.LENGTH_LONG,
+          backgroundColor: DefaultStyles.colors.primary
+        });
+        setLoading(false)
+      })
+    // .catch((error) => Alert.alert("Error In API!"))
+  }
+
+  useEffect(() => {
+    getMovies()
+  }, [])
 
 
   return (
@@ -168,53 +200,54 @@ export default VideoMatch = ({ navigation }) => {
           infinite
           showSecondCard
           animateOverlayLabelsOpacity
-          // overlayLabels={{
-          //   left: {
-          //     title: 'NOPE',
-          //     element: <OverlayLabel label="NOPE" color="#E5566D" />,
-          //     style: {
-          //       wrapper: styles.overlayWrapper,
-          //     },
-          //   },
-          //   right: {
-          //     title: 'LIKE',
-          //     element: <OverlayLabel label="LIKE" color="#4CCC93" />,
-          //     style: {
-          //       wrapper: {
-          //         ...styles.overlayWrapper,
-          //         alignItems: 'flex-start',
-          //         marginLeft: 30,
-          //       },
-          //     },
-          //   },
-          // }}
+        // overlayLabels={{
+        //   left: {
+        //     title: 'NOPE',
+        //     element: <OverlayLabel label="NOPE" color="#E5566D" />,
+        //     style: {
+        //       wrapper: styles.overlayWrapper,
+        //     },
+        //   },
+        //   right: {
+        //     title: 'LIKE',
+        //     element: <OverlayLabel label="LIKE" color="#4CCC93" />,
+        //     style: {
+        //       wrapper: {
+        //         ...styles.overlayWrapper,
+        //         alignItems: 'flex-start',
+        //         marginLeft: 30,
+        //       },
+        //     },
+        //   },
+        // }}
         />
-      
+
       </View>
       <View style={{
         // marginTop:wp('110%'),
-        marginTop:wp('115%'),
-       flexDirection:'row', justifyContent:'space-evenly'}}>
-          <TouchableOpacity 
+        marginTop: wp('115%'),
+        flexDirection: 'row', justifyContent: 'space-evenly'
+      }}>
+        <TouchableOpacity
           // onPress={handleOnSwipedLeft}
           style={styles.whiteCrcl}>
-            <Image source={require('../../../../assets/cross.png')} />
-          </TouchableOpacity>
-          <TouchableOpacity 
+          <Image source={require('../../../../assets/cross.png')} />
+        </TouchableOpacity>
+        <TouchableOpacity
           // onPress={handleOnSwipedTop}
-          style={[styles.whiteCrcl, {marginTop:-25}]}>
-            <Image source={require('../../../../assets/Ystar.png')} />
-          </TouchableOpacity>
-          <TouchableOpacity
+          style={[styles.whiteCrcl, { marginTop: -25 }]}>
+          <Image source={require('../../../../assets/Ystar.png')} />
+        </TouchableOpacity>
+        <TouchableOpacity
           // onPress={handleOnSwipedRight}
           style={styles.whiteCrcl}>
-            <Image source={require('../../../../assets/thumb.png')} />
-          </TouchableOpacity>
-        </View>
+          <Image source={require('../../../../assets/thumb.png')} />
+        </TouchableOpacity>
+      </View>
       <View>
 
 
-    {/* <IconButton
+        {/* <IconButton
       name="close"
       onPress={handleOnSwipedLeft}
       color="white"
@@ -232,7 +265,7 @@ export default VideoMatch = ({ navigation }) => {
       color="white"
       backgroundColor="#4CCC93"
     /> */}
-  </View>
+      </View>
     </View>
   );
 
@@ -243,12 +276,12 @@ const styles = StyleSheet.create({
     flex: 1,
     // backgroundColor: '#fff',
   },
-  whiteCrcl:{
-    width:52, height:52,
-    alignItems:'center',
-    justifyContent:'center',
-    backgroundColor:"white",
-     borderRadius:40
+  whiteCrcl: {
+    width: 52, height: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: "white",
+    borderRadius: 40
   },
   Hflat: {
     flexDirection: 'row',

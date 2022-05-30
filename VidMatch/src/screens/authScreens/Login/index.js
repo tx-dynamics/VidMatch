@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, ActivityIndicator,
-ToastAndroid, Alert, Image, StyleSheet, ScrollView,}
+ToastAndroid, Alert, Image, StyleSheet, ScrollView, Platform,}
 from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -10,12 +10,14 @@ import DefaultStyles from '../../../config/Styles';
 import Apptext from '../../../components/Apptext';
 import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
+import GoogleSign from '../../../components/GoogleSign';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import { setUser, setUserData } from '../../../redux/actions/authAction';
 import { getData, saveInitialData, saveInitialChat } from '../../../firebase/utility';
 import Snackbar from 'react-native-snackbar';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 
 
@@ -59,6 +61,88 @@ const SignIn = ({ navigation }) => {
         }
 
     }
+
+    const googleLogin = async() => {
+        setLoading(true);
+        let info = await GoogleSign();
+        // const token = await AsyncStorage.getItem('token');
+        if (info?.Error) {
+          console.log('here', info?.Error);
+          Snackbar.show({
+            text: info?.Error,
+            backgroundColor: DefaultStyles.colors.primary,
+            duration: Snackbar.LENGTH_LONG,
+          });
+
+        } else {
+          const google = auth.GoogleAuthProvider.credential(info.idToken);
+          auth().signInWithCredential(google).then((res) => {
+            // console.log(res?.additionalUserInfo?.isNewUser);
+            // console.log(info.user,"info")
+            const uid = auth()?.currentUser?.uid;
+
+            // if (res?.additionalUserInfo?.isNewUser) {
+              var regData = {
+                email: info.user?.email,
+                fullName: info.user?.familyName,
+                lastName: info.user?.givenName,
+                displayName: info.user?.name,
+                provider:"google",
+                createdAt: new Date().toISOString(),
+                thumbnail: info?.user?.photo,
+                uid: uid
+              };
+              const userDatabase = firestore().collection(`Users`).doc(uid);
+              userDatabase.set(regData).then(async() => { 
+                console.log("in if")
+                dispatch(setUser(true))
+                dispatch(setUserData(regData))
+                console.log(regData, "kkkk")
+
+                let connections = await getData('Connections', uid);
+                    if (typeof connections.media === "undefined") {
+                        console.log("Undefined")
+                        await saveInitialData('Connections', uid)
+                    }
+                    else {
+                        console.log("Ok to go ")
+                    }
+
+                    let chats = await getData('Chats', uid);
+                    
+                    console.log("chats", chats)
+                    if (chats === false) {
+                        console.log("Chat Undefined")
+                        await saveInitialChat('Chats', uid)
+                    }
+                    else {
+                        console.log("Ok to go Chat ")
+                    }
+
+                    Snackbar.show({
+                        text: `Sign in Succesfully`,
+                        backgroundColor: DefaultStyles.colors.secondary,
+                        duration: Snackbar.LENGTH_LONG,
+                      });
+                    setLoading(false)
+                });
+            // }
+          
+            // setLoading(false);
+          })
+          .catch((err) => {
+            console.error(err.message) 
+            Snackbar.show({
+             text: err.message ,
+             backgroundColor: DefaultStyles.colors.primary,
+             duration: Snackbar.LENGTH_LONG,
+           });
+           });
+            // .catch((err) => console.log(err.message));
+        }
+        setLoading(false);
+    
+      }
 
     const signIn = async (email, password) => {
 
@@ -261,12 +345,18 @@ const SignIn = ({ navigation }) => {
                     /> 
             </View>
             <View style={styles.socialViews} >
-                <TouchableOpacity style={styles.socialBox} >
+               {
+               Platform.OS === "android" ?
+               <TouchableOpacity
+                onPress={() => {googleLogin()}}
+                style={styles.socialBox} >
                 <Image source={require('../../../../assets/google.png')} />
                 </TouchableOpacity>
+                :
                 <TouchableOpacity style={styles.socialBox} >
                 <Image source={require('../../../../assets/apple.png')} />
                 </TouchableOpacity>
+                }
             </View>
             <View style={styles.bottomLines} >
                 <Apptext style={styles.bottomTxt}> Don't have an account? </Apptext>

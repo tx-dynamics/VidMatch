@@ -42,7 +42,8 @@ function DrawerContent({ navigation, userImg, username, userEmail }) {
     style={styles.threeItems} >
     <TouchableOpacity>
 
-    <Image style={styles.golBox} source={Userdata?.thumbnail ? {uri : Userdata.thumbnail } : require('../../../assets/blurBoy.png')} />
+    <Image style={styles.golBox} source={Userdata?.thumbnail ? {uri : Userdata.thumbnail } 
+    : require('../../../assets/empty-img.jpg')} />
     </TouchableOpacity>
     <View style={{}}>
     <Apptext style={styles.hanaTxt} >{Userdata.displayName ? Userdata.displayName : "Hanna Spratt"}</Apptext>

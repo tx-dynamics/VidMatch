@@ -159,7 +159,8 @@ const Connects = ({ navigation, route }) => {
                           }}
                         renderItem={({ item,index }) => (
                             <FvrtComp
-                                leftImgName={item.thumbnail ? {uri : item?.thumbnail} : require("../../../Assets/Images/dp.png")}
+                                leftImgName={item.thumbnail ? {uri : item?.thumbnail}
+                                 : require("../../../../assets/empty-img.jpg")}
                                 borderRadius={9}
                                 labelValue={item?.displayName}
                                 rightImgName={require("../../../../assets/blueAdd.png")}

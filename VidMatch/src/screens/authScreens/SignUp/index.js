@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, ActivityIndicator,
-ToastAndroid, Alert, Image, StyleSheet, ScrollView,}
+ToastAndroid, Alert, Image, StyleSheet, ScrollView, Platform,}
 from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -10,9 +10,13 @@ import DefaultStyles from '../../../config/Styles';
 import Apptext from '../../../components/Apptext';
 import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
+import GoogleSign from '../../../components/GoogleSign';
 import auth from '@react-native-firebase/auth';
 import Snackbar from 'react-native-snackbar';
 import { saveData, saveInitialData, saveInitialChat, getData } from '../../../firebase/utility';
+import firestore from '@react-native-firebase/firestore';
+import { setUser, setUserData } from '../../../redux/actions/authAction';
+import { useDispatch } from "react-redux";
 
 
 
@@ -28,6 +32,9 @@ const SignUp = ({ navigation }) => {
     const [passChk, setPassChk] = useState(false);
     const [badFormat, setBadFormat] = useState(false);
     const [isLoading, setLoading] = useState(false)
+
+
+    let dispatch = useDispatch();
 
 
     const checkValues = () => {
@@ -59,7 +66,75 @@ const SignUp = ({ navigation }) => {
             signUp()
         }
     }
+/////////////////////////////////////////////////////////////////////////////////////////
+    const googleSignUp = async() => {
+    setLoading(true);
+    let info = await GoogleSign();
+    // const token = await AsyncStorage.getItem('token');
+    if (info?.Error) {
+      console.log('here', info?.Error);
+    } else {
 
+      const google = auth.GoogleAuthProvider.credential(info.idToken);
+      auth().signInWithCredential(google).then((res) => {
+        console.log(res?.additionalUserInfo?.isNewUser);
+        const uid = auth()?.currentUser?.uid;
+            var Details = {
+                email: info.user?.email,
+                fullName: info.user?.familyName,
+                lastName: info.user?.givenName,
+                displayName: info.user?.name,
+                provider:"google",
+                createdAt: new Date().toISOString(),
+                thumbnail: info?.user?.photo,
+                uid: uid
+              };
+          const userDatabase = firestore().collection(`Users`).doc(uid);
+          userDatabase.set(Details).then(async() => { 
+            console.log('done')
+            let connections = await getData('Connections', uid);
+            if (typeof connections.media === "undefined") {
+                console.log("Undefined")
+                await saveInitialData('Connections', uid)
+            }
+            else {
+                console.log("Ok to go ")
+            }
+
+            let chats = await getData('Chats', uid);
+            
+            console.log("chats", chats)
+            if (chats === false) {
+                console.log("Chat Undefined")
+                await saveInitialChat('Chats', uid)
+            }
+            else {
+                console.log("Ok to go Chat ")
+            }
+            res?.additionalUserInfo?.isNewUser ?  navigation.navigate("SignUpModal", {items : Details})
+             : 
+             dispatch(setUser(true))
+             dispatch(setUserData(Details))
+
+         });
+          setLoading(false);
+        
+      })
+      .catch((err) => {
+        console.error(err.message) 
+        Snackbar.show({
+         text: err.message ,
+         backgroundColor: DefaultStyles.colors.primary,
+         duration: Snackbar.LENGTH_LONG,
+       });
+       });
+        // .catch((err) => console.log(err.message));
+    }
+    setLoading(false);
+
+  }
+
+////////////////////////////////////////////////////////////////////////////////////////
     const ValidateEmail = (inputText) => {
         console.log(inputText)
         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -75,7 +150,6 @@ const SignUp = ({ navigation }) => {
             return false;
         }
     }
-   
     const signUp = async () => {
             let success = true;
             setLoading(true)
@@ -90,11 +164,10 @@ const SignUp = ({ navigation }) => {
                         uid:user.user.uid
                     };
 
-                    console.log(Details)
+                    console.log(Details, "Details")
                     await saveData('Users', user.user.uid, Details);
                     let connections = await getData('Connections', user.user.uid);
                     if (typeof connections.media === "undefined") {
-                        console.log("Undefined")
                         await saveInitialData('Connections', user.user.uid)
                     }
                     else {
@@ -103,16 +176,14 @@ const SignUp = ({ navigation }) => {
                     
                     let chats = await getData('Chats', user.user.uid);
                     
-                    console.log("chats", chats)
                     if (chats === false) {
-                        console.log("Chat Undefined")
                         await saveInitialChat('Chats', user.user.uid)
                     }
                     else {
                         console.log("Ok to go Chat ")
                     }
 
-                    navigation.navigate("SignUpModal")
+                    navigation.navigate("SignUpModal", {items: Details})
                     setLoading(false)
 
                     Snackbar.show({
@@ -247,12 +318,19 @@ const SignUp = ({ navigation }) => {
             </View>
             <Apptext style={styles.OR} >Or</Apptext>
             <View style={styles.socialViews} >
-                <TouchableOpacity style={styles.socialBox} >
+             { Platform.OS === "android" ?
+             <TouchableOpacity 
+                onPress={() => {
+                    googleSignUp()
+                }}
+                style={styles.socialBox} >
                 <Image source={require('../../../../assets/google.png')} />
                 </TouchableOpacity>
+                :
                 <TouchableOpacity style={styles.socialBox} >
                 <Image source={require('../../../../assets/apple.png')} />
                 </TouchableOpacity>
+                }
             </View>
             <View style={styles.bottomLines} >
                 <Apptext style={styles.bottomTxt}> Already have an account? </Apptext>

@@ -152,9 +152,9 @@ const Chats = ({ navigation }) => {
                         }}
                         renderItem={({ item, index }) => (
                             <InboxComp
-                                imgName={item.thumbnail ? {uri : item.thumbnail} : require("../../../../assets/boy1.png")}
-                                label={item?.displayName}
-                                msg={item.msg ? item.msg : "Lorem Ipsum ...."}
+                                imgName={item.thumbnail ? {uri : item.thumbnail} : require('../../../../assets/empty-img.jpg')}
+                                label={item?.displayName.length >= 20 ? item?.displayName.substring(0,20) + " ..." : item?.displayName }
+                                msg={item.msg ? item.msg : "View Message ..."}
                                 onPress={() => navigation.navigate("ChatDetail", {items:item})}
                            
                             />

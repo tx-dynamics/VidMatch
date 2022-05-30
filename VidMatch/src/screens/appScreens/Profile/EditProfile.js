@@ -176,7 +176,7 @@ const EditProfile = ({ navigation }) => {
                             <Image style={styles.imgCircle} source={{ uri: profilePath }} />
                             :
                             <Image style={styles.imgCircle}
-                                source={require('../../../../assets/boyBack.jpg')} />
+                                source={require('../../../../assets/empty-img.jpg')} />
                         }
 
                     </TouchableOpacity>
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
         height: wp('40%'),
         borderRadius: 50,
         borderWidth: 1,
-        borderColor: DefaultStyles.colors.primary,
+        borderColor: DefaultStyles.colors.secondary,
         alignSelf: 'center',
         marginVertical: wp('5%')
     }

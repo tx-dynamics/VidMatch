@@ -463,7 +463,7 @@ const AddConnect = ({ navigation, route }) => {
                             :
                             <Image
                                 style={styles.imgBox}
-                                source={require('../../../Assets/Images/dp.png')}
+                                source={require("../../../../assets/empty-img.jpg")}
                             />}
                     <Apptext style={styles.imgTxt} >{items?.displayName}</Apptext>
                 </TouchableOpacity>

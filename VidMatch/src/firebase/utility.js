@@ -146,13 +146,12 @@ export async function saveInitialData(collection, userId) {
  }
 
  export async function saveInitialChat(collection, userId) {
-   console.log(collection, userId)
   await firestore()
      .collection(collection)
      .doc(userId)
      .set({})
      .then(function() {
-       console.log("Data saved succesfuly");
+      //  console.log("Data saved succesfuly");
      })
      .catch(function(error) {
        console.log(error);

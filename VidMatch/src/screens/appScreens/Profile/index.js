@@ -116,7 +116,7 @@ const Profile = ({ navigation }) => {
                 <TouchableOpacity>
                     <Image style={styles.imgBox}
                     source={Userdata?.thumbnail ? { uri : Userdata.thumbnail } :
-                     require('../../../../assets/blurBoy.png')} />
+                    require('../../../../assets/empty-img.jpg')} />
                     <Apptext style={styles.imgTxt} >{Userdata?.displayName ? Userdata?.displayName : "Hanna Spratt"}</Apptext>
                 </TouchableOpacity>
                 {/* <ScrollView> */}

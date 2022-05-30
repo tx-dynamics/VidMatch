@@ -26,7 +26,6 @@ const Home = ({ navigation }) => {
 
     let dispatch = useDispatch();
     const Userdata = useSelector((state) => state.auth.userData)
-    console.log(Userdata)
 //////////////////////////////////////////////////////////////////////
 
     const [isVisibe, setVisible] = useState(false)
@@ -40,8 +39,8 @@ const Home = ({ navigation }) => {
         var userInfo = auth().currentUser;
         let res = await getData("Connections", userInfo.uid)
         setData(res?.media)
-        console.log("media",res?.media)
-        console.log("Home Data",res, userInfo.uid)
+        // console.log("media",res?.media)
+        // console.log("Home Data",res, userInfo.uid)
         setLoading(false)
     }
   
@@ -162,7 +161,7 @@ const Home = ({ navigation }) => {
                         data={data}
                         keyExtractor={(item) => item?.FrndUid}
                         showsVerticalScrollIndicator={false}
-                        style={{maxHeight:'95%'}}
+                        style={{maxHeight:'100%'}}
                         ListEmptyComponent={() => {
                             return (
                                 <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
@@ -172,7 +171,7 @@ const Home = ({ navigation }) => {
                         }}
                         renderItem={({ item, index }) => (
                             <FvrtComp
-                                leftImgName={item.thumbnail ? { uri : item?.thumbnail} : require('../../../Assets/Images/dp.png') }
+                                leftImgName={item.thumbnail ? { uri : item?.thumbnail} : require('../../../../assets/empty-img.jpg') }
                                 labelValue={item?.displayName}
                                 // onPress={() => navigation.navigate("Premium")}
                             // rightImgName={item.isLike ? require('../../../../assets/redHeart.png') : require('../../../../assets/heart.png')}
