@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
         width:57,
         height:57,
         borderRadius:43,
+        // backgroundColor:"red"
     },
     txtView:{
         justifyContent:'center',

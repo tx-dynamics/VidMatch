@@ -26,6 +26,7 @@ const Home = ({ navigation }) => {
 
     let dispatch = useDispatch();
     const Userdata = useSelector((state) => state.auth.userData)
+    const userInfo = auth().currentUser;
 //////////////////////////////////////////////////////////////////////
 
     const [isVisibe, setVisible] = useState(false)
@@ -39,7 +40,11 @@ const Home = ({ navigation }) => {
         var userInfo = auth().currentUser;
         let res = await getData("Connections", userInfo.uid)
         setData(res?.media)
-        // console.log("media",res?.media)
+        // res?.media.map(async(val) => {
+        // let rest = await getData("Connections", val.FrndUid)
+        // setData(rest.media)
+        // })
+        console.log("media",res?.media)
         // console.log("Home Data",res, userInfo.uid)
         setLoading(false)
     }
@@ -161,7 +166,7 @@ const Home = ({ navigation }) => {
                         data={data}
                         keyExtractor={(item) => item?.FrndUid}
                         showsVerticalScrollIndicator={false}
-                        style={{maxHeight:'100%'}}
+                        // style={{maxHeight:'100%'}}
                         ListEmptyComponent={() => {
                             return (
                                 <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
@@ -170,11 +175,10 @@ const Home = ({ navigation }) => {
                             );
                         }}
                         renderItem={({ item, index }) => (
+                        //   console.log(item.uid, userInfo.uid)  
                             <FvrtComp
                                 leftImgName={item.thumbnail ? { uri : item?.thumbnail} : require('../../../../assets/empty-img.jpg') }
                                 labelValue={item?.displayName}
-                                // onPress={() => navigation.navigate("Premium")}
-                            // rightImgName={item.isLike ? require('../../../../assets/redHeart.png') : require('../../../../assets/heart.png')}
                             />
 
                         )}

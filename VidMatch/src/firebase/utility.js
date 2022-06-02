@@ -116,6 +116,7 @@ export async function getListing(collection, doc1) {
   return data;
 }
 
+
 export async function getFvrtsListing(collection, doc1) {
 
   console.log(collection, doc1)
@@ -247,6 +248,20 @@ export async function removeToArray(collection, doc,value) {
 }
 export async function saveFav(collection, doc, jsonObject) {
   await firestore().collection(collection).doc(doc).set({media: jsonObject})
+    .then(function () {
+      async () => {
+      console.log("Document successfully written!");
+      return true;
+      };
+    })
+    .catch(function (error) {
+      console.error("Error writing document: ", error);
+      return false;
+    });
+}
+
+export async function saveCons(collection, doc, media) {
+  await firestore().collection(collection).doc(doc).set({media} )
     .then(function () {
       async () => {
       console.log("Document successfully written!");

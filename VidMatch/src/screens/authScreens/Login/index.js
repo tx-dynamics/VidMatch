@@ -101,22 +101,22 @@ const SignIn = ({ navigation }) => {
 
                 let connections = await getData('Connections', uid);
                     if (typeof connections.media === "undefined") {
-                        console.log("Undefined")
+                        // console.log("Undefined")
                         await saveInitialData('Connections', uid)
                     }
                     else {
-                        console.log("Ok to go ")
+                        // console.log("Ok to go ")
                     }
 
                     let chats = await getData('Chats', uid);
                     
-                    console.log("chats", chats)
+                    // console.log("chats", chats)
                     if (chats === false) {
-                        console.log("Chat Undefined")
+                        // console.log("Chat Undefined")
                         await saveInitialChat('Chats', uid)
                     }
                     else {
-                        console.log("Ok to go Chat ")
+                        // console.log("Ok to go Chat ")
                     }
 
                     Snackbar.show({

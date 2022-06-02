@@ -301,7 +301,7 @@ const MyTabs = () => {
 const MainNavigator = () => {
 
     const user = useSelector((state) => state.auth.user)
-    console.log("chkk", user)
+    // console.log("chkk", user)
     if (user != false) {
         return <DrawerNavigator />
     }

@@ -15,7 +15,7 @@ import FormButton from '../../../components/FormButton';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import { setUser, setUserData } from '../../../redux/actions/authAction';
-import { getData, saveData } from '../../../firebase/utility';
+import { getData, saveData, saveCons } from '../../../firebase/utility';
 import Snackbar from 'react-native-snackbar';
 import auth from '@react-native-firebase/auth';
 import Header from '../../../components/Header';
@@ -133,6 +133,26 @@ const EditProfile = ({ navigation }) => {
                                 uid: userinfo.uid,
                                 thumbnail: url
                             };
+                            // let connections = await getData('Connections', userinfo.uid);
+                            // if (connections?.media.length > 0) {
+                            //     connections?.media.map(async(val) => {
+                            //         let conDetails = [{
+                            //             Frnduid : val.FrndUid ? val.FrndUid : '',
+                            //             email: val.email ? val.email : '',
+                            //             fullName: val.fullName ? val.fullName : '',
+                            //             lastName: val.lastName ? val.lastName : '',
+                            //             displayName: val.fullName + " " + val.lastName,
+                            //             uid: val.uid,
+                            //             thumbnail: val.uid === userinfo.uid ? url  : null
+                            //         }]
+                            //     await saveCons('Connections', userinfo.uid, conDetails)
+                            //     })
+
+                            // }
+                            // else {
+                            //     console.log("Empty Connections ")
+                            // }
+
                             await saveData('Users', userinfo.uid, Details);
                             Snackbar.show({
                                 text: 'Image Uploaded Successfully',
