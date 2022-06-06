@@ -116,6 +116,23 @@ export async function getListing(collection, doc1) {
   return data;
 }
 
+export async function getMoviesId(collection, id) {
+  console.log("id => ", id)
+  let data = [];
+  // where("id", "!=", id)
+  let querySnapshot = await firestore().collection(collection).where('id','==',id).get();
+  querySnapshot.forEach(function (doc) {
+    console.log(doc)
+    if (doc.exists) {
+        doc.data().media.forEach(function(doc){
+        data.push(doc)
+      })
+    } else {
+      console.log('No document found!');
+    }
+  });
+  return data;
+}
 
 export async function getFvrtsListing(collection, doc1) {
 

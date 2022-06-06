@@ -80,7 +80,8 @@ const Home = ({ navigation }) => {
                     alignSelf:'center',
                     fontSize:24,
                     fontFamily:'Poppins-SemiBold'}}>Super Match Found!</Apptext>
-                    <Image style={{marginTop:17, alignSelf:'center', backgroundColor:'#181818'}} source={require('../../../../assets/modalStar.png')} />
+                    <Image style={{marginTop:17, alignSelf:'center', backgroundColor:'#181818'}} 
+                    source={require('../../../../assets/modalStar.png')} />
                     </View>
                     <View style={{
                         flexDirection:'row',

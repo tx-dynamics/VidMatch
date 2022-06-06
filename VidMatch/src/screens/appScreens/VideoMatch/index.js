@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet, Text, View, Dimensions,
   Image, Animated, PanResponder, StatusBar,
+  Modal,
   FlatList,
   ScrollView,
   ImageBackground,
@@ -28,7 +29,7 @@ import Snackbar from 'react-native-snackbar';
 import { Base } from '../../../Constants/Base';
 import DefaultStyles from '../../../config/Styles';
 import { setUserData } from '../../../redux/actions/authAction';
-import { saveFvrtsData, getListing, getMoviesId } from '../../../firebase/utility';
+import { saveFvrtsData, getListing, getMoviesId, getData } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
@@ -130,6 +131,10 @@ export default VideoMatch = ({ navigation }) => {
   const handleOnSwipedTop = () => useSwiper.current.swipeTop();
   const handleOnSwipedRight = () => useSwiper.current.swipeRight();
   /////////////////////////////////////////////////////////////////////////////////////////
+  let chkIndex = "";
+  const Userdata = useSelector((state) => state.auth.userData)
+  // console.log("userData", Userdata)
+
   /////////////////////////////////////////////////////////////////////////////////////////
   const [isItem, setSelectedItem] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -137,8 +142,13 @@ export default VideoMatch = ({ navigation }) => {
   const [isService, setService] = useState('netflix');
   const [isValue, setValue] = useState('');
   const [isArrays, setArrays] = useState(photoCards);
+  const [isReferesh, setReferesh] = useState(false);
+  const [isPage, setPage] = useState(1);
+  const [isVisibe, setVisible] = useState(false)
+  const [isFound, setFound] = useState([])
 
-  // console.log("arrays", isArrays)
+
+  // console.log("arrays", isValue)
   ///////////////////////////////////////////////////////////////////////////////////////
   const addCategories = async (item) => {
     var selectedIdss = [...isItem]
@@ -154,18 +164,23 @@ export default VideoMatch = ({ navigation }) => {
 
   const getMovies = () => {
     setLoading(true)
-    console.log(Base.baseURL + '/changes?service=' + isService + Base.params)
-    fetch(Base.baseURL + '/changes?service=' + isService + Base.params, {
-      method: 'GET',
+    // console.log(Base.apiUrl + '/trending_movies', + isPage)
+    let obj = JSON.stringify({
+      pageNo: isPage
+    })
+    // console.log("body => ", obj)
+    fetch(Base.apiUrl + '/trending_movies', {
+      method: 'POST',
       headers: {
-        'X-RapidAPI-Host': Base.hostName,
-        'X-RapidAPI-Key': Base.hostKey
-      }
+        'Content-Type': 'application/json'
+      },
+      body: obj
     })
       .then((response) => response.json())
       .then((data) => {
-        setData(data)
-        console.log("Data agya", data)
+        // setData(data)
+        setArrays(data.data.results)
+        // console.log("Data agya", data?.data?.results)
         setLoading(false)
       })
       .catch(err => {
@@ -180,23 +195,24 @@ export default VideoMatch = ({ navigation }) => {
   }
 
   useEffect(() => {
-    // getMovies()
-  }, [isService])
+    getMovies()
+  }, [isReferesh])
 
   const addMovie = async (items) => {
     const userInfo = auth().currentUser;
     let Details = {
-      movieName: items?.name,
-      movieDescription: items?.description,
-      movieId: items?.id,
-      moviePoster: items?.photo.uri,
+      id: items.id,
+      adult: items.adult,
+      poster_path: items.poster_path,
+      title: items.title,
+      release_date: items.release_date,
       uid: userInfo.uid
     }
-
+    // console.log("Details Pushing", Details)
     await saveFvrtsData('checkMatch', 'xdi1eAz374DSEhVran9U', Details)
       .then(async user => {
         Snackbar.show({
-          text: items.name + " " + "Added Into Favourites",
+          text: items.title + " " + "Added Into Favourites",
           duration: Snackbar.LENGTH_LONG,
           backgroundColor: DefaultStyles.colors.secondary
         });
@@ -213,43 +229,73 @@ export default VideoMatch = ({ navigation }) => {
       });
   }
 
+  // const chkExistLiked = async (items) => {
+  //   const userInfo = auth().currentUser;
+  //   let res = await getListing("checkMatch", 'xdi1eAz374DSEhVran9U',)
+
+  //   const newestData = await res?.media?.filter(item => item.id !== items.id && userInfo.uid === item.uid)
+
+  //   setTimeout(() => {
+  //     console.log("Details Receving", newestData)
+  //     // setArrays(newestData)
+  //   }, 15000);
+
+  // }
+
   const movieLiked = async (items) => {
     const userInfo = auth().currentUser;
- 
-    let res = await getListing("checkMatch", 'xdi1eAz374DSEhVran9U', )
-    // console.log(res.media, "res")
+    let res = await getListing("checkMatch", 'xdi1eAz374DSEhVran9U',)
+
+    let matchExist;
     let exist;
     let indexes;
     if (res.media.length <= 0) {
-      console.log("Undefined")
+      console.log("Undefined Media")
     }
     else {
-      
-      // const newestData = res?.media?.filter(item => item.movieId !== items.Id && userInfo.uid !== item.uid)
-      // console.log(newestData, "newestData")
+      // chkExistLiked(items)
+      res?.media?.filter((chkVal) => {
+        if (chkVal.id === items.id && userInfo.uid !== chkVal.uid) {
+          matchExist = true
+          getMatchUser(chkVal.uid)
+          // console.log("kl => ",chkVal  )
+        }
+      })
 
       res?.media.map((val, index) => {
         // console.log("db values", val.movieId , items.id , val.uid, userInfo.uid)
-        if (items.id === val.movieId && userInfo.uid === val.uid ) {
+        if (items.id === val.id && userInfo.uid === val.uid) {
           exist = true;
           indexes = index;
         }
       }
       )
-      
+
     }
+    if (matchExist === true) {
+      console.log("Match Id Found")
+      setVisible(true)
+      // setFound(IdFound)
+    }
+
     if (exist === true) {
       Snackbar.show({
-        text: "You Have Already Liked" + " " + items.name,
+        text: "You Have Already Liked" + " " + items.title,
         duration: Snackbar.LENGTH_LONG,
         backgroundColor: DefaultStyles.colors.secondary
       });
     }
-    
+
     else {
       addMovie(items)
     }
-   
+
+  }
+
+  const getMatchUser = async (uid) => {
+    let dt = await getData('Users', uid)
+    setFound([dt])
+    console.log(dt, "dt user")
   }
 
   return (
@@ -260,9 +306,160 @@ export default VideoMatch = ({ navigation }) => {
         centerImg={require('../../../../assets/headerLogo.png')}
         onPressLeft={() => navigation.dispatch(DrawerActions.toggleDrawer())}
       />
+      {/* ///////////////////////////////////////////MODAL EXISTS HERE////////////////////////////////////////////////////////// */}
+      <Modal
+        visible={isVisibe}>
+        <View style={{
+          flex: 1,
+          width: wp('100%'),
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 5,
+          },
+          shadowOpacity: 0.34,
+          shadowRadius: 6.27,
+          elevation: 6,
+          backgroundColor: "#181818",
+        }}>
+          <View
+            style={{
+              marginTop: wp('25%'),
+            }}>
+            <Apptext style={{
+              color: "white",
+              alignSelf: 'center',
+              fontSize: 24,
+              fontFamily: 'Poppins-SemiBold'
+            }}>Super Match Found!</Apptext>
+            <Image style={{ marginTop: 17, alignSelf: 'center', backgroundColor: '#181818' }}
+              source={require('../../../../assets/modalStar.png')} />
+          </View>
+          <FlatList
+            data={isFound}
+            keyExtractor={(item) => item.id}
+            ListEmptyComponent={() => {
+              return (
+                <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
+                  No Item Found
+                </Apptext>
+              );
+            }}
+
+            renderItem={({ item, index }) => (
+              <View>
+                <View style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-evenly',
+                  marginHorizontal: wp('5%'),
+                  marginTop: wp('8%'),
+                  alignItems: 'center',
+
+                }}>
+                  {
+                    Userdata.thumbnail ?
+                      <Image style={{
+                        width: 80, height: 80,
+                        borderRadius: 68
+                      }} source={{ uri: Userdata.thumbnail }} />
+                      :
+                      <Image style={{
+                        width: 80, height: 80,
+                        borderRadius: 68
+                      }} source={require('../../../../assets/blurBoy.png')} />
+
+                  }
+                  <Image style={{
+                    width: 28, height: 28,
+                    tintColor: "white",
+                    borderRadius: 68
+                  }} source={require('../../../../assets/play.png')} />
+
+                  {
+                    item.thumbnail ?
+                      <Image style={{
+                        width: 80, height: 80,
+                        borderRadius: 68
+                      }}
+                        source={{ uri: item.thumbnail }} />
+                      :
+                      <Image style={{
+                        width: 80, height: 80,
+                        borderRadius: 68
+                      }} source={require('../../../../assets/empty-img.jpg')} />
+                  }
+                </View>
+                {/* ////////////////////////////////////////////// */}
+                <View style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                  // marginHorizontal:wp('5%'),
+                  marginTop: wp('3%')
+                }}>
+                  <Apptext style={{
+                    fontSize: 14,
+                    textAlign: 'center',
+                    width: wp('30%'),
+                    color: "white"
+                  }}>{Userdata.displayName}</Apptext>
+                  <Apptext style={{ fontSize: 14, color: "white" }}>{item?.displayName}</Apptext>
+                </View>
+              </View>
+            )}
+            ListFooterComponent={item => (
+          <View>   
+          <TouchableOpacity
+            onPress={() => {
+              console.log("item",item)
+              // navigation.navigate("AddConnect", {items:item})
+              // setVisible(false)
+            }}
+            style={{
+              flexDirection: 'row',
+              width: wp('82%'),
+              height: wp('16%'),
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#dbf7ff',
+              borderRadius: 11,
+              alignSelf: 'center',
+              marginTop: wp('15%'),
+              // marginBottom: wp('6%')
+            }}>
+            <Image
+              style={{ tintColor: DefaultStyles.colors.secondary, marginHorizontal: wp('2%') }}
+              source={require('../../../../assets/msg.png')} />
+            <Apptext style={{
+              fontFamily: 'Poppins-Regular',
+              fontSize: 14,
+              color: DefaultStyles.colors.secondary
+            }}>Send A Message</Apptext>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {
+            navigation.navigate("VideoMatch")
+            setVisible(false)
+          }}>
+            <Apptext
+              style={{
+                fontSize: 18, fontFamily: 'Poppins-Medium',
+                marginTop: wp('20%'),
+                color: "white", alignSelf: 'center'
+              }}>Continue</Apptext>
+          </TouchableOpacity>
+          
+          </View>
+          )}
+          />
+        </View>
+        
+      </Modal>
+
+      {/* ///////////////////////////////////////////MODAL ENDS HERE///////////////////////////////////////////////////////// */}
+
       <ScrollView>
         <View style={{ marginTop: wp('5%'), marginHorizontal: wp('4.5%') }}>
-          <FlatList
+          {/* <FlatList
             data={DATA}
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -307,32 +504,45 @@ export default VideoMatch = ({ navigation }) => {
               </View>
             )}
           />
+           */}
         </View>
         <View>
-          <Swiper
-            ref={useSwiper}
-            animateCardOpacity
-            containerStyle={styles.container}
-            cards={isArrays}
-            renderCard={card =>
-              <Card card={card} onPress={setValue(card)} />
-              // console.log(card)
-            }
-            cardIndex={0}
-            backgroundColor="white"
-            stackSize={1}
-            infinite
-            // goBackToPreviousCardOnSwipeTop={true}
-            // goBackToPreviousCardOnSwipeBottom={true}
-            // goBackToPreviousCardOnSwipeLeft={true}
-            // goBackToPreviousCardOnSwipeRight={true}
-            // onSwiped={(cardIndex) => {console.log("index",cardIndex)}}
-            // onSwipedAll={() => {console.log('onSwipedAll')}}
-            showSecondCard
-            animateOverlayLabelsOpacity
+          {
+            isLoading ? <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} style={{ marginTop: wp('50%') }} />
+              :
+              <Swiper
+                ref={useSwiper}
+                animateCardOpacity
+                containerStyle={styles.container}
+                cards={isArrays}
+                renderCard={card =>
+                  <Card card={card}
+                    btnPress={() => navigation.navigate("VideoDetail")}
+                    onPress={setValue(card)} />
+                  // console.log(card)
+                }
+                cardIndex={0}
+                backgroundColor="white"
+                stackSize={1}
+                infinite
+                // goBackToPreviousCardOnSwipeTop={true}
+                // goBackToPreviousCardOnSwipeBottom={true}
+                // goBackToPreviousCardOnSwipeLeft={true}
+                // goBackToPreviousCardOnSwipeRight={true}
+                onSwiped={(cardIndex) => {
+                  // console.log("index", cardIndex)
+                  chkIndex = cardIndex
+                  if (cardIndex === 4) {
+                    setPage(isPage + 1)
+                    setReferesh(!isReferesh)
+                  }
+                }}
+                // onSwipedAll={() => {console.log('onSwipedAll')}}
+                showSecondCard
+                animateOverlayLabelsOpacity
 
-          />
-
+              />
+          }
         </View>
         <View style={{
           // marginTop:wp('110%'),
@@ -345,7 +555,9 @@ export default VideoMatch = ({ navigation }) => {
             <Image source={require('../../../../assets/cross.png')} />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => handleOnSwipedTop()}
+            onPress={() => {
+              handleOnSwipedTop()
+            }}
             style={[styles.whiteCrcl, { marginTop: -25 }]}>
             <Image source={require('../../../../assets/Ystar.png')} />
           </TouchableOpacity>
@@ -353,6 +565,7 @@ export default VideoMatch = ({ navigation }) => {
             onPress={() => {
               movieLiked(isValue)
               handleOnSwipedRight()
+              chkIndex === "4" ? setReferesh(!isReferesh) : null
             }}
             style={styles.whiteCrcl}>
             <Image source={require('../../../../assets/thumb.png')} />

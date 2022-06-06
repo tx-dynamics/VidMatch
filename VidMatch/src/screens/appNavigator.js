@@ -101,6 +101,7 @@ const GeneralNavigator = () => {
          
             <StackNavigator.Screen name="RecentMatch" component={RecentMatch} />
             <StackNavigator.Screen name="EditProfile" component={EditProfile} />
+            <StackNavigator.Screen name="VideoDetail" component={VideoDetail} />
 
             
 
