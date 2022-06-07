@@ -1,15 +1,16 @@
-import React from 'react';
-import { View, ScrollView, StyleSheet, FlatList, TouchableOpacity, Image, KeyboardAvoidingView, TextInput, ImageBackground } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Image, KeyboardAvoidingView, TextInput, ImageBackground } from 'react-native';
 import Apptext from '../../../components/Apptext';
 import DefaultStyles from "../../../config/Styles";
 import Feather from 'react-native-vector-icons/Feather';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import ChatDetailComp from '../../../components/ChatDetailComp';
 import Header from '../../../components/Header';
+import { Base } from '../../../Constants/Base';
+import Snackbar from 'react-native-snackbar';
+import moment from 'moment';
 
-
-const VideoDetail = ({ navigation }) => {
-
+const VideoDetail = ({ navigation, route }) => {
     const DATA = [
         {
             id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -22,9 +23,51 @@ const VideoDetail = ({ navigation }) => {
         },
        
 
-    ];
+    ];    
+    const movieId = route.params.movieId;
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    const [isLoading, setLoading] = useState(false)
+    const [isData, setData] = useState([]);
+    const [isDuration, setDuration] = useState('');
+////////////////////////////////////////////////////////////////////////////////////////////////////
+const getMovieDetail = () => {
+    setLoading(true)
+    // console.log(Base.apiUrl + '/movie_details', + movieId)
+    let obj = JSON.stringify({
+        movieId: movieId
+    })
+    fetch(Base.apiUrl + '/movie_details', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: obj
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setData(data.data)
+        let hours = Math.trunc(data?.data?.runtime/60);
+        let minutes = data?.data?.runtime % 60;
+        setDuration(hours + "h " + minutes + "m")
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error(err);
+        Snackbar.show({
+          text: err,
+          duration: Snackbar.LENGTH_LONG,
+          backgroundColor: DefaultStyles.colors.primary
+        });
+        setLoading(false)
+      })
+  }
 
+  useEffect(() => {
+    getMovieDetail()
+  }, [])
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
     return (
         <View style={[DefaultStyles.container, { flex: 1, }]}>
             <Header
@@ -36,40 +79,46 @@ const VideoDetail = ({ navigation }) => {
             onPressLeft={() => navigation.goBack()}
             onPressRight={() => navigation.navigate("VideoMatch")}
             />
-            <ScrollView>
-                <TouchableOpacity>
+          {
+              isLoading ? <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} style={{marginTop:wp('50%')}} />
+              :
+            <ScrollView>                
                 <ImageBackground 
                 style={styles.BoxView} imageStyle={{borderRadius:7}}
-                resizeMode='stretch'
-                source={require('../../../../assets/Rectangle7.png')} >
+                resizeMode='cover'
+                source={
+                isData?.poster_path ? {uri : Base.imgBaseUrl + isData.poster_path} 
+                : require('../../../../assets/Rectangle7.png')
+                }>
+                <TouchableOpacity
+                onPress={() => navigation.navigate("VideoPlay", {movieId: isData.id, poster: isData?.poster_path}) }
+                >
                 <Image source={require('../../../../assets/PlayIcon.png')} />
-                </ImageBackground>
                 </TouchableOpacity>
+                </ImageBackground>
                 <View style={styles.DirectionView}>
                     <TouchableOpacity style={styles.threeBoxes}>
                     <Image style={[styles.imgView, {tintColor:"white"}]} source={require('../../../../assets/videoChat.png')} />
                     <Apptext style={styles.BoxesTxt} >Genre</Apptext>
-                    <Apptext style={styles.BoxesBlwTxt} >Action</Apptext>
+                    <Apptext style={styles.BoxesBlwTxt}>{isData?.genres ? isData.genres[0]?.name  : "Action"}</Apptext>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.threeBoxes, {backgroundColor:"#ffc0c0"}]}>
                     <Image style={styles.imgView} source={require('../../../../assets/time.png')} />
                     <Apptext style={[styles.BoxesTxt,{color: "#fe7e7e"}]} >Duration</Apptext>
-                    <Apptext style={styles.BoxesBlwTxt} >2h 15m</Apptext>
+                    <Apptext style={styles.BoxesBlwTxt} >{isDuration ? isDuration : "Un-Specified"}</Apptext>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.threeBoxes, {backgroundColor:"#ffd495"}]}>
                     <Image style={styles.imgView} source={require('../../../../assets/star.png')} />
                     <Apptext style={[styles.BoxesTxt, {color:"#ff9c09"}]} >Rating</Apptext>
-                    <Apptext style={styles.BoxesBlwTxt} >8.7 / 10</Apptext>
+                    <Apptext style={styles.BoxesBlwTxt}>{isData?.vote_average ? isData.vote_average + "/10" : "Average"}</Apptext>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.DescTopTxt}>
-                    <Apptext style={styles.Txt}>The Avengers</Apptext>
+                    <Apptext style={styles.Txt}>{isData?.title  ? isData.title : "Movie Title"}</Apptext>
                     <Apptext style={styles.line}></Apptext>
-                    <Apptext style={styles.descTxt}>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            Pellentesque diam id tincidunt elit tincidunt commodo.
-                            Enim at volutpat porttitor aliquam augue amet tortor neque.</Apptext>
+                    <Apptext style={styles.descTxt}>{isData?.overview ? isData.overview : null} </Apptext>
                 </View>
-            </ScrollView>
+            </ScrollView>}
 
         </View>    
      
@@ -82,7 +131,7 @@ export default VideoDetail;
 const styles = StyleSheet.create({
     BoxView:{
         width:wp('90%'),
-        height:wp('93%'),
+        height:wp('100%'),
         alignSelf:'center',
         alignItems:'center',
         justifyContent:'center',
@@ -113,7 +162,7 @@ const styles = StyleSheet.create({
     },
     BoxesBlwTxt:{
         fontFamily:'Poppins-Medium',
-        fontSize:12,
+        fontSize:11,
         color:"white"
     },
     DescTopTxt:{

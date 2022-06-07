@@ -73,8 +73,6 @@ const Chats = ({ navigation }) => {
     const [data, setData] = useState([]);
     const [search, setsearch] = useState('');
 
-
-
     const chkData = async () => {
         setLoading(true)
         var userInfo = auth().currentUser;
@@ -82,6 +80,18 @@ const Chats = ({ navigation }) => {
         setData(res?.media)
         setLoading(false)
     }
+
+    // const chkData = async () => {
+    //     setLoading(true)
+    //     var userInfo = auth().currentUser;
+    //     let res = await getData("Connections", userInfo.uid)
+    //     res?.media?.map(async(val) => {
+    //     let rest = await getData("Users", val.FrndUid)
+    //     setData([rest])
+    //     })
+    //     setLoading(false)
+    // }
+
 
     useEffect(() => {
         chkData()
@@ -142,7 +152,7 @@ const Chats = ({ navigation }) => {
                   <FlatList
                         data={data}
                         showsVerticalScrollIndicator={false}
-                        keyExtractor={(item) => item?.uid}
+                        keyExtractor={(item) => item?.Frnduid}
                         ListEmptyComponent={() => {
                             return (
                                 <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
@@ -156,7 +166,7 @@ const Chats = ({ navigation }) => {
                                 label={item?.displayName.length >= 20 ? item?.displayName.substring(0,20) + " ..." : item?.displayName }
                                 msg={item.msg ? item.msg : "View Message ..."}
                                 onPress={() => navigation.navigate("ChatDetail", {items:item})}
-                           
+                                // onPress={() => console.log(item)}
                             />
 
                         )}

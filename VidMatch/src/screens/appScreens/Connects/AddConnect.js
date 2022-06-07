@@ -93,6 +93,7 @@ const AddConnect = ({ navigation, route }) => {
 
     const isFocused = useIsFocused();
     const { items } = route.params;
+    // console.log(items)
     ////////////////////////////////////////////////////////////////////////////
 
     const [isTrue, setTrue] = useState(false);

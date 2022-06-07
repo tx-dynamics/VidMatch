@@ -29,7 +29,7 @@ import Snackbar from 'react-native-snackbar';
 import { Base } from '../../../Constants/Base';
 import DefaultStyles from '../../../config/Styles';
 import { setUserData } from '../../../redux/actions/authAction';
-import { saveFvrtsData, getListing, getMoviesId, getData } from '../../../firebase/utility';
+import { saveFvrtsData, getListing, getMoviesId, getData, getMultiMatch } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
@@ -254,13 +254,17 @@ export default VideoMatch = ({ navigation }) => {
     }
     else {
       // chkExistLiked(items)
+      let details = []
       res?.media?.filter((chkVal) => {
         if (chkVal.id === items.id && userInfo.uid !== chkVal.uid) {
           matchExist = true
-          getMatchUser(chkVal.uid)
-          // console.log("kl => ",chkVal  )
+          details.push(chkVal.uid)
+          // getMatchUser(chkVal.uid)
+          // console.log("kl => ",chkVal.uid  )
         }
       })
+      // console.log("gg", details)
+      getMatchUser(details)
 
       res?.media.map((val, index) => {
         // console.log("db values", val.movieId , items.id , val.uid, userInfo.uid)
@@ -293,9 +297,13 @@ export default VideoMatch = ({ navigation }) => {
   }
 
   const getMatchUser = async (uid) => {
-    let dt = await getData('Users', uid)
-    setFound([dt])
-    console.log(dt, "dt user")
+    console.log("uid",uid)
+    let details = [];
+    uid.map(async(item) => {
+      let dt = await getData('Users', item)
+      details.push(dt)
+      setFound([...details])
+    })
   }
 
   return (
@@ -347,13 +355,14 @@ export default VideoMatch = ({ navigation }) => {
             }}
 
             renderItem={({ item, index }) => (
-              <View>
+              <ScrollView>
                 <View style={{
                   flexDirection: 'row',
                   justifyContent: 'space-evenly',
                   marginHorizontal: wp('5%'),
                   marginTop: wp('8%'),
                   alignItems: 'center',
+                  // backgroundColor:"red"
 
                 }}>
                   {
@@ -377,16 +386,20 @@ export default VideoMatch = ({ navigation }) => {
 
                   {
                     item.thumbnail ?
+                    <TouchableOpacity onPress={() => navigation.navigate("AddConnect", {items:item})}>
                       <Image style={{
                         width: 80, height: 80,
                         borderRadius: 68
                       }}
                         source={{ uri: item.thumbnail }} />
+                      </TouchableOpacity>
                       :
+                      <TouchableOpacity>
                       <Image style={{
                         width: 80, height: 80,
                         borderRadius: 68
                       }} source={require('../../../../assets/empty-img.jpg')} />
+                    </TouchableOpacity>
                   }
                 </View>
                 {/* ////////////////////////////////////////////// */}
@@ -394,7 +407,6 @@ export default VideoMatch = ({ navigation }) => {
                   flexDirection: 'row',
                   justifyContent: 'space-around',
                   alignItems: 'center',
-                  // marginHorizontal:wp('5%'),
                   marginTop: wp('3%')
                 }}>
                   <Apptext style={{
@@ -405,11 +417,13 @@ export default VideoMatch = ({ navigation }) => {
                   }}>{Userdata.displayName}</Apptext>
                   <Apptext style={{ fontSize: 14, color: "white" }}>{item?.displayName}</Apptext>
                 </View>
-              </View>
+
+              </ScrollView>
             )}
             ListFooterComponent={item => (
           <View>   
-          <TouchableOpacity
+         
+          {/* <TouchableOpacity
             onPress={() => {
               console.log("item",item)
               // navigation.navigate("AddConnect", {items:item})
@@ -425,7 +439,6 @@ export default VideoMatch = ({ navigation }) => {
               borderRadius: 11,
               alignSelf: 'center',
               marginTop: wp('15%'),
-              // marginBottom: wp('6%')
             }}>
             <Image
               style={{ tintColor: DefaultStyles.colors.secondary, marginHorizontal: wp('2%') }}
@@ -436,14 +449,17 @@ export default VideoMatch = ({ navigation }) => {
               color: DefaultStyles.colors.secondary
             }}>Send A Message</Apptext>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {
+          */}
+          <TouchableOpacity
+          style={{ marginTop:wp('15%')}}
+          onPress={() => {
             navigation.navigate("VideoMatch")
             setVisible(false)
           }}>
             <Apptext
               style={{
                 fontSize: 18, fontFamily: 'Poppins-Medium',
-                marginTop: wp('20%'),
+                marginTop: wp('15%'),
                 color: "white", alignSelf: 'center'
               }}>Continue</Apptext>
           </TouchableOpacity>
@@ -517,7 +533,7 @@ export default VideoMatch = ({ navigation }) => {
                 cards={isArrays}
                 renderCard={card =>
                   <Card card={card}
-                    btnPress={() => navigation.navigate("VideoDetail")}
+                    btnPress={() => navigation.navigate("VideoDetail", {movieId : card.id})}
                     onPress={setValue(card)} />
                   // console.log(card)
                 }

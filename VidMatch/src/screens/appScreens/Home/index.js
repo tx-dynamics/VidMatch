@@ -39,14 +39,16 @@ const Home = ({ navigation }) => {
         setLoading(true)
         var userInfo = auth().currentUser;
         let res = await getData("Connections", userInfo.uid)
-        setData(res?.media)
-        // res?.media.map(async(val) => {
-        // let rest = await getData("Connections", val.FrndUid)
-        // setData(rest.media)
-        // })
-        console.log("media",res?.media)
-        // console.log("Home Data",res, userInfo.uid)
-        setLoading(false)
+        // console.log("res", res.media)
+        let details = []
+        res?.media.map(async(val) => {
+        let rest = await getData("Users", val.FrndUid)
+        // console.log("rest",rest)
+        details.push(rest)    
+        setData([...details])
+        setLoading(false)    
+    })
+    setLoading(false)
     }
   
 
@@ -165,7 +167,7 @@ const Home = ({ navigation }) => {
                    : 
                    <FlatList
                         data={data}
-                        keyExtractor={(item) => item?.FrndUid}
+                        keyExtractor={(item) => item?.uid}
                         showsVerticalScrollIndicator={false}
                         // style={{maxHeight:'100%'}}
                         ListEmptyComponent={() => {

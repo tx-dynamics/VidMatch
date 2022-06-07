@@ -53,6 +53,21 @@ export async function upDateData(collection, doc, jsonObject) {
     });
 }
 
+export async function getMultiMatch(collection, doc1) {
+
+  console.log(collection, doc1)
+  let data = [];
+  await firestore().collection(collection).doc(doc1).get().then(function (doc) {
+    if (doc.exists) {
+      data.push(doc.data())
+      // console.log(doc.data())
+    } else {
+      return false;
+    }
+  });
+  return data;
+}
+
 export function getData(collection, doc, objectKey) {
   // check if data exists on the given path
   if (objectKey === undefined) {
