@@ -31,7 +31,6 @@ const ChatDetail = ({ navigation, route }) => {
 
     const items = route.params.items;
     const [messages, setMessages] = useState([]);
-    const [isTxt, setTxt] = useState([]);
     console.log("Rcvd", items)
     var userInfo = auth().currentUser;
     console.log("Crnt USer", userInfo.uid)
@@ -87,7 +86,6 @@ const ChatDetail = ({ navigation, route }) => {
     const chkFrndExist = async() => {
     const userInfo = auth().currentUser;
     let chats = await getData('Chats', items.FrndUid);
-    console.log("chats", chats)
     if (chats === false) {
         console.log("Chat Undefined")
         await saveInitialChat('Chats', items.FrndUid)

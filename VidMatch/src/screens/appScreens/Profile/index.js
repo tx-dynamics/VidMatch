@@ -130,7 +130,7 @@ const Profile = ({ navigation }) => {
                 :
                 <View style={styles.twoLowerTxts}>
                     <Apptext style={styles.nmbrTxt} >{connectNumber ? connectNumber : "00"}</Apptext>
-                    <Apptext style={styles.nmbrTxt}>07</Apptext>
+                    <Apptext style={styles.nmbrTxt}>00</Apptext>
                 </View>
                 }
                 <Apptext style={styles.HLine}> </Apptext>

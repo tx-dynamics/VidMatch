@@ -90,7 +90,8 @@ const SignIn = ({ navigation }) => {
                 provider:"google",
                 createdAt: new Date().toISOString(),
                 thumbnail: info?.user?.photo,
-                uid: uid
+                uid: uid,
+                isPaid:false
               };
               const userDatabase = firestore().collection(`Users`).doc(uid);
               userDatabase.set(regData).then(async() => { 

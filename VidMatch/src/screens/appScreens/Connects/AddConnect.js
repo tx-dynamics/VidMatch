@@ -85,6 +85,8 @@ const AddConnect = ({ navigation, route }) => {
 
     ];
 
+    const Userdata = useSelector((state) => state.auth.userData)
+    console.log("userdt", Userdata.isPaid)
 
     let dispatch = useDispatch();
     const FavItems = useSelector((state) => state.auth.ItemLikes)
@@ -101,6 +103,7 @@ const AddConnect = ({ navigation, route }) => {
     const [isChk, setChk] = useState(false);
     const [isAdded, setAdded] = useState(false);
     const [isReqs, setReqs] = useState(false);
+    const [isPaymentStatus, setPaymentStatus] = useState(false);
     const [connectNumber, setConnectNumber] = useState('');
 
 
@@ -332,7 +335,10 @@ const AddConnect = ({ navigation, route }) => {
         setLoading(true)
         var userInfo = auth().currentUser;
         let res = await getData("Connections", userInfo.uid)
-        
+        if (res?.media?.length === 1 && Userdata.isPaid === false) {
+            console.log("res con",res?.media?.length)
+            setPaymentStatus(true)
+        }
         let rest = await getData("Connections", items.uid)
         // console.log("Rest", rest?.media)
         setConnectNumber(rest?.media?.length)
@@ -371,6 +377,14 @@ const AddConnect = ({ navigation, route }) => {
         var userInfo = auth().currentUser;
         let res = await getData("RequestList", items.uid)
         let rest = await getData("RequestList", userInfo.uid)
+
+        rest?.media?.map((item) => {
+        if (rest?.media?.length === 1 && Userdata.isPaid === false && Userdata.uid === item.uid ) {
+            console.log("res req",res?.media?.length, Userdata.uid)
+            setPaymentStatus(true)
+        }
+        })
+
 
         const newestData = rest?.media?.filter(function (item) {
             const itemData = item.FrndUid;
@@ -480,7 +494,6 @@ const AddConnect = ({ navigation, route }) => {
                     <Apptext style={styles.nmbrTxt} >{connectNumber ? connectNumber : "00" }</Apptext>
                     <Apptext style={styles.nmbrTxt}>{isTrue ? "00" : ""} </Apptext>
                 </View>
-
                 {
                     isLoading ? <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
                         :
@@ -498,10 +511,17 @@ const AddConnect = ({ navigation, route }) => {
                             : isReqs === false && isTrue === false && isAdded === false ?
                                 <TouchableOpacity
                                     onPress={() => {
-                                        addConnection()
+                                      isPaymentStatus ?
+                                      navigation.navigate("withoutBottomTabnavigator",{screen: "AskPaymentOption"})
+                                      :
+                                      addConnection()
                                     }}
-                                    style={[styles.addBtn, { width: wp('90%') }]}>
-                                    <Apptext style={styles.btnTxt}>Add to Your Connection</Apptext>
+                                    style={isPaymentStatus ? [styles.addBtn,{backgroundColor:DefaultStyles.colors.primary,
+                                    
+                                    width: wp('90%') }] : [styles.addBtn, { width: wp('90%') }]}>
+                                    <Apptext style={styles.btnTxt}>
+                                    {isPaymentStatus ? 
+                                    "Please Buy Premium Package " : "Add to Your Connection"}</Apptext>
                                 </TouchableOpacity>
                                 :
                                 null
@@ -538,29 +558,6 @@ const AddConnect = ({ navigation, route }) => {
                         <Apptext style={styles.btnTxt}>Connection Added</Apptext>
                     </TouchableOpacity>
                     : null}
-
-                {/* {isOptions ?
-                     <TouchableOpacity
-                     style={[styles.addBtn, {
-                         width: wp('90%'),
-                         backgroundColor: DefaultStyles.colors.secondary
-                     }]}>
-                     <Image style={{ marginHorizontal: wp('2%') }}
-                         source={require('../../../../assets/msg.png')} />
-                     <Apptext style={styles.btnTxt}>Added</Apptext>
-                 </TouchableOpacity> 
-                    : 
-                        <TouchableOpacity
-                        onPress={() => {
-
-                        }}
-                        style={[styles.addBtn, {width:wp('80%'),
-                         backgroundColor: DefaultStyles.colors.secondary }]}>
-                        <Apptext style={styles.btnTxt}>Pending Request ...</Apptext>
-                    </TouchableOpacity>
-                } */}
-
-
                 <Apptext style={styles.HLine}> </Apptext>
 
             </View >

@@ -258,12 +258,9 @@ export default VideoMatch = ({ navigation }) => {
       res?.media?.filter((chkVal) => {
         if (chkVal.id === items.id && userInfo.uid !== chkVal.uid) {
           matchExist = true
-          details.push(chkVal.uid)
-          // getMatchUser(chkVal.uid)
-          // console.log("kl => ",chkVal.uid  )
+          details.push(chkVal)
         }
       })
-      // console.log("gg", details)
       getMatchUser(details)
 
       res?.media.map((val, index) => {
@@ -296,16 +293,31 @@ export default VideoMatch = ({ navigation }) => {
 
   }
 
-  const getMatchUser = async (uid) => {
-    console.log("uid",uid)
+  const getMatchUser = async (obj) => {
+    // console.log("obj", obj)
+    // const userInfo = auth().currentUser;
+    // let chkState = [];
+    // const newData = obj?.map(async(val) => {
+    //   let res = await getData("Connections", userInfo.uid)
+    //   res?.media?.map((item) => {
+    //     console.log("val", val.uid, item.FrndUid)
+    //     const itemData = val.uid;
+    //     const textData = item.FrndUid ;
+    //     return itemData.indexOf(textData) >= 0;    
+    //   })
+    // })
+
+    // console.log("new data => ", newData)
+    
     let details = [];
-    uid.map(async(item) => {
-      let dt = await getData('Users', item)
+    obj.map(async(item) => {
+      let dt = await getData('Users', item.uid)
       details.push(dt)
       setFound([...details])
-    })
+    })    
   }
-
+  
+ 
   return (
     <View style={styles.container}>
       <Header
@@ -345,7 +357,7 @@ export default VideoMatch = ({ navigation }) => {
           </View>
           <FlatList
             data={isFound}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.uid}
             ListEmptyComponent={() => {
               return (
                 <Apptext style={{ alignSelf: "center", marginTop: 50 }}>

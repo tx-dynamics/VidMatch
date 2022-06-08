@@ -87,7 +87,8 @@ const SignUp = ({ navigation }) => {
                 provider:"google",
                 createdAt: new Date().toISOString(),
                 thumbnail: info?.user?.photo,
-                uid: uid
+                uid: uid,
+                isPaid:false
               };
           const userDatabase = firestore().collection(`Users`).doc(uid);
           userDatabase.set(Details).then(async() => { 
@@ -161,7 +162,8 @@ const SignUp = ({ navigation }) => {
                         fullName: fName,
                         lastName:lName,
                         displayName:fName + " " + lName,
-                        uid:user.user.uid
+                        uid:user.user.uid,
+                        isPaid:false
                     };
 
                     console.log(Details, "Details")

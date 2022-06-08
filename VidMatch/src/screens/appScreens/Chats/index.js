@@ -15,7 +15,7 @@ import FormButton from '../../../components/FormButton';
 import Header from '../../../components/Header';
 import InboxComp from '../../../components/InboxComp';
 import { DrawerActions, useNavigation } from '@react-navigation/native'
-import { getData } from '../../../firebase/utility';
+import { getData, getMultiMatch } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
 
 
@@ -72,25 +72,40 @@ const Chats = ({ navigation }) => {
     const [isLoading, setLoading] = useState(false)
     const [data, setData] = useState([]);
     const [search, setsearch] = useState('');
-
-    const chkData = async () => {
-        setLoading(true)
-        var userInfo = auth().currentUser;
-        let res = await getData("Connections", userInfo.uid)
-        setData(res?.media)
-        setLoading(false)
-    }
+    const [isCon, setCon] = useState('');
 
     // const chkData = async () => {
     //     setLoading(true)
     //     var userInfo = auth().currentUser;
     //     let res = await getData("Connections", userInfo.uid)
-    //     res?.media?.map(async(val) => {
-    //     let rest = await getData("Users", val.FrndUid)
-    //     setData([rest])
-    //     })
+    //     setData(res?.media)
     //     setLoading(false)
     // }
+
+    const chkData = async () => {
+        setLoading(true)
+        var userInfo = auth().currentUser;
+        let res = await getData("Connections", userInfo.uid)       
+        let details = [];
+        res?.media?.map(async(val) => {
+        let rest = await getMultiMatch("Users", val.FrndUid)
+        rest.map((item) => {
+            let items = {
+                FrndUid: val.FrndUid,
+                displayName:val.displayName,
+                email:val.email,
+                fullName:val.fullName,
+                lastName: val.lastName,
+                uid: val.uid,
+                thumbnail:item.thumbnail,
+                isPaid:item.isPaid
+            }
+            details.push(items)
+            setData([...details])
+        })
+        })
+        setLoading(false)
+    }
 
 
     useEffect(() => {
@@ -152,7 +167,7 @@ const Chats = ({ navigation }) => {
                   <FlatList
                         data={data}
                         showsVerticalScrollIndicator={false}
-                        keyExtractor={(item) => item?.Frnduid}
+                        keyExtractor={(item) => item?.FrndUid}
                         ListEmptyComponent={() => {
                             return (
                                 <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
