@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import {
     View, Text, StyleSheet, Image,
     StatusBar, SafeAreaView, ScrollView, Dimensions, Pressable, FlatList,
-    TextInput, Share, Keyboard, ImageBackground, Modal, TouchableOpacity
+    TextInput, Share, Keyboard, ImageBackground, Modal, TouchableOpacity, ActivityIndicator
 } from 'react-native'
 import {
     widthPercentageToDP as wpp,
@@ -22,11 +22,18 @@ import DefaultStyles from "../../../config/Styles";
 import Apptext from '../../../components/Apptext';
 import { useSelector } from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
+import { Base } from '../../../Constants/Base';
+import Snackbar from 'react-native-snackbar';
+import { saveData,getListing,saveFav, removeToArray, saveFvrtsData, getData, saveInitialData } from '../../../firebase/utility';
+import auth from '@react-native-firebase/auth';
+import { setUser } from '../../../redux/actions/authAction';
+import { useDispatch } from "react-redux";
 
 
 
 const ElsePayment = (props) => {
 
+    let dispatch = useDispatch();
     const [cardnum, setcardnum] = useState('');
     const [nam, setnam] = useState('');
     const [exp, setexp] = useState('');
@@ -34,9 +41,104 @@ const ElsePayment = (props) => {
     const [promo, setpromo] = useState('');
     const [show, setshow] = useState(false);
     const [isPayment, setPayment] = useState(false);
+    const [isLoading, setLoading] = useState('');
+    ////////////////////////////////////////////////////////////////////////////
     const user = useSelector((state) => state.auth.user)
+    const Userdata = useSelector((state) => state.auth.userData)
+    const methodName = useSelector((state) => state.auth.methodName)
+    const isPckg = useSelector((state) => state.auth.userPckg)
+    // console.log("num",isPckg.msg)
 
+    const CallApi = () => {
+        setLoading(true)
+        const obj = JSON.stringify({
+            "email": Userdata.email.toString(),
+            "amount": isPckg.msg,
+            "token": {
+                "number": cardnum ? cardnum : "000000000000000",
+                "exp_month": exp.substring(0,2),
+                "exp_year": exp.substring(5,7),
+                "cvc": cvc,
+                "name": nam
+            }
+        })
+        console.log("obj",obj);
+  
+        fetch(Base.paymentUrl + '/stripe/make_payment' , {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: obj
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data.code)
+                if (data?.code === 200) {
+                    // console.log("status 200", data)
+                    saveDatas()
+                    setPayment(true)
+                    setLoading(false)
+                }
+                else {
+                    console.log("In Else")
+                    Snackbar.show({
+                        text: 'Please Check Your Card Details',
+                        duration: Snackbar.LENGTH_LONG,
+                        backgroundColor: DefaultStyles.colors.primary
+                    });
+                    setLoading(false)
+                }
+            })
+            .catch((error) => 
+            {
+              setLoading(false)
+              console.log(error)
+              Snackbar.show({
+                text: error,
+                backgroundColor: 'red',
+                textColor:"white"
+              });
+            }
+            )
+      }
 
+      const saveDatas = async() => {
+        setLoading(true)
+        let uid = auth()?.currentUser?.uid
+        var Details = {
+            email: Userdata.email,
+            fullName: Userdata.fullName,
+            lastName: Userdata.lastName,
+            displayName: Userdata.displayName,
+            thumbnail: Userdata.thumbnail,
+            uid: uid,
+            isPaid:true,
+            packageDetail:isPckg.label,
+            PlanDate : new Date().toISOString(),
+            
+        };
+          var paidDetails = {
+            uid: uid,
+            isPaid:true,
+            packageDetail:isPckg.label,
+            PlanDate : new Date().toISOString(),
+
+          };
+          console.log("regdata", paidDetails)
+        await saveData('paidUsers',uid, paidDetails)
+        await saveData('Users',uid, Details).
+        then(() => {     
+              Snackbar.show({
+                text: 'Payment Record Saved',
+                duration: Snackbar.LENGTH_LONG,
+                backgroundColor: DefaultStyles.colors.secondary
+            });
+        setLoading(false)
+        })
+      }
+      
+      
 
     return (
         <View style={styles.container}>
@@ -75,7 +177,7 @@ const ElsePayment = (props) => {
                                 maxLength={19}
                                 keyboardType='fe'
                                 rightIconName={iconPath.mc}
-                                keyboardType=''
+                                // keyboardType=''
                                 placeholder={"0000   0000   0000    0000"}
                                 placeholderTextColor='#929DA9'
                                 color='#424D59'
@@ -158,13 +260,17 @@ const ElsePayment = (props) => {
                                 </View>
                             </View>
 
-                            <Button
+                        {isLoading ?
+                        <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
+                        :
+                        <Button
                                 icon={true}
                                 iconName={iconPath.paylock}
                                 onPress={() => {
                                     cardnum !== '' && nam !== '' && exp !== '' && cvc !== '' ?
                                         //   setshow(true)
-                                        setPayment(true)
+                                        CallApi()
+                                        // setPayment(true)
                                         :
                                         console.log('no')
                                 }}
@@ -176,8 +282,7 @@ const ElsePayment = (props) => {
                                 height={hp(9.5)}
                                 borderRadius={20}
                                 marginBottom={hp(1.5)}
-
-                            />
+                            />}
                         </View>
                     </> :
                     <Pressable onPress={() => props.navigation.navigate('HomeScreen')}>
@@ -238,7 +343,8 @@ const ElsePayment = (props) => {
                                 setPayment(false)
                                 {
                                 user ? props.navigation.navigate("Home"):
-                                props.navigation.navigate("Login")
+                                dispatch(setUser(true))
+                                // props.navigation.navigate("Login")
                                 }
                                 }}
                             style={[styles.buttonContainer, { marginTop: wpp('60%') }]}>

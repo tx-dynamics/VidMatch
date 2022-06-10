@@ -2,7 +2,9 @@ const INITIAL_STATE = {
     user: false,
     ItemLikes:[],
     ReqLists:[],
-    userData:[]
+    userData:[],
+    userPckg:null,
+    methodName:''
 
 }
 
@@ -16,6 +18,10 @@ export default function (state = INITIAL_STATE, action){
         return {...state, ReqLists: action.payload}
         case "userList" :
         return {...state, userData: action.payload}
+        case "isPckg" :
+        return {...state, userPckg: action.payload}
+        case "isMethodName" :
+        return {...state, methodName: action.payload}
         default:
             return state
     }

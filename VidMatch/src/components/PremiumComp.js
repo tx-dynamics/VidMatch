@@ -60,6 +60,8 @@ const styles = StyleSheet.create({
     },
     ofrTxt:{
         fontSize:12,
+        // backgroundColor:"red",
+        textAlign:'right',
         color:DefaultStyles.colors.secondary,
         fontFamily:"Poppins-Regular"
     },

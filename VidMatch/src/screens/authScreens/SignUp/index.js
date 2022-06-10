@@ -163,7 +163,9 @@ const SignUp = ({ navigation }) => {
                         lastName:lName,
                         displayName:fName + " " + lName,
                         uid:user.user.uid,
-                        isPaid:false
+                        isPaid:false,
+                        thumbnail: null,
+                        
                     };
 
                     console.log(Details, "Details")

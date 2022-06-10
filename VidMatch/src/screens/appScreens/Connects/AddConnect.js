@@ -86,7 +86,7 @@ const AddConnect = ({ navigation, route }) => {
     ];
 
     const Userdata = useSelector((state) => state.auth.userData)
-    console.log("userdt", Userdata.isPaid)
+    // console.log("userdt", Userdata.isPaid)
 
     let dispatch = useDispatch();
     const FavItems = useSelector((state) => state.auth.ItemLikes)
@@ -163,7 +163,7 @@ const AddConnect = ({ navigation, route }) => {
         };
 
         let dt = await getData('Users', userInfo.uid)
-        console.log("dt",dt)
+        // console.log("dt",dt)
         let Details1 = {
             email: dt?.email,
             fullName: dt?.fullName,
@@ -192,13 +192,13 @@ const AddConnect = ({ navigation, route }) => {
         dispatch(setItemLikes(res.media))
         dispatch(setReqLists(rest.media))
         if (FavItems === undefined) {
-            console.log("Undefined found")    
+            // console.log("Undefined found")    
             setLoading(false)
             
         }
         else{
             setLoading(false)
-            console.log("FavItems",FavItems, reqItems)        
+            // console.log("FavItems",FavItems, reqItems)        
         }
     }
 
@@ -216,32 +216,32 @@ const AddConnect = ({ navigation, route }) => {
         let exist ;
         let indexes ;
         if (typeof FavItems === "undefined") {
-            console.log("Undefined")
+            // console.log("Undefined")
         }
         else{
             FavItems.map((val, index) => 
             {
                 if (items.uid === val.uid) {
-                    console.log("exists")
-                    console.log("index", index)
+                    // console.log("exists")
+                    // console.log("index", index)
                     exist = true;
                     indexes = index;
                 }     
             })
         }
     if (exist === true) {
-        console.log(indexes)
+        // console.log(indexes)
         FavItems.splice(indexes,1)
         await firestore().collection("RequestList").doc(userInfo.uid).delete().
         then(async() => {
-            console.log("Favitems",FavItems)
+            // console.log("Favitems",FavItems)
             await saveFav("RequestList",userInfo.uid, FavItems)
             setChk(!isChk)
             removeFrnd()
         })
     }
     else{
-        console.log("Else FavItems",FavItems)
+        // console.log("Else FavItems",FavItems)
         // FavItems.push(Details)
         // await saveFav("RequestList",userInfo.uid, FavItems)
     }
@@ -262,25 +262,25 @@ const AddConnect = ({ navigation, route }) => {
         let exist ;
         let indexes ;
         if (typeof reqItems === "undefined") {
-            console.log("Undefined")
+            // console.log("Undefined")
         }
         else{
             reqItems.map((val, index) => 
             {
                 if (items.uid === val.uid) {
-                    console.log("exists")
-                    console.log("index", index)
+                    // console.log("exists")
+                    // console.log("index", index)
                     exist = true;
                     indexes = index;
                 }     
             })
         }
     if (exist === true) {
-        console.log(indexes)
+        // console.log(indexes)
         reqItems.splice(indexes,1)
         await firestore().collection("RequestList").doc(items.uid).delete().
         then(async() => {
-            console.log("Favitems",reqItems)
+            // console.log("Favitems",reqItems)
             await saveFav("RequestList",items.uid, reqItems)
             setChk(!isChk)
             setTrue(false)
@@ -336,7 +336,7 @@ const AddConnect = ({ navigation, route }) => {
         var userInfo = auth().currentUser;
         let res = await getData("Connections", userInfo.uid)
         if (res?.media?.length === 1 && Userdata.isPaid === false) {
-            console.log("res con",res?.media?.length)
+            // console.log("res con",res?.media?.length)
             setPaymentStatus(true)
         }
         let rest = await getData("Connections", items.uid)
@@ -368,47 +368,41 @@ const AddConnect = ({ navigation, route }) => {
             setLoading(false)
         }
 
-        // setLoading(false)
+        setLoading(false)
     }
 
     const chkFrnd = async () => {
         setLoading(true)
-        // console.log("inside chk frnd")
         var userInfo = auth().currentUser;
         let res = await getData("RequestList", items.uid)
         let rest = await getData("RequestList", userInfo.uid)
 
         rest?.media?.map((item) => {
+            // console.log(rest?.media?.length , Userdata.isPaid , Userdata.uid , item.uid)
         if (rest?.media?.length === 1 && Userdata.isPaid === false && Userdata.uid === item.uid ) {
-            console.log("res req",res?.media?.length, Userdata.uid)
             setPaymentStatus(true)
         }
         })
-
 
         const newestData = rest?.media?.filter(function (item) {
             const itemData = item.FrndUid;
             const textData = items.uid;
             return itemData.indexOf(textData) !== -1;
         });
-        // console.log("Newest Data", newestData)
-        // console.log("res", res.media)
+
+        // console.log("new Data", newestData)
         const newData = res?.media?.filter(function (item) {
             const itemData = item.FrndUid;
             const textData = items.uid;
             return (itemData, textData);
         });
-        // console.log("chk newData", newData)
 
         if (typeof newestData === "undefined") {
-            // console.log("Undefined Reqs List")
             setLoading(false)
         }
         else {
-            // console.log("Rcvd")
             newData?.map((val) => {
-                // console.log("chk newData", newData)
-                console.log(val.uid, userInfo.uid)
+                console.log("chk =>",  val.FrndUid,items.uid ,val.uid, userInfo.uid)
                 if (val.FrndUid === items.uid && val.uid === userInfo.uid) {
                     setTrue(true)
                     setLoading(false)
@@ -420,10 +414,13 @@ const AddConnect = ({ navigation, route }) => {
                     setLoading(false)
                     // console.log("else if")
                 }
-                else {
-                    // console.log("out")
-                    setTrue(false)
+                else if(val.uid === items.uid && val.FrndUid === userInfo.uid){
                     setReqs(true)
+                }
+                else {
+                    console.log("out", val.uid , items.uid,val.FrndUid, userInfo.uid)
+                    setTrue(false)
+                    setReqs(false)
                     setLoading(false)
                 }
             })
@@ -439,7 +436,6 @@ const AddConnect = ({ navigation, route }) => {
         let connections = await getData('RequestList', items.uid);
         let ScndConnections = await getData('RequestList', userInfo.uid);
         if (connections === false && ScndConnections === false) {
-            console.log("Undefined")
             await saveInitialData('RequestList', items.uid)
             await saveInitialData('RequestList', userInfo.uid)
             setLoading(false)
@@ -480,7 +476,7 @@ const AddConnect = ({ navigation, route }) => {
                                 style={styles.imgBox}
                                 source={require("../../../../assets/empty-img.jpg")}
                             />}
-                    <Apptext style={styles.imgTxt} >{items?.displayName}</Apptext>
+                    <Apptext style={[styles.imgTxt, {width:wp('80%'), textAlign:'center'}]} >{items?.displayName}</Apptext>
                 </TouchableOpacity>
                 {/* <ScrollView> */}
                 <View style={styles.twoTxts}>
@@ -512,7 +508,7 @@ const AddConnect = ({ navigation, route }) => {
                                 <TouchableOpacity
                                     onPress={() => {
                                       isPaymentStatus ?
-                                      navigation.navigate("withoutBottomTabnavigator",{screen: "AskPaymentOption"})
+                                      navigation.navigate("Premium")
                                       :
                                       addConnection()
                                     }}
@@ -534,8 +530,8 @@ const AddConnect = ({ navigation, route }) => {
                             <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
                                 <TouchableOpacity
                                     onPress={() => addFrnd()}
-                                    style={[styles.addBtn, { backgroundColor: DefaultStyles.colors.secondary }]}>
-
+                                    style={[styles.addBtn, 
+                                    { backgroundColor: DefaultStyles.colors.secondary }]}>
                                     <Apptext style={styles.btnTxt}>Accept Request</Apptext>
                                 </TouchableOpacity>
                                 <TouchableOpacity

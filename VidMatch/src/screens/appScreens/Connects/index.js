@@ -127,6 +127,7 @@ const Connects = ({ navigation, route }) => {
             leftImgName={require('../../../../assets/arrow-back.png')}
             rightImg={require('../../../../assets/play.png')}
             onPressLeft={() => navigation.goBack()}
+            onPressRight={() => navigation.navigate("VideoMatch")}
             />
          <View style={styles.MainContainer}>
          <TouchableOpacity style={styles.searchBar}>

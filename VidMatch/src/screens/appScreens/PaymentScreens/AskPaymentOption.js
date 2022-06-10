@@ -9,64 +9,52 @@ import Apptext from '../../../components/Apptext';
 import Header from '../../../components/Header';
 import AskPaymentComp from '../../../components/AskPaymentComp';
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { setMethodName } from '../../../redux/actions/authAction';
 
 
 const AskPaymentOption = ({ navigation }) => {
 
-    const user = useSelector((state) => state.auth.user)
-
-    const [isShow, setShow] = useState(false);
-    const [checked, setChecked] = useState('CreditCard');
-
     const DATA = [
-        {
-            id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-            count: "+5",
-            label: "Paypal",
-            msg: "$9,99",
-            chkOffer:false,
-            Img: require("../../../../assets/paypal.png"),
-            dt: "5 minutes ago",
-            move: "Detail"
-        },
-        {
-            id: 'bd7acbewweea-c1b1-46c2-aed5-3ad53abb28ba',
-            count: "",
-            label: 'Per 6 Month',
-            msg: "$41,95",
-            chkOffer:true,
-            offer:"Save ($6,99) 30%",
-            Img: require("../../../../assets/applePay.png"),
-            dt: "2 hours ago",
-            move: "Detail"
-        },
-        {
-            id: 'bd7acbea-c1bewew1-46c2-aed5-3ad53abb28ba',
-            count: "+3",
-            label: "Per 12 Month",
-            msg: "$59,88",
-            chkOffer:true,
-            offer:"Save ($4,99) 50%",
-            Img: require("../../../../assets/googlePay.png"),
-            dt: "3 hours ago",
-            move: "Detail"
-        },
+        // {
+        //     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+        //     label: "Paypal",
+        //     chkOffer:false,
+        //     Img: require("../../../../assets/paypal.png"),
+        // },
+        // {
+        //     id: 'bd7acbewweea-c1b1-46c2-aed5-3ad53abb28ba',
+        //     label: 'ApplePay',            
+        //     Img: require("../../../../assets/applePay.png"),
+            
+        // },
+        // {
+        //     id: 'bd7acbea-c1bewew1-46c2-aed5-3ad53abb28ba',
+        //     label: "GooglePay",
+        //     chkOffer:true,
+        //     Img: require("../../../../assets/googlePay.png"),
+        // },
         {
             id: 'bd7acbea-c1bewe4w1-46c2-aed5-3ad53abb28ba',
-            count: "+3",
-            label: "Per 12 Month",
-            msg: "$59,88",
+            label: "Stripe",
             chkOffer:true,
-            offer:"Save ($4,99) 50%",
             Img: require("../../../../assets/stripe.png"),
-            dt: "3 hours ago",
-            move: "Detail"
+
         },
        
        
     ];
-
+    ///////////////////////////////////////////////////////////////////////////////
+    let dispatch = useDispatch()
+    ///////////////////////////////////////////////////////////////////////////////
+    const user = useSelector((state) => state.auth.user)
+    const isPckg = useSelector((state) => state.auth.userPckg)
+    // console.log("Rcvd => ", isPckg)
+    const [isShow, setShow] = useState(false);
+    const [checked, setChecked] = useState('CreditCard');
     const [isItem, setSelectedItem] = useState([]);
+    const [isLoading, setLoading] = useState('');
+    //////////////////////////////////////////////////////////////////////////////
 
     const addCategories = async (item) => {
         var selectedIdss = [...isItem]
@@ -113,9 +101,11 @@ const AskPaymentOption = ({ navigation }) => {
                                 onPress={() => {
                                     addCategories(item)
                                     {
-                                        user ? navigation.navigate("withoutBottomTabnavigator",{screen:"ElsePayment"}):
+                                        user ? (navigation.navigate("withoutBottomTabnavigator",
+                                        {screen:"ElsePayment"}), dispatch(setMethodName(item.label)))
+                                        :
                                         navigation.navigate("ElsePayment")
-                                     
+                                        dispatch(setMethodName(item.label))
                                     }
                                     // navigation.navigate("withoutBottomTabnavigator", {screen:"ElsePayment"})
                                 }}

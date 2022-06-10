@@ -71,7 +71,11 @@ const SignUpModal = ({ navigation, route }) => {
                         </View>
                     </View>
                     <TouchableOpacity 
-                    onPress={() => navigation.navigate("Premium") }
+                    onPress={() => {
+                    dispatch(setUserData(items))   
+                    // dispatch(setUser(true))
+                    navigation.navigate("Premium")}
+                     }
                     style={styles.btn}>
                         <Apptext style={styles.btnTxt}>Start Now</Apptext>
                     </TouchableOpacity>

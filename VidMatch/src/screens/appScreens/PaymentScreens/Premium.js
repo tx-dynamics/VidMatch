@@ -16,56 +16,77 @@ import PremiumComp from '../../../components/PremiumComp';
 import CountryPicker from 'react-native-country-picker-modal'
 import { CountryCode, Country } from '../../appScreens/PaymentScreens/types';
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import {setPckg } from '../../../redux/actions/authAction';
+import { saveData,getListing, } from '../../../firebase/utility';
+import auth from '@react-native-firebase/auth';
+import Snackbar from 'react-native-snackbar';
+import { useIsFocused } from '@react-navigation/native';    
+import moment from 'moment';
 
 
 const Premium = ({ navigation }) => {
-
-
+    let dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user)
-    console.log("user", user)
+    const isFocused = useIsFocused();
+    const Userdata = useSelector((state) => state.auth.userData)
+
+    /////////////////////////////////////////////////////////////////////////
     const [isItem, setSelectedItem] = useState([]);
     const [withFlag, setWithFlag] = useState('')
     const [countryCode, setCountryCode] = useState('US')
     const [country, setCountry] = useState("America")
     const [isVisibe, setVisible] = useState(false)
+    const [isLoading, setLoading] = useState(false)
+    const [isChkPlan, setChkPlan] = useState('');
+    const [isMDays,setMDays] = useState('');
+    const [isYDays,setYDays] = useState('');
+    const [isHYDays,setHYDays] = useState('');
+
 
     const DATA = [
         {
             id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
             count: "+5",
             label: "Per Month",
-            msg: "$9,99",
-            chkOffer: false,
-            Img: require("../../../../assets/boy1.png"),
+            msg: "9.99",
+            showDate: isMDays + " Days Left",
+            chkOffer: isMDays !=='' && isChkPlan === "Per Month" ? true : false,
             dt: "5 minutes ago",
-            move: "Detail"
+            move: "Detail",
+            clr:isChkPlan === "Per Month" ? true : false
         },
         {
             id: 'bd7acbewweea-c1b1-46c2-aed5-3ad53abb28ba',
             count: "",
             label: 'Per 6 month',
-            msg: "$41,95",
+            msg: "41.95",
             chkOffer: true,
-            offer: "Save ($6,99) 30%",
-            Img: require("../../../../assets/boy2.png"),
+            showDate: isChkPlan === 'Per 6 month' ? isHYDays + " Days Left" : "Save ($6,99) 30%",
+            // offer: '',
             dt: "2 hours ago",
-            move: "Detail"
+            move: "Detail",
+            clr:isChkPlan === 'Per 6 month' ? true : false
+
         },
         {
             id: 'bd7acbea-c1bewew1-46c2-aed5-3ad53abb28ba',
             count: "+3",
             label: "Per 12 month",
-            msg: "$59,88",
+            msg: "59.88",
             chkOffer: true,
-            offer: "Save ($4,99) 50%",
-            Img: require("../../../../assets/boy3.png"),
+            showDate: isChkPlan === "Per 12 month" ? isYDays + " Days Left" : "Save ($4,99) 50%",
+            // offer: "Save ($4,99) 50%",
             dt: "3 hours ago",
-            move: "Detail"
+            move: "Detail",
+            clr:isChkPlan === "Per 12 month" ? true : false
+
         },
 
 
     ];
 
+    // console.log(isChkPlan, "plan")
     const onSelect = (country) => {
         setCountryCode(country.cca2)
         setCountry(country.name)
@@ -83,6 +104,48 @@ const Premium = ({ navigation }) => {
         }
         await setSelectedItem(selectedIdss)
     }
+
+    const getData = async() => {
+    setLoading(true)
+    const userInfo = auth().currentUser;
+    let res = await getListing("paidUsers", userInfo.uid)
+    if (res === false) {
+        console.log("No Paid User")
+        setLoading(false)
+    }
+    else{
+        // console.log("res", res)
+        const cnvrtDate = new Date();
+        let a = new Date(res?.PlanDate);
+        let b = moment(cnvrtDate);
+        let aa = moment(a)
+        let finalY = aa.diff(b, 'days')
+        console.log("finalY", finalY, cnvrtDate, aa)
+        let YearDays = 365
+        let calY = YearDays - finalY
+        console.log("Cal Y => ", calY)
+        setYDays(calY)
+        let finalM = aa.diff(b, 'days')
+        let MonthDays = 30
+        let calM = MonthDays - finalM
+        console.log("Cal M => ", calM)
+        setMDays(calM)
+        let finalHY = aa.diff(b, 'days')
+        let HalfYearDays = 182
+        let calHY = HalfYearDays - finalHY
+        console.log("Cal Half Year => ", calHY)
+        setHYDays(calHY)
+        setChkPlan(res.packageDetail)
+        setLoading(false)
+    }}
+
+    
+
+    useEffect(() => {
+        getData()
+    },[isFocused])
+
+  
 
     return (
         <View style={styles.container}>
@@ -121,8 +184,8 @@ const Premium = ({ navigation }) => {
                     </View>
                 </View>
                 <View style={styles.rgn}>
+                    {/* <View style={{ flexDirection: 'row', marginTop: wp('4%'), }}>
                     <Apptext style={styles.rgnTxt}>Your Region</Apptext>
-                    <View style={{ flexDirection: 'row', marginTop: wp('4%'), }}>
                         <TouchableOpacity onPress={() => setVisible(true)} style={styles.inputContainer}>
                             <CountryPicker
                                 {...{
@@ -139,7 +202,7 @@ const Premium = ({ navigation }) => {
                             />
 
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
                     {/* <TouchableOpacity style={{flexDirection:'row' }} onPress={() => setVisible(true)} >
                         <CountryPicker
                             {...{
@@ -166,8 +229,11 @@ const Premium = ({ navigation }) => {
                     <Apptext style={[styles.rgnTxt, { marginTop: 14 }]}>Select Package</Apptext>
 
                 </View>
+            
                 <View style={{marginTop:wp('4%')}}>
-                    <FlatList
+                  {isLoading ? <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
+                  :
+                  <FlatList
                         data={DATA}
                         maxHeight={"99%"}
                         showsVerticalScrollIndicator={false}
@@ -184,20 +250,25 @@ const Premium = ({ navigation }) => {
                                 labelValue={item.label}
                                 priceValue={item.msg}
                                 isOffer={item.chkOffer}
-                                offerTxt={item.offer}
+                                offerTxt={item.showDate}
                                 onPress={() => {
                                     addCategories(item)
                                     {
-                                    user ? navigation.navigate("withoutBottomTabnavigator",{screen:"AskPaymentOption"}):
+                                    user ? (navigation.navigate("withoutBottomTabnavigator",
+                                    {screen:"AskPaymentOption"}) ,dispatch(setPckg(item)))
+                                    :
                                     navigation.navigate("AskPaymentOption")
+                                    dispatch(setPckg(item))
+                                    
                                  
                                 }
                                 }}
-                                myStl={isItem.includes(item.id) ? true : false}
+                                // myStl={isItem.includes(item.id) ? true : false}
+                                myStl={item.clr}
                             />
 
                         )}
-                    />
+                    />}
                 </View>
             </ScrollView>
         </View>

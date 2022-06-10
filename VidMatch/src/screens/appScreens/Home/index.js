@@ -15,18 +15,23 @@ import FormButton from '../../../components/FormButton';
 import Header from '../../../components/Header';
 import FvrtComp from '../../../components/FvrtComp';
 import {DrawerActions, useNavigation} from '@react-navigation/native'
-import { getAllOfCollection,getData, getAllOptions,getListing } from '../../../firebase/utility';
+import { getAllOfCollection,getData, getAllOptions,getListing, saveData } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
 import { useIsFocused } from '@react-navigation/native';    
 import { setUserData } from '../../../redux/actions/authAction';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
+import moment from 'moment';
+import { Use } from 'react-native-svg';
+import Snackbar from 'react-native-snackbar';
+
 
 const Home = ({ navigation }) => {
 
     let dispatch = useDispatch();
     const Userdata = useSelector((state) => state.auth.userData)
     const userInfo = auth().currentUser;
+    // console.log("Userdata => ", Userdata)
 //////////////////////////////////////////////////////////////////////
 
     const [isVisibe, setVisible] = useState(false)
@@ -38,8 +43,14 @@ const Home = ({ navigation }) => {
     const chkData = async () => {
         setLoading(true)
         var userInfo = auth().currentUser;
+        let own = await getData("Users", userInfo.uid)
+        dispatch(setUserData(own))
         let res = await getData("Connections", userInfo.uid)
         // console.log("res", res.media)
+        if (typeof res.media === "undefined") {
+            console.log("Undefined Media")
+        }
+        else{    
         let details = []
         res?.media.map(async(val) => {
         let rest = await getData("Users", val.FrndUid)
@@ -48,14 +59,73 @@ const Home = ({ navigation }) => {
         setData([...details])
         setLoading(false)    
     })
+    }
     setLoading(false)
     }
-  
 
     useEffect(() => {
         chkData()
+        chkExpiry()
+
     },[isFocused])
     
+    const chkExpiry = async () => {
+        let uid = auth()?.currentUser?.uid
+        let res = await getListing("paidUsers", uid)
+        console.log(res?.packageDetail, "pckg")
+        const cnvrtDate = new Date();
+        let a = new Date(res?.PlanDate);
+        let b = moment(cnvrtDate);
+        let aa = moment(a)
+        let finalY = aa.diff(b, 'days')
+        let YearDays = res?.packageDetail === "Per Month" ? 30 : res?.packageDetail === "Per 6 month" ? 182 : res?.packageDetail === "Per 12 month" ? 365 : null
+        let calY = YearDays - finalY
+        console.log("year DYS",YearDays , finalY)
+        // console.log("calY",calY)
+        if (calY === 0) {
+          saveDatas()
+          console.log("Now Call Data")
+        }
+        else {
+          console.log(calY, "Days Remaning")
+        }
+        //////////////////////////////////
+      }
+      const saveDatas = async () => {
+          let uid = auth()?.currentUser?.uid
+          console.log("in save data", uid)
+        let regData = {
+            displayName: Userdata.displayName,
+            email: Userdata.email,
+            fullName: Userdata.fullName,
+            isPaid: false,
+            packageDetail:null,
+            PlanDate:null,
+            lastName:Userdata.lastName,
+            thumbnail: Userdata.thumbnail,
+            uid: Userdata.uid
+        }
+        let regData1 = {
+            isPaid:false,
+            packageDetail:null,
+            PlanDate:null,
+        }
+        console.log("regdata", regData)
+        await saveData('paidUsers', uid, regData1)
+        await saveData('Users', uid, regData).
+          then(() => {
+            Snackbar.show({
+              text: 'Your Subscription Is Finished',
+              backgroundColor: DefaultStyles.colors.primary,
+              duration: Snackbar.LENGTH_LONG,
+            });
+            // console.log("Saved")
+          })
+      }
+
+    //   useEffect(() => {
+    //     },[])
+
     return (
         <View style={styles.container}>
             <Modal

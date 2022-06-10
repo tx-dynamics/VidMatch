@@ -50,7 +50,7 @@ const Payment = ({ props, route, navigation }) => {
                 leftImgName={require('../../../../assets/arrow-back.png')}
                 onPressLeft={() => navigation.goBack()}
             />
-            <ScrollView>
+            <View>
                 {!show ?
                     <>
                         <View style={{ paddingHorizontal: wp('4%') }}>
@@ -78,11 +78,11 @@ const Payment = ({ props, route, navigation }) => {
                                 maxLength={19}
                                 keyboardType='fe'
                                 // rightIconName={require('../../../../assets/tick.png')}
-                                keyboardType=''
+                                // keyboardType=''
                                 placeholder={"0000   0000   0000    0000"}
                                 placeholderTextColor='#929DA9'
                                 
-                                placeholderTextColor="lightgray"
+                                // placeholderTextColor="lightgray"
                                 color='#424D59'
                                 fontFamily={'Poppins-Medium'}
                                 // value={cardnum}
@@ -232,7 +232,7 @@ const Payment = ({ props, route, navigation }) => {
                         {/* <Image source={require('../../../../assets/confirm.png')}
                             style={{ height: hp(100), width: wp(100), }} resizeMode='stretch' /> */}
                     </Pressable>}
-            </ScrollView >
+            </View >
         </View>
     )
 }

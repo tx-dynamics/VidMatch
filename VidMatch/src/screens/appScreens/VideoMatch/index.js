@@ -179,9 +179,20 @@ export default VideoMatch = ({ navigation }) => {
       .then((response) => response.json())
       .then((data) => {
         // setData(data)
-        setArrays(data.data.results)
-        // console.log("Data agya", data?.data?.results)
-        setLoading(false)
+        if (data.code === 200) {
+          setArrays(data?.data?.results)
+          setLoading(false)
+        }
+        else{
+          console.log("Data agya", data?.code)
+          setLoading(false)
+          Snackbar.show({
+            text: 'Server Error',
+            duration: Snackbar.LENGTH_LONG,
+            backgroundColor: DefaultStyles.colors.primary
+          });
+        }
+        // setLoading(false)
       })
       .catch(err => {
         console.error(err);
@@ -249,7 +260,7 @@ export default VideoMatch = ({ navigation }) => {
     let matchExist;
     let exist;
     let indexes;
-    if (res.media.length <= 0) {
+    if (res?.media?.length <= 0) {
       console.log("Undefined Media")
     }
     else {

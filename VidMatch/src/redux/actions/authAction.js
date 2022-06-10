@@ -10,3 +10,9 @@ export const setReqLists = (data) => async (dispatch) => {
 export const setUserData = (data) => async (dispatch) => {
     dispatch({type: "userList" , payload : data})
 }
+export const setPckg = (data) => async (dispatch) => {
+    dispatch({type: "isPckg" , payload : data})
+}
+export const setMethodName = (data) => async (dispatch) => {
+    dispatch({type: "isMethodName" , payload : data})
+}
