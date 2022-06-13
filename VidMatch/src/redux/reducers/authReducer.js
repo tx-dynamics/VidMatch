@@ -4,7 +4,8 @@ const INITIAL_STATE = {
     ReqLists:[],
     userData:[],
     userPckg:null,
-    methodName:''
+    methodName:'',
+    splash:false
 
 }
 
@@ -22,6 +23,8 @@ export default function (state = INITIAL_STATE, action){
         return {...state, userPckg: action.payload}
         case "isMethodName" :
         return {...state, methodName: action.payload}
+        case "Splash" :
+            return {...state, splash: action.payload}
         default:
             return state
     }

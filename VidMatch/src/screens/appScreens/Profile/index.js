@@ -20,6 +20,7 @@ import auth from '@react-native-firebase/auth';
 import { setUserData } from '../../../redux/actions/authAction';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
+import { useIsFocused } from '@react-navigation/native';    
 
 
 const Profile = ({ navigation }) => {
@@ -83,22 +84,37 @@ const Profile = ({ navigation }) => {
     ];
 
     const Userdata = useSelector((state) => state.auth.userData)
+    const isFocused = useIsFocused();
+
     ////////////////////////////////////////////////////////////////////////////////////
 
     const [connectNumber, setConnectNumber] = useState('');
     const [isLoading, setLoading] = useState(false);
+    const [likeNumbers, setLikeNumbers] = useState('');
 
     const chkData = async () => {
         setLoading(true)
         var userInfo = auth().currentUser;
         let res = await getData("Connections", userInfo.uid)        
         setConnectNumber(res?.media?.length)
+        let matchs = await getData("checkMatch", 'xdi1eAz374DSEhVran9U')        
+        if (typeof matchs.media === "undefined") {
+            console.log("undefined")
+        }
+        else{
+            const newData = matchs?.media?.filter(function (item) {
+                const itemData = item.uid;
+                const textData = userInfo.uid;
+                return itemData.indexOf(textData) >= 0;
+            });    
+            setLikeNumbers(newData?.length)
+        }
         setLoading(false)
     }
 
     useEffect(() => {
         chkData()
-    },[])
+    },[isFocused])
 
 
     return (
@@ -123,14 +139,14 @@ const Profile = ({ navigation }) => {
                 <View style={styles.twoTxts}>
                     <Apptext style={styles.cncts} >Connects</Apptext>
                     <Apptext style={styles.VLine}></Apptext>
-                    <Apptext style={styles.cncts}>Matches</Apptext>
+                    <Apptext style={styles.cncts}>   Likes  </Apptext>
                 </View>
                 { isLoading ? 
                 <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
                 :
                 <View style={styles.twoLowerTxts}>
                     <Apptext style={styles.nmbrTxt} >{connectNumber ? connectNumber : "00"}</Apptext>
-                    <Apptext style={styles.nmbrTxt}>00</Apptext>
+                    <Apptext style={styles.nmbrTxt}>{likeNumbers ? likeNumbers : "00"}</Apptext>
                 </View>
                 }
                 <Apptext style={styles.HLine}> </Apptext>

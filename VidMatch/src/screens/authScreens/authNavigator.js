@@ -9,12 +9,19 @@ import ElsePayment from "../appScreens/PaymentScreens/ElsePayment";
 import Payment from "../appScreens/PaymentScreens/Payment";
 import Premium from "../appScreens/PaymentScreens/Premium";
 import ForgotPassword from "./Forgot/ForgotPassword";
+import { setSplash } from "../../redux/actions/authAction";
+import {useSelector} from 'react-redux'
+
 
 const AuthStack = createNativeStackNavigator()
 
 const SplashNavigator = () => {
+
+    const chkSplash = useSelector((state) => state.auth.splash)
+
     return (
         <AuthStack.Navigator
+        initialRouteName= {chkSplash ? "Login" : "Splash"}
         screenOptions = {{
             headerShown: false
         }}>

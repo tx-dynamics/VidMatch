@@ -86,7 +86,6 @@ const AddConnect = ({ navigation, route }) => {
     ];
 
     const Userdata = useSelector((state) => state.auth.userData)
-    // console.log("userdt", Userdata.isPaid)
 
     let dispatch = useDispatch();
     const FavItems = useSelector((state) => state.auth.ItemLikes)
@@ -95,7 +94,6 @@ const AddConnect = ({ navigation, route }) => {
 
     const isFocused = useIsFocused();
     const { items } = route.params;
-    // console.log(items)
     ////////////////////////////////////////////////////////////////////////////
 
     const [isTrue, setTrue] = useState(false);
@@ -105,7 +103,7 @@ const AddConnect = ({ navigation, route }) => {
     const [isReqs, setReqs] = useState(false);
     const [isPaymentStatus, setPaymentStatus] = useState(false);
     const [connectNumber, setConnectNumber] = useState('');
-
+    const [isLikeNumbers, setLikeNumbers] = useState('');
 
 
     const addConnection = async () => {
@@ -118,15 +116,17 @@ const AddConnect = ({ navigation, route }) => {
             FrndUid: items.uid,
             uid: userInfo.uid,
         };
+        
+        let dt = await getData('Users', userInfo.uid)
+        let Details1 = {
+            email: dt?.email,
+            fullName: dt?.fullName,
+            lastName: dt?.lastName,
+            displayName: dt?.displayName,
+            FrndUid: userInfo?.uid,
+            uid: items?.uid,
 
-        // let Details1 = {
-        //     email: items.email,
-        //     fullName: items.fullName,
-        //     lastName: items.lastName,
-        //     displayName: items.displayName,
-        //     FrndUid: userInfo.uid,
-        //     uid: items.uid,
-        // };
+        };
 
         await saveFvrtsData('RequestList', userInfo.uid, Details)
         await saveFvrtsData('RequestList', items.uid, Details)
@@ -140,7 +140,6 @@ const AddConnect = ({ navigation, route }) => {
             })
             .catch(function (error) {
                 success = false;
-                console.log(error)
                 Snackbar.show({
                     text: error.code,
                     duration: Snackbar.LENGTH_LONG,
@@ -163,7 +162,6 @@ const AddConnect = ({ navigation, route }) => {
         };
 
         let dt = await getData('Users', userInfo.uid)
-        // console.log("dt",dt)
         let Details1 = {
             email: dt?.email,
             fullName: dt?.fullName,
@@ -184,21 +182,16 @@ const AddConnect = ({ navigation, route }) => {
     const getFvListing = async() => {
         setLoading(true)
         const userInfo = auth().currentUser;
-        console.log("User Id", userInfo.uid)
-        console.log("Item Id", items.uid)
-
         let res = await getListing("RequestList", userInfo.uid)
         let rest = await getListing("RequestList", items.uid)
         dispatch(setItemLikes(res.media))
         dispatch(setReqLists(rest.media))
         if (FavItems === undefined) {
-            // console.log("Undefined found")    
             setLoading(false)
             
         }
         else{
             setLoading(false)
-            // console.log("FavItems",FavItems, reqItems)        
         }
     }
 
@@ -216,32 +209,26 @@ const AddConnect = ({ navigation, route }) => {
         let exist ;
         let indexes ;
         if (typeof FavItems === "undefined") {
-            // console.log("Undefined")
         }
         else{
             FavItems.map((val, index) => 
             {
                 if (items.uid === val.uid) {
-                    // console.log("exists")
-                    // console.log("index", index)
                     exist = true;
                     indexes = index;
                 }     
             })
         }
     if (exist === true) {
-        // console.log(indexes)
         FavItems.splice(indexes,1)
         await firestore().collection("RequestList").doc(userInfo.uid).delete().
         then(async() => {
-            // console.log("Favitems",FavItems)
             await saveFav("RequestList",userInfo.uid, FavItems)
             setChk(!isChk)
             removeFrnd()
         })
     }
     else{
-        // console.log("Else FavItems",FavItems)
         // FavItems.push(Details)
         // await saveFav("RequestList",userInfo.uid, FavItems)
     }
@@ -262,25 +249,20 @@ const AddConnect = ({ navigation, route }) => {
         let exist ;
         let indexes ;
         if (typeof reqItems === "undefined") {
-            // console.log("Undefined")
         }
         else{
             reqItems.map((val, index) => 
             {
                 if (items.uid === val.uid) {
-                    // console.log("exists")
-                    // console.log("index", index)
                     exist = true;
                     indexes = index;
                 }     
             })
         }
     if (exist === true) {
-        // console.log(indexes)
         reqItems.splice(indexes,1)
         await firestore().collection("RequestList").doc(items.uid).delete().
         then(async() => {
-            // console.log("Favitems",reqItems)
             await saveFav("RequestList",items.uid, reqItems)
             setChk(!isChk)
             setTrue(false)
@@ -288,7 +270,6 @@ const AddConnect = ({ navigation, route }) => {
         })
     }
     else{
-        console.log("Else Reqitems",reqItems)
         // reqItems.push(Details)
         // await saveFav("RequestList",items.uid, reqItems)
     }
@@ -302,7 +283,6 @@ const AddConnect = ({ navigation, route }) => {
         //     FrndUid: items.uid,
         //     uid: userInfo.uid,
         // };
-        // // console.log("dtls", Details)
         // await firestore().collection('RequestList').doc(items.uid).set({
         //     media: firestore.FieldValue.arrayRemove(Details),
         //   })
@@ -311,7 +291,6 @@ const AddConnect = ({ navigation, route }) => {
         //     media: firestore.FieldValue.arrayRemove(Details),
         //   })
         //     .then(async user => {
-        //         console.log("Friend Removed As Well")
         //         setTrue(false)
         //         setReqs(false)
         //         Snackbar.show({
@@ -322,7 +301,6 @@ const AddConnect = ({ navigation, route }) => {
         //     })
         //     .catch(function (error) {
         //         success = false;
-        //         console.log(error, "Friend Not Added")
         //         Snackbar.show({
         //             text: error.code,
         //             duration: Snackbar.LENGTH_LONG,
@@ -335,13 +313,33 @@ const AddConnect = ({ navigation, route }) => {
         setLoading(true)
         var userInfo = auth().currentUser;
         let res = await getData("Connections", userInfo.uid)
-        if (res?.media?.length === 1 && Userdata.isPaid === false) {
-            // console.log("res con",res?.media?.length)
-            setPaymentStatus(true)
-        }
+
         let rest = await getData("Connections", items.uid)
-        // console.log("Rest", rest?.media)
         setConnectNumber(rest?.media?.length)
+        
+        let matchs = await getData("checkMatch", 'xdi1eAz374DSEhVran9U')        
+        if (typeof matchs?.media === "undefined") {
+            console.log("undefined")
+        }
+        else{
+            const newData = matchs?.media?.filter(function (item) {
+                const itemData = item?.uid;
+                const textData = items?.uid;
+                return itemData.indexOf(textData) >= 0;
+            });    
+            setLikeNumbers(newData?.length)
+        }
+
+
+        if (res?.media?.length >= 1 && Userdata.isPaid === false && rest?.media?.length >= 1) {
+            setPaymentStatus(true)
+            console.log("conct =>", true)
+        }
+
+        if (res?.media?.length >= 1 && Userdata.isPaid === false ) {
+            setPaymentStatus(true)
+            console.log("chk own id=>", true)
+        }
 
         const newData = res?.media?.filter(function (item) {
             const itemData = item.FrndUid;
@@ -352,11 +350,10 @@ const AddConnect = ({ navigation, route }) => {
             newData?.map((val) => {
                 if (val.FrndUid === items.uid) {
                     setAdded(true)
+                    setPaymentStatus(false)
                     setLoading(false)
-                    // console.log("Added")
                 }
                 else {
-                    // console.log("Not Add")
                     setAdded(false)
                     setLoading(false)
 
@@ -376,11 +373,17 @@ const AddConnect = ({ navigation, route }) => {
         var userInfo = auth().currentUser;
         let res = await getData("RequestList", items.uid)
         let rest = await getData("RequestList", userInfo.uid)
+       
+        if (res?.media?.length >= 1 && Userdata.isPaid === false && rest?.media?.length >= 1) {
+            setPaymentStatus(true)
+            // console.log(res.media.length, rest.media.length)
+            console.log("req items =>", true)
+        }
 
         rest?.media?.map((item) => {
-            // console.log(rest?.media?.length , Userdata.isPaid , Userdata.uid , item.uid)
-        if (rest?.media?.length === 1 && Userdata.isPaid === false && Userdata.uid === item.uid ) {
+        if (rest?.media?.length >= 1 && Userdata.isPaid === false && Userdata.uid === item.uid ) {
             setPaymentStatus(true)
+            console.log("req user own =>", true)
         }
         })
 
@@ -390,7 +393,6 @@ const AddConnect = ({ navigation, route }) => {
             return itemData.indexOf(textData) !== -1;
         });
 
-        // console.log("new Data", newestData)
         const newData = res?.media?.filter(function (item) {
             const itemData = item.FrndUid;
             const textData = items.uid;
@@ -401,21 +403,25 @@ const AddConnect = ({ navigation, route }) => {
             setLoading(false)
         }
         else {
-            newData?.map((val) => {
-                console.log("chk =>",  val.FrndUid,items.uid ,val.uid, userInfo.uid)
+                newData?.map((val) => {
+                    console.log(val.FrndUid, items.uid, val.uid, userInfo.uid)
                 if (val.FrndUid === items.uid && val.uid === userInfo.uid) {
                     setTrue(true)
                     setLoading(false)
-                    // console.log("in")
+                    console.log("if")
                 }
                 else if (val.FrndUid === items.uid && val.uid !== userInfo.uid) {
                     setTrue(false)
-                    setReqs(false)
+                    setReqs(true)
                     setLoading(false)
-                    // console.log("else if")
+                    console.log("else")
+
                 }
                 else if(val.uid === items.uid && val.FrndUid === userInfo.uid){
                     setReqs(true)
+                    setPaymentStatus(false)
+                    setLoading(false)
+                    console.log("third else")
                 }
                 else {
                     console.log("out", val.uid , items.uid,val.FrndUid, userInfo.uid)
@@ -442,7 +448,6 @@ const AddConnect = ({ navigation, route }) => {
         }
         else {
 
-            // console.log("Ok to go ")
             setLoading(false)
         }
         // setLoading(false)
@@ -455,6 +460,8 @@ const AddConnect = ({ navigation, route }) => {
         chkData()
         // chkFrnd()
     }, [isChk])
+
+    // console.log(isPaymentStatus, isReqs )
 
     return (
         <View style={styles.container}>
@@ -484,11 +491,11 @@ const AddConnect = ({ navigation, route }) => {
                     <Apptext style={styles.VLine}></Apptext>
                     <Apptext
                         style={isTrue === false ? [styles.cncts, { color: "lightgray" }]
-                            : styles.cncts}>Matches</Apptext>
+                            : styles.cncts}>   Likes  </Apptext>
                 </View>
                 <View style={styles.twoLowerTxts}>
                     <Apptext style={styles.nmbrTxt} >{connectNumber ? connectNumber : "00" }</Apptext>
-                    <Apptext style={styles.nmbrTxt}>{isTrue ? "00" : ""} </Apptext>
+                    <Apptext style={styles.nmbrTxt}>{isLikeNumbers ? isLikeNumbers : "00" } </Apptext>
                 </View>
                 {
                     isLoading ? <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
@@ -526,7 +533,7 @@ const AddConnect = ({ navigation, route }) => {
                 {
                     isLoading ? <ActivityIndicator size={"small"} color={"transparent"} />
                         :
-                        isReqs ?
+                        isReqs === true && isPaymentStatus === false?
                             <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
                                 <TouchableOpacity
                                     onPress={() => addFrnd()}
@@ -541,7 +548,16 @@ const AddConnect = ({ navigation, route }) => {
                                     style={[styles.addBtn, { backgroundColor: DefaultStyles.colors.primary }]}>
                                     <Apptext style={styles.btnTxt}>Decline Request</Apptext>
                                 </TouchableOpacity>
-                            </View> : null}
+                            </View>
+                            :isReqs === true && isPaymentStatus === true?
+                                <TouchableOpacity
+                                    onPress={() => {navigation.navigate("Premium")}}
+                                    style={[styles.addBtn,{backgroundColor:DefaultStyles.colors.primary,
+                                    width: wp('90%') }]}>
+                                    <Apptext style={styles.btnTxt}>
+                                    {"Please Buy Premium Package"}</Apptext>
+                                </TouchableOpacity>
+                             : null}
 
                 {isAdded ?
                     <TouchableOpacity

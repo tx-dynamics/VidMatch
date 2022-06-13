@@ -16,3 +16,6 @@ export const setPckg = (data) => async (dispatch) => {
 export const setMethodName = (data) => async (dispatch) => {
     dispatch({type: "isMethodName" , payload : data})
 }
+export const setSplash = (data) => async (dispatch) => {
+    dispatch({type: "Splash" , payload : data})
+}

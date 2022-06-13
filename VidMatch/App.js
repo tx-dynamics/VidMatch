@@ -19,9 +19,9 @@ const App = () => {
   return (
     <NavigationContainer>
       <Provider store={store}>
-      {/* <SafeAreaView  style={{ flex: 1,}}> */}
+      <SafeAreaView  style={{ flex: 1,}}>
       <Main />
-      {/* </SafeAreaView> */}
+      </SafeAreaView>
       </Provider>
     </NavigationContainer>
   );

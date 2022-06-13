@@ -438,7 +438,8 @@ export default VideoMatch = ({ navigation }) => {
                     width: wp('30%'),
                     color: "white"
                   }}>{Userdata.displayName}</Apptext>
-                  <Apptext style={{ fontSize: 14, color: "white" }}>{item?.displayName}</Apptext>
+                  <Apptext style={{ fontSize: 14,textAlign: 'center',
+                    width: wp('30%'),color: "white" }}>{item?.displayName}</Apptext>
                 </View>
 
               </ScrollView>
