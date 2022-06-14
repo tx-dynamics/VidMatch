@@ -231,7 +231,9 @@ const Home = ({ navigation }) => {
                         <Image source={require('../../../../assets/add.png')} />
                     </TouchableOpacity>
                 </View>
-                <View style={{ marginTop: wp('6%') }} >
+               
+            </View>
+            <View style={{ marginTop: wp('6%') }} >
                    {isLoading ? 
                    <ActivityIndicator size={"large"} color={DefaultStyles.colors.primary} />
                    : 
@@ -257,7 +259,9 @@ const Home = ({ navigation }) => {
                         )}
                     />}
                 </View>
-            </View>
+                <View style={{height:'25%'}}>
+
+                </View>
         </View>
     )
 }

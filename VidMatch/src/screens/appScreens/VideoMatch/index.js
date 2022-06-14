@@ -417,7 +417,9 @@ export default VideoMatch = ({ navigation }) => {
                         source={{ uri: item.thumbnail }} />
                       </TouchableOpacity>
                       :
-                      <TouchableOpacity>
+                      <TouchableOpacity
+                      onPress={() => navigation.navigate("AddConnect", {items:item})}
+                      >
                       <Image style={{
                         width: 80, height: 80,
                         borderRadius: 68

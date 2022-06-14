@@ -142,7 +142,10 @@ const Profile = ({ navigation }) => {
                     <Apptext style={styles.cncts}>   Likes  </Apptext>
                 </View>
                 { isLoading ? 
-                <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
+                <ActivityIndicator size={"small"}
+                style={{marginLeft:wp(5)}}
+                
+                color={DefaultStyles.colors.primary} />
                 :
                 <View style={styles.twoLowerTxts}>
                     <Apptext style={styles.nmbrTxt} >{connectNumber ? connectNumber : "00"}</Apptext>
@@ -150,7 +153,7 @@ const Profile = ({ navigation }) => {
                 </View>
                 }
                 <Apptext style={styles.HLine}> </Apptext>
-                <View style={styles.DirectionView}>
+                {/* <View style={styles.DirectionView}>
                     <TouchableOpacity style={styles.buttonView}>
                         <Image source={require('../../../../assets/Achivement.png')} />
                         <Apptext style={styles.achTxt} >Achievements</Apptext>
@@ -159,8 +162,8 @@ const Profile = ({ navigation }) => {
                         <Image source={require('../../../../assets/Like.png')} />
                         <Apptext style={styles.achTxt} >Your Likes</Apptext>
                     </TouchableOpacity>
-                </View>
-                <View style={styles.MainContainer}>
+                </View> */}
+                {/* <View style={styles.MainContainer}>
                     <Apptext style={styles.rcnt}>Recent Activities</Apptext>
                 </View>
                 <FlatList
@@ -180,7 +183,7 @@ const Profile = ({ navigation }) => {
                         />
 
                     )}
-                />
+                /> */}
                 {/* </ScrollView> */}
             </View>
 
@@ -193,7 +196,7 @@ export default Profile;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // backgroundColor: DefaultStyles.colors.white,
+        backgroundColor: DefaultStyles.colors.white,
     },
     whiteView: {
         width: wp('100%'),

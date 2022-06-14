@@ -71,7 +71,9 @@ function DrawerContent({ navigation, userImg, username, userEmail }) {
                     <Apptext style={styles.innerTxt} > Your Connects</Apptext>
                     <Image style={{ marginTop: wp('1%'), tintColor: DefaultStyles.colors.secondary }} source={require('../../../assets/chevron-right.png')} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.listView}>
+                <TouchableOpacity 
+                onPress={() => navigation.navigate("EditProfile")}
+                style={styles.listView}>
                     <View style={styles.blueBox}>
                         <Image style={{ tintColor: "white", height: 12, width: 12 }} source={require('../../../assets/settings.png')} />
                     </View>

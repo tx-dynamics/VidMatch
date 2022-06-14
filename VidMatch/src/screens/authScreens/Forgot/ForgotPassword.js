@@ -111,24 +111,9 @@ const ForgotPassword = ({ navigation }) => {
                 <Image style={{ marginHorizontal: wp('5%'), marginTop: wp('10%') }}
                     source={require('../../../../assets/arrow-back.png')} />
             </TouchableOpacity>
-            <ScrollView>
+            <View>
                 <View style={styles.MainContainer} >
-                    {/* <View style={styles.DirectionView}>
-            <TouchableOpacity 
-            style={styles.ImgView}>
-                <Apptext style={styles.SignInTxt}>Login</Apptext>
-                <Apptext style={styles.line}></Apptext>
-            </TouchableOpacity>
-            <TouchableOpacity 
-            onPress={() => navigation.navigate("SignUp")}
-            style={[styles.ImgView, {marginHorizontal:wp('5%')}]}>
-                <Apptext style={styles.SignUpTxt}>Sign Up</Apptext>
-            </TouchableOpacity>
-            </View> */}
-                    {/* <View style={{marginTop:26}} >
-                <Apptext style={styles.WlcmTxt} >Welcome Back to </Apptext>
-                <Apptext style={styles.VidTxt} >VidMatch</Apptext>
-            </View> */}
+                
                     <View>
                         <Apptext style={styles.cntrView} >Forgot Password </Apptext>
                     </View>
@@ -176,7 +161,7 @@ const ForgotPassword = ({ navigation }) => {
                     </View>
 
                 </View>
-            </ScrollView>
+            </View>
         </View>
     )
 }

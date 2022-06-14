@@ -32,22 +32,18 @@ function BackgroundHeader({
         ...style,
       }}
     >
-     
-      <TouchableOpacity 
-      onPress={onPressLeft} 
-      style={{width:wp('6%'), marginTop:-80}}>
-      {isBack ? (
-        <Image style={{tintColor:"white"}} source={leftImgName} />
-      ) : null}
+       <View style={styles.headerIcons}>
+      <TouchableOpacity
+        onPress={onPressLeft}
+        >
+        {isBack ? (
+          <Image style={[styles.icons, ]} source={leftImgName} />
+        ) : null}
       </TouchableOpacity>
-      <View>
-      <Image source={centerImg} />
-      <Apptext style={styles.headerLabel} >{headerLabel}</Apptext>
-      </View>
       <TouchableOpacity onPress={onPressRight}>
-        <Image style={{marginTop:-50, tintColor:"white" }} source={rightImg} />
+        <Image style={[styles.icons,]} source={rightImg} />
       </TouchableOpacity>
-
+      </View>
 
     </ImageBackground>
   );
@@ -65,10 +61,27 @@ const styles = StyleSheet.create({
     padding: wp('5%'),
   
   },
+  icons:
+  {
+    tintColor: "white",
+    // marginHorizontal:wp(5),
+    marginTop:wp(-15)
+    // position:"absolute",
+    // bottom:0,
+  },
+  imgView: {
+    width: '100%'
+  },
   headerLabel:{
     fontFamily:'Poppins-SemiBold',
     color:DefaultStyles.colors.secondary,
     fontSize:14
+  },
+  headerIcons:{
+    flexDirection:'row',
+    width:'100%',
+    justifyContent:'space-between',
+    // alignItems:'center'
   }
 });
 

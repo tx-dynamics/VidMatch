@@ -350,7 +350,6 @@ const AddConnect = ({ navigation, route }) => {
             newData?.map((val) => {
                 if (val.FrndUid === items.uid) {
                     setAdded(true)
-                    setPaymentStatus(false)
                     setLoading(false)
                 }
                 else {
@@ -376,21 +375,28 @@ const AddConnect = ({ navigation, route }) => {
        
         if (res?.media?.length >= 1 && Userdata.isPaid === false && rest?.media?.length >= 1) {
             setPaymentStatus(true)
-            // console.log(res.media.length, rest.media.length)
             console.log("req items =>", true)
         }
 
         rest?.media?.map((item) => {
+            // console.log(rest?.media?.length , Userdata.isPaid , Userdata.uid , item.uid)
         if (rest?.media?.length >= 1 && Userdata.isPaid === false && Userdata.uid === item.uid ) {
             setPaymentStatus(true)
             console.log("req user own =>", true)
         }
         })
 
+        // const newestData = rest?.media?.filter(function (item) {
+        //     const itemData = item.FrndUid;
+        //     const textData = items.uid;
+        //     return itemData.indexOf(textData) !== -1;
+        // });
+        
         const newestData = rest?.media?.filter(function (item) {
             const itemData = item.FrndUid;
             const textData = items.uid;
-            return itemData.indexOf(textData) !== -1;
+            return (itemData, textData);
+        
         });
 
         const newData = res?.media?.filter(function (item) {
@@ -403,23 +409,24 @@ const AddConnect = ({ navigation, route }) => {
             setLoading(false)
         }
         else {
-                newData?.map((val) => {
+
+                newestData?.map((val) => {
+                    console.log(val)
                     console.log(val.FrndUid, items.uid, val.uid, userInfo.uid)
                 if (val.FrndUid === items.uid && val.uid === userInfo.uid) {
                     setTrue(true)
                     setLoading(false)
                     console.log("if")
                 }
-                else if (val.FrndUid === items.uid && val.uid !== userInfo.uid) {
+                else if (val.FrndUid === items.uid &&  val.uid !== userInfo.uid) {
                     setTrue(false)
-                    setReqs(true)
+                    setReqs(false)
                     setLoading(false)
                     console.log("else")
 
                 }
-                else if(val.uid === items.uid && val.FrndUid === userInfo.uid){
+                else if(val.uid === items.uid && val.FrndUid === userInfo.uid ){
                     setReqs(true)
-                    setPaymentStatus(false)
                     setLoading(false)
                     console.log("third else")
                 }
@@ -430,6 +437,7 @@ const AddConnect = ({ navigation, route }) => {
                     setLoading(false)
                 }
             })
+          
 
         }
 
@@ -458,10 +466,8 @@ const AddConnect = ({ navigation, route }) => {
         getFvListing()
         chkReqs()
         chkData()
-        // chkFrnd()
     }, [isChk])
 
-    // console.log(isPaymentStatus, isReqs )
 
     return (
         <View style={styles.container}>
@@ -498,7 +504,9 @@ const AddConnect = ({ navigation, route }) => {
                     <Apptext style={styles.nmbrTxt}>{isLikeNumbers ? isLikeNumbers : "00" } </Apptext>
                 </View>
                 {
-                    isLoading ? <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
+                    isLoading ? <ActivityIndicator size={"small"} 
+                    style={{marginLeft:wp(5)}}
+                    color={DefaultStyles.colors.primary} />
                         :
                         isTrue ?
                             <TouchableOpacity
@@ -531,7 +539,9 @@ const AddConnect = ({ navigation, route }) => {
                 }
 
                 {
-                    isLoading ? <ActivityIndicator size={"small"} color={"transparent"} />
+                    isLoading ? <ActivityIndicator size={"small"}
+                    style={{marginLeft:wp(5)}}
+                    color={"transparent"} />
                         :
                         isReqs === true && isPaymentStatus === false?
                             <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
