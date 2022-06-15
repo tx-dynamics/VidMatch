@@ -46,10 +46,10 @@ const SignUp = ({ navigation }) => {
             setBadFormat(false) 
         }
         else if (fName === "") {
-            setFName(true)
+            setFChk(true)
         }
         else if (lName === "") {
-            setLName(true)
+            setLChk(true)
         }
         else if (email === "") {
             setMailChk(true)

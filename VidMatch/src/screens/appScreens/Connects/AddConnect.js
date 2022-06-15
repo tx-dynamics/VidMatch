@@ -335,11 +335,23 @@ const AddConnect = ({ navigation, route }) => {
         console.log("req", req.media.length)
         if (Userdata.isPaid === false) {
         if (res.media.length === 0) {
+            // setPaymentStatus(false)
+            // console.log("conct false")  
+            // if (req.media.length === 0) {
+            //         setPaymentStatus(false)
+            //         console.log("if")
+            //     }
+            //     else{
+            //         console.log("else")
+            //         setPaymentStatus(true)
+            //     }   
             setPaymentStatus(false)
-            console.log("conct false")  
             if (req.media.length === 0) {
                     setPaymentStatus(false)
                     console.log("if")
+                }
+                else if (req.media.length >= 1) {
+                    setPaymentStatus(false)
                 }
                 else{
                     console.log("else")

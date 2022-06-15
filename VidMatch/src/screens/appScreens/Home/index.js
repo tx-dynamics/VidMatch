@@ -14,10 +14,10 @@ import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 import Header from '../../../components/Header';
 import FvrtComp from '../../../components/FvrtComp';
-import {DrawerActions, useNavigation} from '@react-navigation/native'
-import { getAllOfCollection,getData, getAllOptions,getListing, saveData } from '../../../firebase/utility';
+import { DrawerActions, useNavigation } from '@react-navigation/native'
+import { getAllOfCollection, getData, getAllOptions, getListing, saveData } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
-import { useIsFocused } from '@react-navigation/native';    
+import { useIsFocused } from '@react-navigation/native';
 import { setUserData } from '../../../redux/actions/authAction';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
@@ -32,7 +32,7 @@ const Home = ({ navigation }) => {
     const Userdata = useSelector((state) => state.auth.userData)
     const userInfo = auth().currentUser;
     // console.log("Userdata => ", Userdata)
-//////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
 
     const [isVisibe, setVisible] = useState(false)
     const [data, setData] = useState([])
@@ -50,25 +50,25 @@ const Home = ({ navigation }) => {
         if (typeof res.media === "undefined") {
             console.log("Undefined Media")
         }
-        else{    
-        let details = []
-        res?.media.map(async(val) => {
-        let rest = await getData("Users", val.FrndUid)
-        // console.log("rest",rest)
-        details.push(rest)    
-        setData([...details])
-        setLoading(false)    
-    })
-    }
-    setLoading(false)
+        else {
+            let details = []
+            res?.media.map(async (val) => {
+                let rest = await getData("Users", val.FrndUid)
+                // console.log("rest",rest)
+                details.push(rest)
+                setData([...details])
+                setLoading(false)
+            })
+        }
+        setLoading(false)
     }
 
     useEffect(() => {
         chkData()
         chkExpiry()
 
-    },[isFocused])
-    
+    }, [isFocused])
+
     const chkExpiry = async () => {
         let uid = auth()?.currentUser?.uid
         let res = await getListing("paidUsers", uid)
@@ -80,48 +80,48 @@ const Home = ({ navigation }) => {
         let finalY = aa.diff(b, 'days')
         let YearDays = res?.packageDetail === "Per Month" ? 30 : res?.packageDetail === "Per 6 month" ? 182 : res?.packageDetail === "Per 12 month" ? 365 : null
         let calY = YearDays - finalY
-        console.log("year DYS",YearDays , finalY)
+        console.log("year DYS", YearDays, finalY)
         // console.log("calY",calY)
         if (calY === 0) {
-          saveDatas()
-          console.log("Now Call Data")
+            saveDatas()
+            console.log("Now Call Data")
         }
         else {
-          console.log(calY, "Days Remaning")
+            console.log(calY, "Days Remaning")
         }
         //////////////////////////////////
-      }
-      const saveDatas = async () => {
-          let uid = auth()?.currentUser?.uid
-          console.log("in save data", uid)
+    }
+    const saveDatas = async () => {
+        let uid = auth()?.currentUser?.uid
+        console.log("in save data", uid)
         let regData = {
             displayName: Userdata.displayName,
             email: Userdata.email,
             fullName: Userdata.fullName,
             isPaid: false,
-            packageDetail:null,
-            PlanDate:null,
-            lastName:Userdata.lastName,
+            packageDetail: null,
+            PlanDate: null,
+            lastName: Userdata.lastName,
             thumbnail: Userdata.thumbnail,
             uid: Userdata.uid
         }
         let regData1 = {
-            isPaid:false,
-            packageDetail:null,
-            PlanDate:null,
+            isPaid: false,
+            packageDetail: null,
+            PlanDate: null,
         }
         console.log("regdata", regData)
         await saveData('paidUsers', uid, regData1)
         await saveData('Users', uid, regData).
-          then(() => {
-            Snackbar.show({
-              text: 'Your Subscription Is Finished',
-              backgroundColor: DefaultStyles.colors.primary,
-              duration: Snackbar.LENGTH_LONG,
-            });
-            // console.log("Saved")
-          })
-      }
+            then(() => {
+                Snackbar.show({
+                    text: 'Your Subscription Is Finished',
+                    backgroundColor: DefaultStyles.colors.primary,
+                    duration: Snackbar.LENGTH_LONG,
+                });
+                // console.log("Saved")
+            })
+    }
 
     //   useEffect(() => {
     //     },[])
@@ -147,70 +147,76 @@ const Home = ({ navigation }) => {
                         style={{
                             marginTop: wp('25%'),
                         }}>
-                    <Apptext style={{
-                    color:"white",
-                    alignSelf:'center',
-                    fontSize:24,
-                    fontFamily:'Poppins-SemiBold'}}>Super Match Found!</Apptext>
-                    <Image style={{marginTop:17, alignSelf:'center', backgroundColor:'#181818'}} 
-                    source={require('../../../../assets/modalStar.png')} />
+                        <Apptext style={{
+                            color: "white",
+                            alignSelf: 'center',
+                            fontSize: 24,
+                            fontFamily: 'Poppins-SemiBold'
+                        }}>Super Match Found!</Apptext>
+                        <Image style={{ marginTop: 17, alignSelf: 'center', backgroundColor: '#181818' }}
+                            source={require('../../../../assets/modalStar.png')} />
                     </View>
                     <View style={{
-                        flexDirection:'row',
-                        justifyContent:'space-evenly',
-                        marginHorizontal:wp('5%'),
-                        marginTop:wp('8%'),
-                        alignItems:'center' }}>
+                        flexDirection: 'row',
+                        justifyContent: 'space-evenly',
+                        marginHorizontal: wp('5%'),
+                        marginTop: wp('8%'),
+                        alignItems: 'center'
+                    }}>
                         <Image style={{
-                        width:80, height:80,
-                        borderRadius:68}} source={require('../../../../assets/blurBoy.png')} />
+                            width: 80, height: 80,
+                            borderRadius: 68
+                        }} source={require('../../../../assets/blurBoy.png')} />
                         <Image style={{
-                        width:28, height:28,
-                        tintColor:"white",
-                        borderRadius:68}} source={require('../../../../assets/play.png')} />
+                            width: 28, height: 28,
+                            tintColor: "white",
+                            borderRadius: 68
+                        }} source={require('../../../../assets/play.png')} />
                         <Image style={{
-                        width:80, height:80,
-                        borderRadius:68}} source={require('../../../../assets/boy3.png')} />
+                            width: 80, height: 80,
+                            borderRadius: 68
+                        }} source={require('../../../../assets/boy3.png')} />
                     </View>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         onPress={() => {
-                        navigation.navigate("ChatDetail")
-                        setVisible(false)}}
+                            navigation.navigate("ChatDetail")
+                            setVisible(false)
+                        }}
                         style={{
-                        flexDirection:'row',
-                        width:wp('82%'),
-                        height:wp('16%'),
-                        alignItems:'center',
-                        justifyContent:'center',
-                        backgroundColor:'#dbf7ff',
-                        borderRadius:11,
-                        alignSelf:'center',
-                        marginTop:wp('18%'),
-                        marginBottom:wp('6%')
+                            flexDirection: 'row',
+                            width: wp('82%'),
+                            height: wp('16%'),
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: '#dbf7ff',
+                            borderRadius: 11,
+                            alignSelf: 'center',
+                            marginTop: wp('18%'),
+                            marginBottom: wp('6%')
                         }}>
-                        <Image 
-                        style={{tintColor:DefaultStyles.colors.secondary,marginHorizontal:wp('2%')}} 
-                        source={require('../../../../assets/msg.png')} />
+                        <Image
+                            style={{ tintColor: DefaultStyles.colors.secondary, marginHorizontal: wp('2%') }}
+                            source={require('../../../../assets/msg.png')} />
                         <Apptext style={{
-                        fontFamily:'Poppins-Regular',
-                        fontSize:14,
-                        color:DefaultStyles.colors.secondary
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 14,
+                            color: DefaultStyles.colors.secondary
                         }}>Send A Message</Apptext>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => {
                         navigation.navigate("Home")
                         setVisible(false)
-                        }}>
-                        <Apptext 
-                        style={{
-                        fontSize:18,fontFamily:'Poppins-Medium',
-                        marginTop:wp('30%'),
-                        color:"white",alignSelf:'center'
-                        }}>Continue</Apptext>
+                    }}>
+                        <Apptext
+                            style={{
+                                fontSize: 18, fontFamily: 'Poppins-Medium',
+                                marginTop: wp('30%'),
+                                color: "white", alignSelf: 'center'
+                            }}>Continue</Apptext>
                     </TouchableOpacity>
                 </ScrollView>
             </Modal>
-      
+
             <Header
                 backgroundColor={"white"}
                 leftImgName={require('../../../../assets/hamBurger.png')}
@@ -222,22 +228,21 @@ const Home = ({ navigation }) => {
             <View style={styles.MainContainer}>
                 <View style={styles.topTxtView}>
                     <Apptext style={styles.topTxt}>Select a connection for VidMatch </Apptext>
-                    <TouchableOpacity onPress={() =>
-                        { 
+                    <TouchableOpacity onPress={() => {
                         // setVisible(true)
                         navigation.navigate("Connects")
                     }
-                        }>
+                    }>
                         <Image source={require('../../../../assets/add.png')} />
                     </TouchableOpacity>
                 </View>
-               
+
             </View>
             <View style={{ marginTop: wp('6%') }} >
-                   {isLoading ? 
-                   <ActivityIndicator size={"large"} color={DefaultStyles.colors.primary} />
-                   : 
-                   <FlatList
+                {isLoading ?
+                    <ActivityIndicator size={"large"} color={DefaultStyles.colors.primary} />
+                    :
+                    <FlatList
                         data={data}
                         keyExtractor={(item) => item?.uid}
                         showsVerticalScrollIndicator={false}
@@ -250,18 +255,19 @@ const Home = ({ navigation }) => {
                             );
                         }}
                         renderItem={({ item, index }) => (
-                        //   console.log(item.uid, userInfo.uid)  
+                            //   console.log(item.uid, userInfo.uid)  
                             <FvrtComp
-                                leftImgName={item.thumbnail ? { uri : item?.thumbnail} : require('../../../../assets/empty-img.jpg') }
+                                leftImgName={item.thumbnail ? { uri: item?.thumbnail } : require('../../../../assets/empty-img.jpg')}
                                 labelValue={item?.displayName}
                             />
 
                         )}
                     />}
-                </View>
-                <View style={{height:'25%'}}>
+                <View style={{height:'55%'}}>
 
                 </View>
+            </View>
+
         </View>
     )
 }
