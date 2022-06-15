@@ -331,15 +331,38 @@ const AddConnect = ({ navigation, route }) => {
         }
 
 
-        if (res?.media?.length >= 1 && Userdata.isPaid === false && rest?.media?.length >= 1) {
+        let req = await getData("RequestList", userInfo.uid)
+        console.log("req", req.media.length)
+        if (Userdata.isPaid === false) {
+        if (res.media.length === 0) {
+            setPaymentStatus(false)
+            console.log("conct false")  
+            if (req.media.length === 0) {
+                    setPaymentStatus(false)
+                    console.log("if")
+                }
+                else{
+                    console.log("else")
+                    setPaymentStatus(true)
+                }   
+        }
+        else{
             setPaymentStatus(true)
-            console.log("conct =>", true)
+        }   
+        }
+        else{
+            console.log("paid")
         }
 
-        if (res?.media?.length >= 1 && Userdata.isPaid === false ) {
-            setPaymentStatus(true)
-            console.log("chk own id=>", true)
-        }
+        // if (res?.media?.length >= 1 && Userdata.isPaid === false && rest?.media?.length >= 1) {
+        //     setPaymentStatus(true)
+        //     console.log("conct =>", true)
+        // }
+
+        // if (res?.media?.length >= 1 && Userdata.isPaid === false ) {
+        //     setPaymentStatus(true)
+        //     console.log("chk own id=>", true)
+        // }
 
         const newData = res?.media?.filter(function (item) {
             const itemData = item.FrndUid;
@@ -372,26 +395,21 @@ const AddConnect = ({ navigation, route }) => {
         var userInfo = auth().currentUser;
         let res = await getData("RequestList", items.uid)
         let rest = await getData("RequestList", userInfo.uid)
-       
-        if (res?.media?.length >= 1 && Userdata.isPaid === false && rest?.media?.length >= 1) {
-            setPaymentStatus(true)
-            console.log("req items =>", true)
-        }
-
-        rest?.media?.map((item) => {
-            // console.log(rest?.media?.length , Userdata.isPaid , Userdata.uid , item.uid)
-        if (rest?.media?.length >= 1 && Userdata.isPaid === false && Userdata.uid === item.uid ) {
-            setPaymentStatus(true)
-            console.log("req user own =>", true)
-        }
-        })
-
-        // const newestData = rest?.media?.filter(function (item) {
-        //     const itemData = item.FrndUid;
-        //     const textData = items.uid;
-        //     return itemData.indexOf(textData) !== -1;
-        // });
         
+        // if (res?.media?.length >= 1 && Userdata.isPaid === false && rest?.media?.length >= 1) {
+        //     setPaymentStatus(true)
+        //     console.log("req items =>", true)
+        // }
+
+        // rest?.media?.map((item) => {
+        //     // console.log(rest?.media?.length , Userdata.isPaid , Userdata.uid , item.uid)
+        // if (rest?.media?.length >= 1 && Userdata.isPaid === false && Userdata.uid === item.uid ) {
+        //     setPaymentStatus(true)
+        //     console.log("req user own =>", true)
+        // }
+        // })
+       
+
         const newestData = rest?.media?.filter(function (item) {
             const itemData = item.FrndUid;
             const textData = items.uid;
@@ -409,29 +427,41 @@ const AddConnect = ({ navigation, route }) => {
             setLoading(false)
         }
         else {
-
+                // console.log("newestData", newestData)
                 newestData?.map((val) => {
-                    console.log(val)
-                    console.log(val.FrndUid, items.uid, val.uid, userInfo.uid)
+
+                    // console.log("IDS => ", val.uid, userInfo.uid)
+                    // if(userInfo.uid === val.FrndUid){
+                    //     if (val.uid === items.uid) {
+                            
+                    //         console.log("req sent",)
+                    //     }
+                    // }
+
                 if (val.FrndUid === items.uid && val.uid === userInfo.uid) {
                     setTrue(true)
                     setLoading(false)
-                    console.log("if")
+                    // console.log("if")
                 }
                 else if (val.FrndUid === items.uid &&  val.uid !== userInfo.uid) {
                     setTrue(false)
                     setReqs(false)
                     setLoading(false)
-                    console.log("else")
+                    // console.log("else")
 
                 }
-                else if(val.uid === items.uid && val.FrndUid === userInfo.uid ){
-                    setReqs(true)
-                    setLoading(false)
-                    console.log("third else")
+                else if( val.FrndUid === userInfo.uid ){
+                    
+                    if (val.uid === items.uid) {
+                            
+                        console.log("req sent",)
+                        setReqs(true)
+                        setLoading(false)
+                    }
+                    // console.log("third else")
                 }
                 else {
-                    console.log("out", val.uid , items.uid,val.FrndUid, userInfo.uid)
+                    // console.log("out", val.uid , items.uid,val.FrndUid, userInfo.uid)
                     setTrue(false)
                     setReqs(false)
                     setLoading(false)
