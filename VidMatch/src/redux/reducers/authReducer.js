@@ -5,7 +5,8 @@ const INITIAL_STATE = {
     userData:[],
     userPckg:null,
     methodName:'',
-    splash:false
+    splash:false,
+    isJugaar:false
 
 }
 
@@ -25,6 +26,8 @@ export default function (state = INITIAL_STATE, action){
         return {...state, methodName: action.payload}
         case "Splash" :
             return {...state, splash: action.payload}
+        case "Jugaar" :
+            return {...state, isJugaar: action.payload}
         default:
             return state
     }

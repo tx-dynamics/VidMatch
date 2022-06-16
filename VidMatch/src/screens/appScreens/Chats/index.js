@@ -92,15 +92,16 @@ const Chats = ({ navigation }) => {
         rest.map((item) => {
             let items = {
                 FrndUid: val.FrndUid,
-                displayName:val.displayName,
-                email:val.email,
-                fullName:val.fullName,
-                lastName: val.lastName,
+                displayName:item.displayName,
+                email:item.email,
+                fullName:item.fullName,
+                lastName: item.lastName,
                 uid: val.uid,
                 thumbnail:item.thumbnail,
                 isPaid:item.isPaid
             }
             details.push(items)
+            console.log("details", details)
             setData([...details])
         })
         })

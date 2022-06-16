@@ -19,3 +19,7 @@ export const setMethodName = (data) => async (dispatch) => {
 export const setSplash = (data) => async (dispatch) => {
     dispatch({type: "Splash" , payload : data})
 }
+
+export const setJugaar = (data) => async (dispatch) => {
+    dispatch({type: "Jugaar" , payload : data})
+}

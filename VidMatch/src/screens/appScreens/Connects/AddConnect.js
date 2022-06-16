@@ -20,7 +20,7 @@ import auth from '@react-native-firebase/auth';
 import { useIsFocused } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
-import { setItemLikes,setReqLists } from '../../../redux/actions/authAction';
+import { setItemLikes,setReqLists,setJugaar } from '../../../redux/actions/authAction';
 
 
 
@@ -90,11 +90,13 @@ const AddConnect = ({ navigation, route }) => {
     let dispatch = useDispatch();
     const FavItems = useSelector((state) => state.auth.ItemLikes)
     const reqItems = useSelector((state) => state.auth.ReqLists)
+    const isJugaars = useSelector((state) => state.auth.isJugaar)
 
 
     const isFocused = useIsFocused();
     const { items } = route.params;
     ////////////////////////////////////////////////////////////////////////////
+
 
     const [isTrue, setTrue] = useState(false);
     const [isLoading, setLoading] = useState(false);
@@ -334,19 +336,8 @@ const AddConnect = ({ navigation, route }) => {
         let req = await getData("RequestList", userInfo.uid)
         
         let reqs = await getData("RequestList", items.uid)
-        // console.log("req", req.media.length)
         if (Userdata.isPaid === false) {
-        if (res.media.length === 0) {
-            // setPaymentStatus(false)
-            // console.log("conct false")  
-            // if (req.media.length === 0) {
-            //         setPaymentStatus(false)
-            //         console.log("if")
-            //     }
-            //     else{
-            //         console.log("else")
-            //         setPaymentStatus(true)
-            //     }   
+        if (res.media.length === 0) {               
             setPaymentStatus(false)
             if (req.media.length === 0) {
                     setPaymentStatus(false)
@@ -355,7 +346,6 @@ const AddConnect = ({ navigation, route }) => {
                 else if (req.media.length >= 1) {
                     setPaymentStatus(false)
                     console.log("else if")
-                    
                 }
                 else{
                     console.log("else")
@@ -363,10 +353,13 @@ const AddConnect = ({ navigation, route }) => {
                 }   
         }
         else{
+            console.log("new else")
             setPaymentStatus(true)
         }   
         }
         else{
+           dispatch(setJugaar(true))
+            // setPaymentStatus(false)
             console.log("paid")
         }
 
@@ -475,10 +468,19 @@ const AddConnect = ({ navigation, route }) => {
                     // console.log("third else")
                 }
                 else {
-                    console.log("out", val.uid , items.uid,val.FrndUid, userInfo.uid)
-                    setTrue(false)
+                    console.log("out",isJugaars)
+                    if (isJugaars === true) {
+                    setPaymentStatus(false)
+                    // dispatch(setJugaar(false))
+                    console.log("Paid user it is")
+                    }
+                    else{
+                    console.log("Un-Paid user it is")
+                        setPaymentStatus(true)
+                        // setChk(!isChk)
+                    }
+                    // setTrue(false)
                     // setReqs(false)
-                    setLoading(false)
                 }
             })
           
@@ -512,7 +514,7 @@ const AddConnect = ({ navigation, route }) => {
         chkData()
     }, [isChk])
 
-    console.log("Payment staus", isPaymentStatus,  "req",  isReqs)
+    // console.log("Payment staus", isPaymentStatus,  "req",  isReqs)
 
     return (
         <View style={styles.container}>
