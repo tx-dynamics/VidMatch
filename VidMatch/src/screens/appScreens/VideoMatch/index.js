@@ -398,7 +398,7 @@ export default VideoMatch = ({ navigation }) => {
                       <Image style={{
                         width: 80, height: 80,
                         borderRadius: 68
-                      }} source={require('../../../../assets/blurBoy.png')} />
+                      }} source={require('../../../../assets/empty-img.jpg')} />
 
                   }
                   <Image style={{

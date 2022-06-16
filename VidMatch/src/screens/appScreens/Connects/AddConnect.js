@@ -332,7 +332,9 @@ const AddConnect = ({ navigation, route }) => {
 
 
         let req = await getData("RequestList", userInfo.uid)
-        console.log("req", req.media.length)
+        
+        let reqs = await getData("RequestList", items.uid)
+        // console.log("req", req.media.length)
         if (Userdata.isPaid === false) {
         if (res.media.length === 0) {
             // setPaymentStatus(false)
@@ -352,6 +354,8 @@ const AddConnect = ({ navigation, route }) => {
                 }
                 else if (req.media.length >= 1) {
                     setPaymentStatus(false)
+                    console.log("else if")
+                    
                 }
                 else{
                     console.log("else")
@@ -453,19 +457,17 @@ const AddConnect = ({ navigation, route }) => {
                 if (val.FrndUid === items.uid && val.uid === userInfo.uid) {
                     setTrue(true)
                     setLoading(false)
-                    // console.log("if")
+                    console.log("if doing")
                 }
                 else if (val.FrndUid === items.uid &&  val.uid !== userInfo.uid) {
                     setTrue(false)
                     setReqs(false)
                     setLoading(false)
-                    // console.log("else")
+                    console.log("else doing")
 
                 }
                 else if( val.FrndUid === userInfo.uid ){
-                    
                     if (val.uid === items.uid) {
-                            
                         console.log("req sent",)
                         setReqs(true)
                         setLoading(false)
@@ -473,9 +475,9 @@ const AddConnect = ({ navigation, route }) => {
                     // console.log("third else")
                 }
                 else {
-                    // console.log("out", val.uid , items.uid,val.FrndUid, userInfo.uid)
+                    console.log("out", val.uid , items.uid,val.FrndUid, userInfo.uid)
                     setTrue(false)
-                    setReqs(false)
+                    // setReqs(false)
                     setLoading(false)
                 }
             })
@@ -510,6 +512,7 @@ const AddConnect = ({ navigation, route }) => {
         chkData()
     }, [isChk])
 
+    console.log("Payment staus", isPaymentStatus,  "req",  isReqs)
 
     return (
         <View style={styles.container}>
@@ -561,7 +564,7 @@ const AddConnect = ({ navigation, route }) => {
                                 }]}>
                                 <Apptext style={styles.btnTxt}>Pending Request ...</Apptext>
                             </TouchableOpacity>
-                            : isReqs === false && isTrue === false && isAdded === false ?
+                            : isReqs === false && isTrue === false && isAdded === false?
                                 <TouchableOpacity
                                     onPress={() => {
                                       isPaymentStatus ?
@@ -569,8 +572,8 @@ const AddConnect = ({ navigation, route }) => {
                                       :
                                       addConnection()
                                     }}
-                                    style={isPaymentStatus ? [styles.addBtn,{backgroundColor:DefaultStyles.colors.primary,
-                                    
+                                    style={isPaymentStatus ? 
+                                    [styles.addBtn,{backgroundColor:DefaultStyles.colors.primary,
                                     width: wp('90%') }] : [styles.addBtn, { width: wp('90%') }]}>
                                     <Apptext style={styles.btnTxt}>
                                     {isPaymentStatus ? 
