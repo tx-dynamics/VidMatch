@@ -28,12 +28,14 @@ import { saveData,getListing,saveFav, removeToArray, saveFvrtsData, getData, sav
 import auth from '@react-native-firebase/auth';
 import { setUser } from '../../../redux/actions/authAction';
 import { useDispatch } from "react-redux";
+import { useNavigation } from '@react-navigation/native';
 
 
 
 const ElsePayment = (props) => {
 
     let dispatch = useDispatch();
+    let navigation = useNavigation()
     const [cardnum, setcardnum] = useState('');
     const [nam, setnam] = useState('');
     const [exp, setexp] = useState('');
@@ -43,11 +45,11 @@ const ElsePayment = (props) => {
     const [isPayment, setPayment] = useState(false);
     const [isLoading, setLoading] = useState('');
     ////////////////////////////////////////////////////////////////////////////
-    const user = useSelector((state) => state.auth.user)
+    const User = useSelector((state) => state.auth.user)
     const Userdata = useSelector((state) => state.auth.userData)
     const methodName = useSelector((state) => state.auth.methodName)
     const isPckg = useSelector((state) => state.auth.userPckg)
-    // console.log("num",isPckg.msg)
+    console.log("num",isPckg)
 
     const CallApi = () => {
         setLoading(true)
@@ -62,7 +64,7 @@ const ElsePayment = (props) => {
                 "name": nam
             }
         })
-        console.log("obj",obj);
+        console.log("obj =>",obj);
   
         fetch(Base.paymentUrl + '/stripe/make_payment' , {
             method: 'POST',
@@ -73,7 +75,7 @@ const ElsePayment = (props) => {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log(data.code)
+                console.log("dat =>", data)
                 if (data?.code === 200) {
                     // console.log("status 200", data)
                     saveDatas()
@@ -279,7 +281,7 @@ const ElsePayment = (props) => {
                                 fontFamily={fonts.Poppins_Bold}
                                 marginHorizontal={wp(20)}
                                 backgroundColor={cardnum !== '' && nam !== '' && exp !== '' && cvc !== '' ? '#25d482' : '#9DA1B7'}
-                                height={hp(9.5)}
+                                height={wp(16)}
                                 borderRadius={20}
                                 marginBottom={hp(1.5)}
                             />}
@@ -341,11 +343,11 @@ const ElsePayment = (props) => {
                             onPress={() =>
                                  {
                                 setPayment(false)
-                                {
-                                user ? props.navigation.navigate("Home"):
-                                dispatch(setUser(true))
+                                // navigation.navigate("Premium")
+                                // User ? props.navigation.navigate("Home")
+                                // :
+                                // dispatch(setUser(true))
                                 // props.navigation.navigate("Login")
-                                }
                                 }}
                             style={[styles.buttonContainer, { marginTop: wpp('60%') }]}>
                             {/* <Image style={{marginHorizontal:wp('2%')}} source={require('../../../../assets/Lock.png')} />  */}

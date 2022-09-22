@@ -33,7 +33,7 @@ export async function saveData(collection, doc, jsonObject) {
       };
     })
     .catch(function (error) {
-      console.log("received", collection, doc, jsonObject)
+      // console.log("received", collection, doc, jsonObject)
       console.error('Error writing document: ', error);
 
     });

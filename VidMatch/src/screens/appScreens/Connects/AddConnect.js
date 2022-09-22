@@ -95,6 +95,7 @@ const AddConnect = ({ navigation, route }) => {
 
     const isFocused = useIsFocused();
     const { items } = route.params;
+    console.log('item recived => ' , items)
     ////////////////////////////////////////////////////////////////////////////
 
 
@@ -339,11 +340,11 @@ const AddConnect = ({ navigation, route }) => {
         if (Userdata.isPaid === false) {
         if (res.media.length === 0) {               
             setPaymentStatus(false)
-            if (req.media.length === 0) {
+            if (req?.media?.length === 0) {
                     setPaymentStatus(false)
                     console.log("if")
                 }
-                else if (req.media.length >= 1) {
+                else if (req?.media?.length >= 1) {
                     setPaymentStatus(false)
                     console.log("else if")
                 }

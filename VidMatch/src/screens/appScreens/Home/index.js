@@ -78,10 +78,10 @@ const Home = ({ navigation }) => {
         let b = moment(cnvrtDate);
         let aa = moment(a)
         let finalY = aa.diff(b, 'days')
-        let YearDays = res?.packageDetail === "Per Month" ? 30 : res?.packageDetail === "Per 6 month" ? 182 : res?.packageDetail === "Per 12 month" ? 365 : null
+        let YearDays = res?.packageDetail === "Per Month" ? 30 : res?.packageDetail === "Per 6 month" ? 182 : res?.packageDetail === "Per 12 month" ? 365 : 36500
         let calY = YearDays - finalY
         console.log("year DYS", YearDays, finalY)
-        // console.log("calY",calY)
+        console.log("calY",calY)
         if (calY === 0) {
             saveDatas()
             console.log("Now Call Data")

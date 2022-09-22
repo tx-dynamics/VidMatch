@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, ActivityIndicator,
-ToastAndroid, Alert, Image, StyleSheet, ScrollView, Platform,}
-from 'react-native';
+import {
+    View, TouchableOpacity, ActivityIndicator,
+    ToastAndroid, Alert, Image, StyleSheet, ScrollView, Platform,
+}
+    from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -14,22 +16,17 @@ import GoogleSign from '../../../components/GoogleSign';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import { setUser, setUserData } from '../../../redux/actions/authAction';
-import { getData, saveInitialData, saveInitialChat } from '../../../firebase/utility';
+import { getData, saveInitialData, saveInitialChat, saveData } from '../../../firebase/utility';
 import Snackbar from 'react-native-snackbar';
-import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import { appleAuth } from '@invertase/react-native-apple-authentication';
 
 
 
 const SignIn = ({ navigation }) => {
-
     let dispatch = useDispatch();
     const [isEntry, setEntry] = useState(true);
-
-    const updateSecureTextEntry = () => {
-        setEntry(!isEntry)
-    }
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [mailChk, setMailChk] = useState(false);
@@ -39,6 +36,68 @@ const SignIn = ({ navigation }) => {
     const [badFormat, setBadFormat] = useState(false);
     const [isLoading, setLoading] = useState(false);
     const [noUser, setNoUser] = useState(false);
+
+    const AppleAuthentication = async () => {
+        // Start the sign-in request
+        const appleAuthRequestResponse = await appleAuth.performRequest({
+            requestedOperation: appleAuth.Operation.LOGIN,
+            requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+        });
+        console.log("log =>", appleAuthRequestResponse)
+        // Ensure Apple returned a user identityToken
+        if (!appleAuthRequestResponse.identityToken) {
+            throw new Error('Apple Sign-In failed - no identify token returned');
+        }
+
+        // Create a Firebase credential from the response
+        const { identityToken, nonce } = appleAuthRequestResponse;
+        const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+        console.log("Credentials =>", appleCredential.token)
+        // Sign the user in with the credential
+        if (appleCredential.token === '') {
+            alert('Error While Apple Login')
+        }
+        else {
+            dispatch(setUser(true))
+            // dispatch(setUserData(userinfo))
+        }
+        return auth().signInWithCredential(appleCredential);
+    }
+
+    // const AppleAuthentication = async() => {
+    //     return new Promise(async (resolve, reject) => {
+    //       const appleAuthRequestResponse = await appleAuth.performRequest({
+    //         nonceEnabled: false,
+    //         requestedOperation: appleAuth.Operation.LOGIN,
+    //         requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+    //       });
+    //       console.log('log', appleAuthRequestResponse)
+    //       const credentialState = await appleAuth.getCredentialStateForUser(appleAuthRequestResponse.user);
+    //       if (credentialState === appleAuth.State.AUTHORIZED) {
+    //         const {fullName, authorizationCode, email, identityToken} = appleAuthRequestResponse;
+    //         // const {email} = jwt_decode(appleAuthRequestResponse.identityToken);
+    //         // const {email} = {appleAuthRequestResponse}
+    //         const {familyName, givenName} = fullName;
+
+
+    //         let Details = {
+    //             email: email,
+    //             fullName: givenName,
+    //             lastName:familyName,
+    //             displayName:fullName,
+    //             uid:identityToken,
+    //             isPaid:false,
+    //             thumbnail: null,
+
+    //         };
+    //         //console.log(Details, "Details")
+    //         await saveData('Users', identityToken, Details);
+
+
+
+    //       }
+    //     });
+    //   }
 
 
     const checkValues = () => {
@@ -54,7 +113,7 @@ const SignIn = ({ navigation }) => {
             setPassChk(true)
             setMailChk(false)
         }
-     
+
         else {
             console.log("Sign IN Called")
             signIn(email, password)
@@ -62,45 +121,49 @@ const SignIn = ({ navigation }) => {
 
     }
 
-    const googleLogin = async() => {
+    const updateSecureTextEntry = () => {
+        setEntry(!isEntry)
+    }
+
+    const googleLogin = async () => {
         setLoading(true);
         let info = await GoogleSign();
         // const token = await AsyncStorage.getItem('token');
         if (info?.Error) {
-          console.log('here', info?.Error);
-          Snackbar.show({
-            text: info?.Error,
-            backgroundColor: DefaultStyles.colors.primary,
-            duration: Snackbar.LENGTH_LONG,
-          });
+            console.log('here', info?.Error);
+            Snackbar.show({
+                text: info?.Error,
+                backgroundColor: DefaultStyles.colors.primary,
+                duration: Snackbar.LENGTH_LONG,
+            });
 
         } else {
-          const google = auth.GoogleAuthProvider.credential(info.idToken);
-          auth().signInWithCredential(google).then((res) => {
-            // console.log(res?.additionalUserInfo?.isNewUser);
-            // console.log(info.user,"info")
-            const uid = auth()?.currentUser?.uid;
+            const google = auth.GoogleAuthProvider.credential(info.idToken);
+            auth().signInWithCredential(google).then((res) => {
+                // console.log(res?.additionalUserInfo?.isNewUser);
+                // console.log(info.user,"info")
+                const uid = auth()?.currentUser?.uid;
 
-            // if (res?.additionalUserInfo?.isNewUser) {
-              var regData = {
-                email: info.user?.email,
-                fullName: info.user?.familyName,
-                lastName: info.user?.givenName,
-                displayName: info.user?.name,
-                provider:"google",
-                createdAt: new Date().toISOString(),
-                thumbnail: info?.user?.photo,
-                uid: uid,
-                isPaid:false
-              };
-              const userDatabase = firestore().collection(`Users`).doc(uid);
-              userDatabase.set(regData).then(async() => { 
-                console.log("in if")
-                dispatch(setUser(true))
-                dispatch(setUserData(regData))
-                console.log(regData, "kkkk")
+                // if (res?.additionalUserInfo?.isNewUser) {
+                var regData = {
+                    email: info.user?.email,
+                    fullName: info.user?.familyName,
+                    lastName: info.user?.givenName,
+                    displayName: info.user?.name,
+                    provider: "google",
+                    createdAt: new Date().toISOString(),
+                    thumbnail: info?.user?.photo,
+                    uid: uid,
+                    isPaid: false
+                };
+                const userDatabase = firestore().collection(`Users`).doc(uid);
+                userDatabase.set(regData).then(async () => {
+                    console.log("in if")
+                    dispatch(setUser(true))
+                    dispatch(setUserData(regData))
+                    console.log(regData, "kkkk")
 
-                let connections = await getData('Connections', uid);
+                    let connections = await getData('Connections', uid);
                     if (typeof connections.media === "undefined") {
                         // console.log("Undefined")
                         await saveInitialData('Connections', uid)
@@ -110,7 +173,7 @@ const SignIn = ({ navigation }) => {
                     }
 
                     let chats = await getData('Chats', uid);
-                    
+
                     // console.log("chats", chats)
                     if (chats === false) {
                         // console.log("Chat Undefined")
@@ -124,26 +187,26 @@ const SignIn = ({ navigation }) => {
                         text: `Sign in Succesfully`,
                         backgroundColor: DefaultStyles.colors.secondary,
                         duration: Snackbar.LENGTH_LONG,
-                      });
+                    });
                     setLoading(false)
                 });
-            // }
-          
-            // setLoading(false);
-          })
-          .catch((err) => {
-            console.error(err.message) 
-            Snackbar.show({
-             text: err.message ,
-             backgroundColor: DefaultStyles.colors.primary,
-             duration: Snackbar.LENGTH_LONG,
-           });
-           });
+                // }
+
+                // setLoading(false);
+            })
+                .catch((err) => {
+                    console.error(err.message)
+                    Snackbar.show({
+                        text: err.message,
+                        backgroundColor: DefaultStyles.colors.primary,
+                        duration: Snackbar.LENGTH_LONG,
+                    });
+                });
             // .catch((err) => console.log(err.message));
         }
         setLoading(false);
-    
-      }
+
+    }
 
     const signIn = async (email, password) => {
 
@@ -174,7 +237,7 @@ const SignIn = ({ navigation }) => {
                     }
 
                     let chats = await getData('Chats', user.user.uid);
-                    
+
                     console.log("chats", chats)
                     if (chats === false) {
                         console.log("Chat Undefined")
@@ -187,11 +250,11 @@ const SignIn = ({ navigation }) => {
                     Snackbar.show({
                         text: 'Login Successful',
                         duration: Snackbar.LENGTH_LONG,
-                        backgroundColor:DefaultStyles.colors.secondary
-                      });
-                      setLoading(false)
-                
-                    }
+                        backgroundColor: DefaultStyles.colors.secondary
+                    });
+                    setLoading(false)
+
+                }
                 else {
                     console.log("Error")
                 }
@@ -243,7 +306,7 @@ const SignIn = ({ navigation }) => {
             setBadFormat(false)
             return true;
         }
-        else if (email === ""){
+        else if (email === "") {
             setBadFormat(false)
         }
         else {
@@ -255,87 +318,87 @@ const SignIn = ({ navigation }) => {
     return (
         <ScrollView style={styles.container}>
             <View style={styles.MainContainer} >
-            <View style={styles.DirectionView}>
-            <TouchableOpacity 
-            style={styles.ImgView}>
-                <Apptext style={styles.SignInTxt}>Login</Apptext>
-                <Apptext style={styles.line}></Apptext>
-            </TouchableOpacity>
-            <TouchableOpacity 
-            onPress={() => navigation.navigate("SignUp")}
-            style={[styles.ImgView, {marginHorizontal:wp('5%')}]}>
-                <Apptext style={styles.SignUpTxt}>Sign Up</Apptext>
-            </TouchableOpacity>
-            </View>
-            <View style={{marginTop:26}} >
-                <Apptext style={styles.WlcmTxt} >Welcome Back to </Apptext>
-                <Apptext style={styles.VidTxt} >VidMatch</Apptext>
-            </View>
-            <View>
-            <Apptext style={styles.cntrView} >Login </Apptext>
-            </View>
-            <View style={{ marginTop: wp('1%') }}>
-            <FormInput
-                    // labelValue={email}
-                    placeholderText="Email address"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    onChangeText={(txt) => {
-                        setEmail(txt)
-                        setMailChk(false)
-                        
-                    }}
-                />
-                {mailChk ? <View>
-                <Apptext style={styles.errorTxt}>
-                        Please Must Enter Email Address</Apptext>
-                </View> : null}
-                {duplicateEmail ? <View>
-                <Apptext style={styles.errorTxt}>
-                        The email address is already in use by another account.</Apptext>
-                </View> : null}
-                {badFormat ? <View>
-                <Apptext style={styles.errorTxt}>
-                        The email address is badly formatted</Apptext>
-                </View> : null}
-                {noUser ? <View>
-                <Apptext style={styles.errorTxt}>
-                        There is no user record found with this email
-                    </Apptext>
-                </View> : null}
+                <View style={styles.DirectionView}>
+                    <TouchableOpacity
+                        style={styles.ImgView}>
+                        <Apptext style={styles.SignInTxt}>Login</Apptext>
+                        <Apptext style={styles.line}></Apptext>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("SignUp")}
+                        style={[styles.ImgView, { marginHorizontal: wp('5%') }]}>
+                        <Apptext style={styles.SignUpTxt}>Sign Up</Apptext>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ marginTop: 26 }} >
+                    <Apptext style={styles.WlcmTxt} >Welcome Back to </Apptext>
+                    <Apptext style={styles.VidTxt} >VidMatch</Apptext>
+                </View>
+                <View>
+                    <Apptext style={styles.cntrView} >Login </Apptext>
+                </View>
+                <View style={{ marginTop: wp('1%') }}>
+                    <FormInput
+                        // labelValue={email}
+                        placeholderText="Email address"
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        onChangeText={(txt) => {
+                            setEmail(txt)
+                            setMailChk(false)
 
-                <FormInput
-                    // labelValue={password}
-                    placeholderText="Password"
-                    autoCapitalize="none"
-                    rightImgName={isEntry ? require('../../../../assets/eye-off.png') : require('../../../../assets/eye.png')}
-                    onPress={updateSecureTextEntry}
-                    secureTextEntry={isEntry ? true : false }
-                    autoCorrect={false}
-                    onChangeText={(txt) => {
-                        setPassword(txt)
-                        setPassChk(false)
-                    }}
-                />
-             {passChk ? <View >
-                <Apptext style={styles.errorTxt}>
-                        Please Must Enter Password</Apptext>
-                </View> : null}
-                {weakPass ? <View>
-                    <Apptext style={styles.errorTxt}>
-                        The password is weak or the user enter invalid password.
-                    </Apptext>
-                </View> : null}
-            </View>
-            <View style={styles.lightBoxTxt}>
-                <TouchableOpacity onPress={() => {
-                    navigation.navigate("ForgotPassword")
-                }}>
-                    <Apptext style={styles.lightTxt}> Forgot password?</Apptext>
-                </TouchableOpacity>
-            </View>
-            <View style={{ marginTop: wp('10%') }}>
+                        }}
+                    />
+                    {mailChk ? <View>
+                        <Apptext style={styles.errorTxt}>
+                            Please Must Enter Email Address</Apptext>
+                    </View> : null}
+                    {duplicateEmail ? <View>
+                        <Apptext style={styles.errorTxt}>
+                            The email address is already in use by another account.</Apptext>
+                    </View> : null}
+                    {badFormat ? <View>
+                        <Apptext style={styles.errorTxt}>
+                            The email address is badly formatted</Apptext>
+                    </View> : null}
+                    {noUser ? <View>
+                        <Apptext style={styles.errorTxt}>
+                            There is no user record found with this email
+                        </Apptext>
+                    </View> : null}
+
+                    <FormInput
+                        // labelValue={password}
+                        placeholderText="Password"
+                        autoCapitalize="none"
+                        rightImgName={isEntry ? require('../../../../assets/eye-off.png') : require('../../../../assets/eye.png')}
+                        onPress={updateSecureTextEntry}
+                        secureTextEntry={isEntry ? true : false}
+                        autoCorrect={false}
+                        onChangeText={(txt) => {
+                            setPassword(txt)
+                            setPassChk(false)
+                        }}
+                    />
+                    {passChk ? <View >
+                        <Apptext style={styles.errorTxt}>
+                            Please Must Enter Password</Apptext>
+                    </View> : null}
+                    {weakPass ? <View>
+                        <Apptext style={styles.errorTxt}>
+                            The password is weak or the user enter invalid password.
+                        </Apptext>
+                    </View> : null}
+                </View>
+                <View style={styles.lightBoxTxt}>
+                    <TouchableOpacity onPress={() => {
+                        navigation.navigate("ForgotPassword")
+                    }}>
+                        <Apptext style={styles.lightTxt}> Forgot password?</Apptext>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ marginTop: wp('10%') }}>
                     <FormButton
                         buttonTitle={isLoading ? "Logging In ...." : "Login"}
                         onPress={() => {
@@ -343,31 +406,33 @@ const SignIn = ({ navigation }) => {
                             ValidateEmail(email)
 
                         }}
-                    /> 
+                    />
+                </View>
+                <View style={styles.socialViews} >
+                    {
+                        Platform.OS === "android" ?
+                            <TouchableOpacity
+                                onPress={() => { googleLogin() }}
+                                style={styles.socialBox} >
+                                <Image source={require('../../../../assets/google.png')} />
+                            </TouchableOpacity>
+                            :
+                            <TouchableOpacity
+                                onPress={() => AppleAuthentication()}
+                                style={styles.socialBox} >
+                                <Image source={require('../../../../assets/apple.png')} />
+                            </TouchableOpacity>
+                    }
+                </View>
+                <View style={styles.bottomLines} >
+                    <Apptext style={styles.bottomTxt}> Don't have an account? </Apptext>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("SignUp")}
+                    >
+                        <Apptext style={[styles.bottomTxt, { color: DefaultStyles.colors.black, fontStyle: "italic", }]}>Signup Here</Apptext>
+                    </TouchableOpacity>
+                </View>
             </View>
-            <View style={styles.socialViews} >
-               {
-               Platform.OS === "android" ?
-               <TouchableOpacity
-                onPress={() => {googleLogin()}}
-                style={styles.socialBox} >
-                <Image source={require('../../../../assets/google.png')} />
-                </TouchableOpacity>
-                :
-                <TouchableOpacity style={styles.socialBox} >
-                <Image source={require('../../../../assets/apple.png')} />
-                </TouchableOpacity>
-                }
-            </View>
-            <View style={styles.bottomLines} >
-                <Apptext style={styles.bottomTxt}> Don't have an account? </Apptext>
-                <TouchableOpacity
-                onPress={() => navigation.navigate("SignUp")}
-                >
-                    <Apptext style={[styles.bottomTxt,{color: DefaultStyles.colors.black, fontStyle:"italic",  }]}>Signup Here</Apptext>
-                </TouchableOpacity>
-            </View>
-            </View>  
         </ScrollView>
     )
 }
@@ -379,15 +444,15 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: DefaultStyles.colors.white,
     },
-    MainContainer:{
-    marginHorizontal:wp('7%')
+    MainContainer: {
+        marginHorizontal: wp('7%')
     },
-    DirectionView:{
-    flexDirection:'row',
+    DirectionView: {
+        flexDirection: 'row',
     },
     ImgView: {
         // marginHorizontal:wp('7%'),
-        marginTop:wp('10%')
+        marginTop: wp('10%')
     },
     SignInTxt: {
         fontFamily: "Poppins-SemiBold",
@@ -399,41 +464,41 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: DefaultStyles.colors.black,
     },
-    line:{ 
-        width:50,
-        height:2,
+    line: {
+        width: 50,
+        height: 2,
         backgroundColor: DefaultStyles.colors.black,
     },
-    WlcmTxt:{
-        fontSize:24,
-        marginTop:wp('1%'),
-        fontFamily:'Poppins-Regular',
-        
+    WlcmTxt: {
+        fontSize: 24,
+        marginTop: wp('1%'),
+        fontFamily: 'Poppins-Regular',
+
     },
-    VidTxt:{
-        fontSize:28,
-        fontFamily:'Poppins-Medium',
-        marginTop:wp('1%')
+    VidTxt: {
+        fontSize: 28,
+        fontFamily: 'Poppins-Medium',
+        marginTop: wp('1%')
     },
-    cntrView:{
+    cntrView: {
         justifyContent: 'center',
         alignItems: 'center',
-        alignSelf:'center',
-        fontSize:30,
+        alignSelf: 'center',
+        fontSize: 30,
         marginTop: 107
     },
-    socialViews:{
-        marginTop:wp('8%'),
-        flexDirection:'row',
-        justifyContent:'space-around'
+    socialViews: {
+        marginTop: wp('8%'),
+        flexDirection: 'row',
+        justifyContent: 'space-around'
     },
-    socialBox:{
-        width:wp('27%') ,
-        height:wp('15%') ,
-        alignItems:'center',
-        justifyContent:'center',
-        borderRadius:4,
-        backgroundColor:"lightgray"
+    socialBox: {
+        width: wp('27%'),
+        height: wp('15%'),
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 4,
+        backgroundColor: "lightgray"
     },
     methods: {
         justifyContent: 'center', alignItems: 'center',
@@ -447,14 +512,14 @@ const styles = StyleSheet.create({
     lightBoxTxt: {
         flexDirection: 'row',
         marginTop: wp('3%'),
-        backgroundColor:"red",
-        marginHorizontal:wp('55%')
+        backgroundColor: "red",
+        marginHorizontal: wp('55%')
         // justifyContent: 'flex-end',
     },
-    lightTxt:{
+    lightTxt: {
         color: DefaultStyles.colors.black,
         fontSize: 13,
-        width:wp('55%'),
+        width: wp('55%'),
         fontFamily: "Poppins-Regular",
     },
     bottomLines: {
@@ -465,11 +530,11 @@ const styles = StyleSheet.create({
     },
     bottomTxt: {
         fontSize: 14,
-        color:DefaultStyles.colors.black,
+        color: DefaultStyles.colors.black,
         fontFamily: "Roboto-Regular",
 
     },
-    errorTxt:{
+    errorTxt: {
         // marginVertical:wp('3%'),
         marginTop: wp(2),
         fontSize: 10,

@@ -9,7 +9,7 @@ const FvrtComp = ({ labelValue, placeholderText,
     onPress,borderRadius= 6,rightOnPress,
     rightIconType, ...rest }) => {
     return (
-        <View 
+        <TouchableOpacity 
         onPress={onPress}
         style={[styles.inputContainer, {borderRadius:borderRadius}]} >
             <View style={{ flexDirection: 'row',alignItems:'center' }}>
@@ -25,7 +25,7 @@ const FvrtComp = ({ labelValue, placeholderText,
                 source={rightImgName}  />
                 </TouchableOpacity>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 

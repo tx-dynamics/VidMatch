@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     HumanInput: {
         //paddingLeft: wp('2%'),
         width: wp('70%'),
+        color:DefaultStyles.colors.black
     
     },
     inputContainer: {

@@ -223,7 +223,7 @@ export default VideoMatch = ({ navigation }) => {
     await saveFvrtsData('checkMatch', 'xdi1eAz374DSEhVran9U', Details)
       .then(async user => {
         Snackbar.show({
-          text: items.title + " " + "Added Into Favourites",
+          text: items.title + " " + "added into favourites",
           duration: Snackbar.LENGTH_LONG,
           backgroundColor: DefaultStyles.colors.secondary
         });
@@ -598,6 +598,8 @@ export default VideoMatch = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
+              movieLiked(isValue)
+              chkIndex === "4" ? setReferesh(!isReferesh) : null
               handleOnSwipedTop()
             }}
             style={[styles.whiteCrcl, { marginTop: -25 }]}>
@@ -605,9 +607,9 @@ export default VideoMatch = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              movieLiked(isValue)
+              // movieLiked(isValue)
               handleOnSwipedRight()
-              chkIndex === "4" ? setReferesh(!isReferesh) : null
+              // chkIndex === "4" ? setReferesh(!isReferesh) : null
             }}
             style={styles.whiteCrcl}>
             <Image source={require('../../../../assets/thumb.png')} />

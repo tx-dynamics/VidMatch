@@ -49,7 +49,7 @@ const Premium = ({ navigation }) => {
             id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
             count: "+5",
             label: "Per Month",
-            msg: "9.99",
+            msg: "2.49",
             showDate: isMDays + " Days Left",
             chkOffer: isMDays !=='' && isChkPlan === "Per Month" ? true : false,
             dt: "5 minutes ago",
@@ -60,9 +60,9 @@ const Premium = ({ navigation }) => {
             id: 'bd7acbewweea-c1b1-46c2-aed5-3ad53abb28ba',
             count: "",
             label: 'Per 6 month',
-            msg: "41.95",
+            msg: "8.94",
             chkOffer: true,
-            showDate: isChkPlan === 'Per 6 month' ? isHYDays + " Days Left" : "Save ($6,99) 30%",
+            showDate: isChkPlan === 'Per 6 month' ? isHYDays + " Days Left" : "Save ($1,49) 40%",
             // offer: '',
             dt: "2 hours ago",
             move: "Detail",
@@ -73,13 +73,27 @@ const Premium = ({ navigation }) => {
             id: 'bd7acbea-c1bewew1-46c2-aed5-3ad53abb28ba',
             count: "+3",
             label: "Per 12 month",
-            msg: "59.88",
+            msg: "11.88",
             chkOffer: true,
-            showDate: isChkPlan === "Per 12 month" ? isYDays + " Days Left" : "Save ($4,99) 50%",
+            showDate: isChkPlan === "Per 12 month" ? isYDays + " Days Left" : "Save ($0,99) 60%",
             // offer: "Save ($4,99) 50%",
             dt: "3 hours ago",
             move: "Detail",
             clr:isChkPlan === "Per 12 month" ? true : false
+
+        },
+
+        {
+            id: 'bd7acbea-c1b33ewew1-46c2-aed5-3ad53abb28ba',
+            count: "+3",
+            label: "Lifetime",
+            msg: "50",
+            chkOffer: true,
+            showDate: isChkPlan == "Lifetime" ? "Subscription Added" : "Pay $50 for Lifetime",
+            // offer: "Save ($4,99) 50%",
+            dt: "3 hours ago",
+            move: "Detail",
+            clr:isChkPlan === "Lifetime" ? true : false
 
         },
 
@@ -246,6 +260,7 @@ const Premium = ({ navigation }) => {
                             );
                         }}
                         renderItem={({ item, index }) => (
+                            <>
                             <PremiumComp
                                 labelValue={item.label}
                                 priceValue={item.msg}
@@ -266,9 +281,11 @@ const Premium = ({ navigation }) => {
                                 // myStl={isItem.includes(item.id) ? true : false}
                                 myStl={item.clr}
                             />
+                            </>
 
                         )}
                     />}
+                    <View style={{height:wp(5)}} />
                 </View>
             </ScrollView>
         </View>

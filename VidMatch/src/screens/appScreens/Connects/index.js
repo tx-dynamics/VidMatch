@@ -12,71 +12,19 @@ import FormInput from '../../../components/FormInput';
 import FormButton from '../../../components/FormButton';
 import Header from '../../../components/Header';
 import FvrtComp from '../../../components/FvrtComp';
-import { getAllOfCollection,getData, getAllOptions,getListing } from '../../../firebase/utility';
+import { getAllOfCollection,getData, getAllOptions,getListing, saveFvrtsData } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
+import Snackbar from 'react-native-snackbar';
 
 
 const Connects = ({ navigation, route }) => {
-    const DATA = [
-        {
-            id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-            count: "+5",
-            label: "Alex Mintz",
-            conct: require("../../../../assets/blueAdd.png"),
-            msg: "Lorem ipsum",
-            Img: require("../../../../assets/boy1.png"),
-            dt: "5 minutes ago",
-            move: "Detail"
-        },
-        {
-            id: 'bd7acbewweea-c1b1-46c2-aed5-3ad53abb28ba',
-            count: "",
-            label: 'Amelia Tray',
-            msg: "Will do, super, thank you",
-            conct: require("../../../../assets/blueAdd.png"),
-            Img: require("../../../../assets/boy2.png"),
-            dt: "2 hours ago",
-            move: "Detail"
-        },
-        {
-            id: 'bd7acbea-c1bewew1-46c2-aed5-3ad53abb28ba',
-            count: "+3",
-            label: "Krysia Eurydyka",
-            msg: "Lorem ipsum",
-            Img: require("../../../../assets/boy3.png"),
-            conct: require("../../../../assets/blueAdd.png"),
-            dt: "3 hours ago",
-            move: "Detail"
-        },
-        {
-            id: 'bd7acbea-c1bewew31-46c2-aed5-3ad53abb28ba',
-            count: "+3",
-            label: "jarosław kowalski",
-            msg: "Lorem ipsum",
-            Img: require("../../../../assets/boy1.png"),
-            conct: require("../../../../assets/blueAdd.png"),
-            dt: "3 hours ago",
-            move: "Detail"
-        },
-        {
-            id: 'bd7acbea-c1be4wew1-46c2-aed5-3ad53abb28ba',
-            count: "+3",
-            label: "Krysia Eurydyka",
-            msg: "Lorem ipsum",
-            Img: require("../../../../assets/boy2.png"),
-            conct: require("../../../../assets/blueAdd.png"),
-            dt: "3 hours ago",
-            move: "Detail"
-        },
-       
-    ];
-
 
     const [data, setData] = useState([])
     const [isLoading, setLoading] = useState(false)
     const [filteredData, setfilteredData] = useState([]);
     const [search, setsearch] = useState('');
     const [isShow, setShow] = useState(false)
+    const [isIcon, setIcon] = useState(false)
 
     const chkData = async () => {
         setLoading(true)
@@ -96,12 +44,7 @@ const Connects = ({ navigation, route }) => {
     },[])
 
     const searchFilterFunction = (text) => {
-        console.log("txt", text)
-        // Check if searched text is not blank
         if (text) {
-            // Inserted text is not blank
-            // Filter the masterDataSource
-            // Update FilteredDataSource
             const newData = data.filter(function (item) {
                 const itemData = item.displayName ? item.displayName.toUpperCase() : "".toUpperCase();
                 const textData = text.toUpperCase();
@@ -110,14 +53,56 @@ const Connects = ({ navigation, route }) => {
             setData(newData);
             setsearch(text);
         } else {
-            // Inserted text is blank
-            // Update FilteredDataSource with masterDataSource
             chkData()
             setData(data);
             setsearch(text);
         }
     };
 
+    const addConnection = async (items) => {
+        console.log("item in AddCon =>", items)
+        var userInfo = auth().currentUser;
+        let Details = {
+            email: items.email,
+            fullName: items.fullName,
+            lastName: items.lastName,
+            displayName: items.displayName,
+            FrndUid: items.uid,
+            uid: userInfo.uid,
+        };
+        
+        let dt = await getData('Users', userInfo.uid)
+        let Details1 = {
+            email: dt?.email,
+            fullName: dt?.fullName,
+            lastName: dt?.lastName,
+            displayName: dt?.displayName,
+            FrndUid: userInfo?.uid,
+            uid: items?.uid,
+
+        };
+
+        await saveFvrtsData('RequestList', userInfo.uid, Details)
+        await saveFvrtsData('RequestList', items.uid, Details)
+            .then(async user => {
+                Snackbar.show({
+                    text: 'Connection Request Sent',
+                    duration: Snackbar.LENGTH_LONG,
+                    backgroundColor: DefaultStyles.colors.secondary
+                });
+                setIcon(true)
+                // setChk(!isChk)
+            })
+            .catch(function (error) {
+                success = false;
+                Snackbar.show({
+                    text: error.code,
+                    duration: Snackbar.LENGTH_LONG,
+                    backgroundColor: DefaultStyles.colors.primary
+                });
+
+            });
+    }
 
     return (
         <View style={styles.container}>
@@ -142,7 +127,7 @@ const Connects = ({ navigation, route }) => {
                 />
             </TouchableOpacity>
            
-            <View style={{ marginTop: wp('6%') }} >
+            <View style={{height:wp(120), marginTop: wp('6%') }} >
             {isLoading ?  
                    <ActivityIndicator size={"large"} color={DefaultStyles.colors.primary} />
                    : 
@@ -164,8 +149,12 @@ const Connects = ({ navigation, route }) => {
                                  : require("../../../../assets/empty-img.jpg")}
                                 borderRadius={9}
                                 labelValue={item?.displayName}
-                                rightImgName={require("../../../../assets/blueAdd.png")}
-                                rightOnPress={() => navigation.navigate("AddConnect", {items:item})}
+                                rightImgName={isIcon ? require("../../../../assets/personAdded.png") : require("../../../../assets/blueAdd.png")}
+                                rightOnPress={() => 
+                                    navigation.navigate("AddConnect", {items:item})
+                                    // addConnection(item)
+                                }
+                                onPress={() => navigation.navigate("AddConnect", {items:item})}
                                 />
 
                         )}

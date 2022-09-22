@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, ActivityIndicator,
-ToastAndroid, Alert, Image, StyleSheet, ScrollView, Platform,}
-from 'react-native';
+import {
+    View, TouchableOpacity, ActivityIndicator,
+    ToastAndroid, Alert, Image, StyleSheet, ScrollView, Platform,
+}
+    from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -18,6 +20,7 @@ import firestore from '@react-native-firebase/firestore';
 import { setUser, setUserData } from '../../../redux/actions/authAction';
 import { useDispatch } from "react-redux";
 
+import { appleAuth } from '@invertase/react-native-apple-authentication';
 
 
 const SignUp = ({ navigation }) => {
@@ -37,13 +40,60 @@ const SignUp = ({ navigation }) => {
     let dispatch = useDispatch();
 
 
+    const AppleAuthentication = async () => {
+        // Start the sign-in request
+        const appleAuthRequestResponse = await appleAuth.performRequest({
+            requestedOperation: appleAuth.Operation.LOGIN,
+            requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+        });
+        console.log("log =>", appleAuthRequestResponse)
+        // Ensure Apple returned a user identityToken
+        if (!appleAuthRequestResponse.identityToken) {
+            throw new Error('Apple Sign-In failed - no identify token returned');
+        }
+
+        // Create a Firebase credential from the response
+        const { identityToken, nonce, email , givenName, familyName, fullName} = appleAuthRequestResponse;
+        const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+        console.log("Credentials =>", appleCredential.token)
+        let Details = {
+            email: email,
+            fullName: givenName,
+            lastName: familyName,
+            displayName: fullName,
+            uid: identityToken,
+            isPaid: false,
+            thumbnail: null,
+
+        };
+        //console.log(Details, "Details")
+        await saveData('Users', identityToken, Details);
+        if (appleCredential.token === '') {
+            alert('Error While Apple Login')
+        }
+        else{
+            let Details = {
+                email: email,
+                fullName: givenName,
+                lastName: familyName,
+                displayName: fullName,
+                uid: identityToken,
+                isPaid: false,
+                thumbnail: null,
+    
+            };
+            navigation.navigate("SignUpModal", { items: Details })
+        }
+        return auth().signInWithCredential(appleCredential);
+    }
+
     const checkValues = () => {
-        if (email === "" && password === "" && fName === "" && lName === "" ) {
+        if (email === "" && password === "" && fName === "" && lName === "") {
             setMailChk(true)
             setPassChk(true)
             setFChk(true)
-            setLChk(true)    
-            setBadFormat(false) 
+            setLChk(true)
+            setBadFormat(false)
         }
         else if (fName === "") {
             setFChk(true)
@@ -58,7 +108,7 @@ const SignUp = ({ navigation }) => {
             setPassChk(true)
         }
 
-        else if(badFormat === true){
+        else if (badFormat === true) {
             setBadFormat(true)
         }
         else {
@@ -66,76 +116,76 @@ const SignUp = ({ navigation }) => {
             signUp()
         }
     }
-/////////////////////////////////////////////////////////////////////////////////////////
-    const googleSignUp = async() => {
-    setLoading(true);
-    let info = await GoogleSign();
-    // const token = await AsyncStorage.getItem('token');
-    if (info?.Error) {
-      console.log('here', info?.Error);
-    } else {
+    /////////////////////////////////////////////////////////////////////////////////////////
+    const googleSignUp = async () => {
+        setLoading(true);
+        let info = await GoogleSign();
+        // const token = await AsyncStorage.getItem('token');
+        if (info?.Error) {
+            console.log('here', info?.Error);
+        } else {
 
-      const google = auth.GoogleAuthProvider.credential(info.idToken);
-      auth().signInWithCredential(google).then((res) => {
-        console.log(res?.additionalUserInfo?.isNewUser);
-        const uid = auth()?.currentUser?.uid;
-            var Details = {
-                email: info.user?.email,
-                fullName: info.user?.familyName,
-                lastName: info.user?.givenName,
-                displayName: info.user?.name,
-                provider:"google",
-                createdAt: new Date().toISOString(),
-                thumbnail: info?.user?.photo,
-                uid: uid,
-                isPaid:false
-              };
-          const userDatabase = firestore().collection(`Users`).doc(uid);
-          userDatabase.set(Details).then(async() => { 
-            console.log('done')
-            let connections = await getData('Connections', uid);
-            if (typeof connections.media === "undefined") {
-                console.log("Undefined")
-                await saveInitialData('Connections', uid)
-            }
-            else {
-                console.log("Ok to go ")
-            }
+            const google = auth.GoogleAuthProvider.credential(info.idToken);
+            auth().signInWithCredential(google).then((res) => {
+                console.log(res?.additionalUserInfo?.isNewUser);
+                const uid = auth()?.currentUser?.uid;
+                var Details = {
+                    email: info.user?.email,
+                    fullName: info.user?.familyName,
+                    lastName: info.user?.givenName,
+                    displayName: info.user?.name,
+                    provider: "google",
+                    createdAt: new Date().toISOString(),
+                    thumbnail: info?.user?.photo,
+                    uid: uid,
+                    isPaid: false
+                };
+                const userDatabase = firestore().collection(`Users`).doc(uid);
+                userDatabase.set(Details).then(async () => {
+                    console.log('done')
+                    let connections = await getData('Connections', uid);
+                    if (typeof connections.media === "undefined") {
+                        console.log("Undefined")
+                        await saveInitialData('Connections', uid)
+                    }
+                    else {
+                        console.log("Ok to go ")
+                    }
 
-            let chats = await getData('Chats', uid);
-            
-            console.log("chats", chats)
-            if (chats === false) {
-                console.log("Chat Undefined")
-                await saveInitialChat('Chats', uid)
-            }
-            else {
-                console.log("Ok to go Chat ")
-            }
-            res?.additionalUserInfo?.isNewUser ?  navigation.navigate("SignUpModal", {items : Details})
-             : 
-             dispatch(setUser(true))
-             dispatch(setUserData(Details))
+                    let chats = await getData('Chats', uid);
 
-         });
-          setLoading(false);
-        
-      })
-      .catch((err) => {
-        console.error(err.message) 
-        Snackbar.show({
-         text: err.message ,
-         backgroundColor: DefaultStyles.colors.primary,
-         duration: Snackbar.LENGTH_LONG,
-       });
-       });
-        // .catch((err) => console.log(err.message));
+                    console.log("chats", chats)
+                    if (chats === false) {
+                        console.log("Chat Undefined")
+                        await saveInitialChat('Chats', uid)
+                    }
+                    else {
+                        console.log("Ok to go Chat ")
+                    }
+                    res?.additionalUserInfo?.isNewUser ? navigation.navigate("SignUpModal", { items: Details })
+                        :
+                        dispatch(setUser(true))
+                    dispatch(setUserData(Details))
+
+                });
+                setLoading(false);
+
+            })
+                .catch((err) => {
+                    console.error(err.message)
+                    Snackbar.show({
+                        text: err.message,
+                        backgroundColor: DefaultStyles.colors.primary,
+                        duration: Snackbar.LENGTH_LONG,
+                    });
+                });
+            // .catch((err) => console.log(err.message));
+        }
+        setLoading(false);
+
     }
-    setLoading(false);
 
-  }
-
-////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
     const ValidateEmail = (inputText) => {
         console.log(inputText)
         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -143,7 +193,7 @@ const SignUp = ({ navigation }) => {
             setBadFormat(false)
             return true;
         }
-        else if (email === ""){
+        else if (email === "") {
             setBadFormat(false)
         }
         else {
@@ -152,199 +202,201 @@ const SignUp = ({ navigation }) => {
         }
     }
     const signUp = async () => {
-            let success = true;
-            setLoading(true)
-            await auth()
-                .createUserWithEmailAndPassword(email, password)
-                .then(async user => {
-                    let Details = {
-                        email: email,
-                        fullName: fName,
-                        lastName:lName,
-                        displayName:fName + " " + lName,
-                        uid:user.user.uid,
-                        isPaid:false,
-                        thumbnail: null,
-                        
-                    };
+        let success = true;
+        setLoading(true)
+        await auth()
+            .createUserWithEmailAndPassword(email, password)
+            .then(async user => {
+                let Details = {
+                    email: email,
+                    fullName: fName,
+                    lastName: lName,
+                    displayName: fName + " " + lName,
+                    uid: user.user.uid,
+                    isPaid: false,
+                    thumbnail: null,
 
-                    console.log(Details, "Details")
-                    await saveData('Users', user.user.uid, Details);
-                    let connections = await getData('Connections', user.user.uid);
-                    if (typeof connections.media === "undefined") {
-                        await saveInitialData('Connections', user.user.uid)
-                    }
-                    else {
-                        console.log("Ok to go ")
-                    }
-                    
-                    let chats = await getData('Chats', user.user.uid);
-                    
-                    if (chats === false) {
-                        await saveInitialChat('Chats', user.user.uid)
-                    }
-                    else {
-                        console.log("Ok to go Chat ")
-                    }
+                };
 
-                    navigation.navigate("SignUpModal", {items: Details})
-                    setLoading(false)
+                console.log(Details, "Details")
+                await saveData('Users', user.user.uid, Details);
+                let connections = await getData('Connections', user.user.uid);
+                if (typeof connections.media === "undefined") {
+                    await saveInitialData('Connections', user.user.uid)
+                }
+                else {
+                    console.log("Ok to go ")
+                }
 
-                    Snackbar.show({
-                        text: 'Account Created',
-                        duration: Snackbar.LENGTH_LONG,
-                        backgroundColor:DefaultStyles.colors.secondary
-                      });
+                let chats = await getData('Chats', user.user.uid);
 
-                })
-                .catch(function (error) {
-                    success = false;
-                    console.log(error)
-                    Snackbar.show({
-                        text: error.code,
-                        duration: Snackbar.LENGTH_LONG,
-                        backgroundColor:DefaultStyles.colors.primary
-                      });
-                    setLoading(false)
+                if (chats === false) {
+                    await saveInitialChat('Chats', user.user.uid)
+                }
+                else {
+                    console.log("Ok to go Chat ")
+                }
 
-                    // Alert.alert(error.code)
+                navigation.navigate("SignUpModal", { items: Details })
+                setLoading(false)
 
-                    
+                Snackbar.show({
+                    text: 'Account Created',
+                    duration: Snackbar.LENGTH_LONG,
+                    backgroundColor: DefaultStyles.colors.secondary
                 });
-            return success;
-        
+
+            })
+            .catch(function (error) {
+                success = false;
+                console.log(error)
+                Snackbar.show({
+                    text: error.code,
+                    duration: Snackbar.LENGTH_LONG,
+                    backgroundColor: DefaultStyles.colors.primary
+                });
+                setLoading(false)
+
+                // Alert.alert(error.code)
+
+
+            });
+        return success;
+
     }
 
     return (
         <ScrollView style={styles.container}>
             <View style={styles.MainContainer} >
-            <View style={styles.DirectionView}>
-            <TouchableOpacity
-            onPress={() => navigation.navigate("Login") }
-            style={styles.ImgView}>
-                <Apptext style={styles.SignUpTxt}>Login</Apptext>
-                
-            </TouchableOpacity>
-            <TouchableOpacity 
-            style={[styles.ImgView, {marginHorizontal:wp('5%')}]}>
-                <Apptext style={styles.SignInTxt}>Sign Up</Apptext>
-                <Apptext style={styles.line}></Apptext>
-            </TouchableOpacity>
-            </View>
-            <View style={{marginTop:26}} >
-                <Apptext style={styles.WlcmTxt} >let's create</Apptext>
-                <Apptext style={styles.WlcmTxt}>your sign in </Apptext>
-            </View>
-            <View>
-            <Apptext style={styles.cntrView} >Sign Up</Apptext>
-            </View>
-            <View style={{ marginTop: wp('1%') }}>
-            <FormInput
-                    // labelValue={email}
-                    placeholderText="First Name"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    onChangeText={(txt) => {
-                        setFName(txt)
-                        setFChk(false)
-                    }}
-                />
-                {fChk ? <View>
-                    <Apptext style={styles.errorTxt}>
-                        Please Must Enter First Name</Apptext>
-                </View> : null}
-                   <FormInput
-                    // labelValue={email}
-                    placeholderText="Last Name"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    onChangeText={(txt) => {
-                        setLName(txt)
-                        setLChk(false)
-                    }}
-                />
-                {lChk ? <View>
-                    <Apptext style={styles.errorTxt}>
-                    
-                        Please Must Enter Last Name</Apptext>
-                </View> : null}
-                 
-                <FormInput
-                    // labelValue={email}
-                    placeholderText="Email"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    onChangeText={(txt) => {
-                        setEmail(txt)
-                        setMailChk(false)
-                    }}
-                />
-                {mailChk ? <View>
-                    <Apptext style={styles.errorTxt}>
+                <View style={styles.DirectionView}>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("Login")}
+                        style={styles.ImgView}>
+                        <Apptext style={styles.SignUpTxt}>Login</Apptext>
 
-                        Please Must Enter Email Address</Apptext>
-                </View> : null}
-                {badFormat ? <View>
-                    <Apptext style={styles.errorTxt}>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.ImgView, { marginHorizontal: wp('5%') }]}>
+                        <Apptext style={styles.SignInTxt}>Sign Up</Apptext>
+                        <Apptext style={styles.line}></Apptext>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ marginTop: 26 }} >
+                    <Apptext style={styles.WlcmTxt} >let's create</Apptext>
+                    <Apptext style={styles.WlcmTxt}>your sign in </Apptext>
+                </View>
+                <View>
+                    <Apptext style={styles.cntrView} >Sign Up</Apptext>
+                </View>
+                <View style={{ marginTop: wp('1%') }}>
+                    <FormInput
+                        // labelValue={email}
+                        placeholderText="First Name"
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        onChangeText={(txt) => {
+                            setFName(txt)
+                            setFChk(false)
+                        }}
+                    />
+                    {fChk ? <View>
+                        <Apptext style={styles.errorTxt}>
+                            Please Must Enter First Name</Apptext>
+                    </View> : null}
+                    <FormInput
+                        // labelValue={email}
+                        placeholderText="Last Name"
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        onChangeText={(txt) => {
+                            setLName(txt)
+                            setLChk(false)
+                        }}
+                    />
+                    {lChk ? <View>
+                        <Apptext style={styles.errorTxt}>
 
-                        The Email Address is badly formatted</Apptext>
-                </View> : null}
-                <FormInput
-                    // labelValue={password}
-                    placeholderText="Password"
-                    autoCapitalize="none"
-                    // rightImgName={require('../../../../assets/eye-off.png')}
-                    secureTextEntry={true}
-                    autoCorrect={false}
-                    onChangeText={(txt) => {
-                        setPassword(txt)
-                        setPassChk(false)
-                    }}
-                />
-                 {passChk ? <View>
-                    <Apptext style={styles.errorTxt}>
-                        Please Must Enter Password</Apptext>
-                </View> : null}
-            
-            </View>
-           
-            <View style={{ marginTop: wp('9%') }}>
+                            Please Must Enter Last Name</Apptext>
+                    </View> : null}
+
+                    <FormInput
+                        // labelValue={email}
+                        placeholderText="Email"
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        onChangeText={(txt) => {
+                            setEmail(txt)
+                            setMailChk(false)
+                        }}
+                    />
+                    {mailChk ? <View>
+                        <Apptext style={styles.errorTxt}>
+
+                            Please Must Enter Email Address</Apptext>
+                    </View> : null}
+                    {badFormat ? <View>
+                        <Apptext style={styles.errorTxt}>
+
+                            The Email Address is badly formatted</Apptext>
+                    </View> : null}
+                    <FormInput
+                        // labelValue={password}
+                        placeholderText="Password"
+                        autoCapitalize="none"
+                        // rightImgName={require('../../../../assets/eye-off.png')}
+                        secureTextEntry={true}
+                        autoCorrect={false}
+                        onChangeText={(txt) => {
+                            setPassword(txt)
+                            setPassChk(false)
+                        }}
+                    />
+                    {passChk ? <View>
+                        <Apptext style={styles.errorTxt}>
+                            Please Must Enter Password</Apptext>
+                    </View> : null}
+
+                </View>
+
+                <View style={{ marginTop: wp('9%') }}>
                     <FormButton
                         buttonTitle={isLoading ? "Signing Up ...." : "Sign Up"}
-                        onPress={() => 
-                           { checkValues()
+                        onPress={() => {
+                            checkValues()
                             ValidateEmail(email)
-}
+                        }
                         }
 
-                    /> 
+                    />
+                </View>
+                <Apptext style={styles.OR} >Or</Apptext>
+                <View style={styles.socialViews} >
+                    {Platform.OS === "android" ?
+                        <TouchableOpacity
+                            onPress={() => {
+                                googleSignUp()
+                            }}
+                            style={styles.socialBox} >
+                            <Image source={require('../../../../assets/google.png')} />
+                        </TouchableOpacity>
+                        :
+                        <TouchableOpacity
+                            onPress={() => AppleAuthentication()}
+                            style={styles.socialBox} >
+                            <Image source={require('../../../../assets/apple.png')} />
+                        </TouchableOpacity>
+                    }
+                </View>
+                <View style={styles.bottomLines} >
+                    <Apptext style={styles.bottomTxt}> Already have an account? </Apptext>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("Login")}
+                    >
+                        <Apptext style={[styles.bottomTxt, { color: DefaultStyles.colors.black, fontStyle: "italic", }]}>Login Here</Apptext>
+                    </TouchableOpacity>
+                </View>
             </View>
-            <Apptext style={styles.OR} >Or</Apptext>
-            <View style={styles.socialViews} >
-             { Platform.OS === "android" ?
-             <TouchableOpacity 
-                onPress={() => {
-                    googleSignUp()
-                }}
-                style={styles.socialBox} >
-                <Image source={require('../../../../assets/google.png')} />
-                </TouchableOpacity>
-                :
-                <TouchableOpacity style={styles.socialBox} >
-                <Image source={require('../../../../assets/apple.png')} />
-                </TouchableOpacity>
-                }
-            </View>
-            <View style={styles.bottomLines} >
-                <Apptext style={styles.bottomTxt}> Already have an account? </Apptext>
-                <TouchableOpacity
-                onPress={() => navigation.navigate("Login") }
-                >
-                    <Apptext style={[styles.bottomTxt,{color: DefaultStyles.colors.black,fontStyle:"italic",  }]}>Login Here</Apptext>
-                </TouchableOpacity>
-            </View>
-            </View>  
         </ScrollView>
     )
 }
@@ -356,15 +408,15 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: DefaultStyles.colors.white,
     },
-    MainContainer:{
-    marginHorizontal:wp('7%')
+    MainContainer: {
+        marginHorizontal: wp('7%')
     },
-    DirectionView:{
-    flexDirection:'row',
+    DirectionView: {
+        flexDirection: 'row',
     },
     ImgView: {
         // marginHorizontal:wp('7%'),
-        marginTop:wp('10%')
+        marginTop: wp('10%')
     },
     SignInTxt: {
         fontFamily: "Poppins-SemiBold",
@@ -376,46 +428,46 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: DefaultStyles.colors.black,
     },
-    line:{ 
-        width:70,
-        height:2,
+    line: {
+        width: 70,
+        height: 2,
         backgroundColor: DefaultStyles.colors.black,
     },
-    WlcmTxt:{
-        fontSize:30,
-        marginTop:wp('1%'),
-        fontFamily:'ABeeZee-Regular',
-        
+    WlcmTxt: {
+        fontSize: 30,
+        marginTop: wp('1%'),
+        fontFamily: 'ABeeZee-Regular',
+
     },
-    VidTxt:{
-        fontSize:28,
-        fontFamily:'ABeeZee-Regular',
-        marginTop:wp('1%')
+    VidTxt: {
+        fontSize: 28,
+        fontFamily: 'ABeeZee-Regular',
+        marginTop: wp('1%')
     },
-    cntrView:{
+    cntrView: {
         justifyContent: 'center',
         alignItems: 'center',
-        alignSelf:'center',
-        fontSize:30,
+        alignSelf: 'center',
+        fontSize: 30,
         marginTop: 35
     },
-    socialViews:{
+    socialViews: {
         marginTop: wp('7%'),
-        flexDirection:'row',
-        justifyContent:'space-around'
+        flexDirection: 'row',
+        justifyContent: 'space-around'
     },
-    socialBox:{
-        width:wp('27%') ,
-        height:wp('15%') ,
-        alignItems:'center',
-        justifyContent:'center',
-        borderRadius:4,
-        backgroundColor:"lightgray"
+    socialBox: {
+        width: wp('27%'),
+        height: wp('15%'),
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 4,
+        backgroundColor: "lightgray"
     },
-    OR:{
-        fontFamily:'Roboto-Regular',
-        alignSelf:'center',
-        fontSize:14
+    OR: {
+        fontFamily: 'Roboto-Regular',
+        alignSelf: 'center',
+        fontSize: 14
     },
     methods: {
         justifyContent: 'center', alignItems: 'center',
@@ -439,11 +491,11 @@ const styles = StyleSheet.create({
     },
     bottomTxt: {
         fontSize: 14,
-        color:DefaultStyles.colors.black,
+        color: DefaultStyles.colors.black,
         fontFamily: "Roboto-Regular",
 
     },
-    errorTxt:{
+    errorTxt: {
         marginTop: wp(2),
         fontSize: 10,
         color: "red"
