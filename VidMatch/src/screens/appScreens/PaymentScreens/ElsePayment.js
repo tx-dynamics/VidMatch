@@ -24,7 +24,7 @@ import { useSelector } from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
 import { Base } from '../../../Constants/Base';
 import Snackbar from 'react-native-snackbar';
-import { saveData,getListing,saveFav, removeToArray, saveFvrtsData, getData, saveInitialData } from '../../../firebase/utility';
+import { saveData, getListing, saveFav, removeToArray, saveFvrtsData, getData, saveInitialData } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
 import { setUser } from '../../../redux/actions/authAction';
 import { useDispatch } from "react-redux";
@@ -49,7 +49,7 @@ const ElsePayment = (props) => {
     const Userdata = useSelector((state) => state.auth.userData)
     const methodName = useSelector((state) => state.auth.methodName)
     const isPckg = useSelector((state) => state.auth.userPckg)
-    console.log("num",isPckg)
+    console.log("num", isPckg)
 
     const CallApi = () => {
         setLoading(true)
@@ -58,15 +58,15 @@ const ElsePayment = (props) => {
             "amount": isPckg.msg,
             "token": {
                 "number": cardnum ? cardnum : "000000000000000",
-                "exp_month": exp.substring(0,2),
-                "exp_year": exp.substring(5,7),
+                "exp_month": exp.substring(0, 2),
+                "exp_year": exp.substring(5, 7),
                 "cvc": cvc,
                 "name": nam
             }
         })
-        console.log("obj =>",obj);
-  
-        fetch(Base.paymentUrl + '/stripe/make_payment' , {
+        console.log("obj =>", obj);
+
+        fetch(Base.paymentUrl + '/stripe/make_payment', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -92,20 +92,19 @@ const ElsePayment = (props) => {
                     setLoading(false)
                 }
             })
-            .catch((error) => 
-            {
-              setLoading(false)
-              console.log(error)
-              Snackbar.show({
-                text: error,
-                backgroundColor: 'red',
-                textColor:"white"
-              });
+            .catch((error) => {
+                setLoading(false)
+                console.log(error)
+                Snackbar.show({
+                    text: error,
+                    backgroundColor: 'red',
+                    textColor: "white"
+                });
             }
             )
-      }
+    }
 
-      const saveDatas = async() => {
+    const saveDatas = async () => {
         setLoading(true)
         let uid = auth()?.currentUser?.uid
         var Details = {
@@ -115,32 +114,32 @@ const ElsePayment = (props) => {
             displayName: Userdata.displayName,
             thumbnail: Userdata.thumbnail,
             uid: uid,
-            isPaid:true,
-            packageDetail:isPckg.label,
-            PlanDate : new Date().toISOString(),
-            
-        };
-          var paidDetails = {
-            uid: uid,
-            isPaid:true,
-            packageDetail:isPckg.label,
-            PlanDate : new Date().toISOString(),
+            isPaid: true,
+            packageDetail: isPckg.label,
+            PlanDate: new Date().toISOString(),
 
-          };
-          console.log("regdata", paidDetails)
-        await saveData('paidUsers',uid, paidDetails)
-        await saveData('Users',uid, Details).
-        then(() => {     
-              Snackbar.show({
-                text: 'Payment Record Saved',
-                duration: Snackbar.LENGTH_LONG,
-                backgroundColor: DefaultStyles.colors.secondary
-            });
-        setLoading(false)
-        })
-      }
-      
-      
+        };
+        var paidDetails = {
+            uid: uid,
+            isPaid: true,
+            packageDetail: isPckg.label,
+            PlanDate: new Date().toISOString(),
+
+        };
+        console.log("regdata", paidDetails)
+        await saveData('paidUsers', uid, paidDetails)
+        await saveData('Users', uid, Details).
+            then(() => {
+                Snackbar.show({
+                    text: 'Payment Record Saved',
+                    duration: Snackbar.LENGTH_LONG,
+                    backgroundColor: DefaultStyles.colors.secondary
+                });
+                setLoading(false)
+            })
+    }
+
+
 
     return (
         <View style={styles.container}>
@@ -262,29 +261,29 @@ const ElsePayment = (props) => {
                                 </View>
                             </View>
 
-                        {isLoading ?
-                        <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
-                        :
-                        <Button
-                                icon={true}
-                                iconName={iconPath.paylock}
-                                onPress={() => {
-                                    cardnum !== '' && nam !== '' && exp !== '' && cvc !== '' ?
-                                        //   setshow(true)
-                                        CallApi()
-                                        // setPayment(true)
-                                        :
-                                        console.log('no')
-                                }}
-                                Text={cardnum !== '' && nam !== '' && exp !== '' && cvc !== '' ? 'Pay for the Premium' : 'Pay for the Pro'}
-                                marginTop={wp(12)}
-                                fontFamily={fonts.Poppins_Bold}
-                                marginHorizontal={wp(20)}
-                                backgroundColor={cardnum !== '' && nam !== '' && exp !== '' && cvc !== '' ? '#25d482' : '#9DA1B7'}
-                                height={wp(16)}
-                                borderRadius={20}
-                                marginBottom={hp(1.5)}
-                            />}
+                            {isLoading ?
+                                <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
+                                :
+                                <Button
+                                    icon={true}
+                                    iconName={iconPath.paylock}
+                                    onPress={() => {
+                                        cardnum !== '' && nam !== '' && exp !== '' && cvc !== '' ?
+                                            //   setshow(true)
+                                            CallApi()
+                                            // setPayment(true)
+                                            :
+                                            console.log('no')
+                                    }}
+                                    Text={cardnum !== '' && nam !== '' && exp !== '' && cvc !== '' ? 'Pay for the Premium' : 'Pay for the Pro'}
+                                    marginTop={wp(12)}
+                                    fontFamily={fonts.Poppins_Bold}
+                                    marginHorizontal={wp(20)}
+                                    backgroundColor={cardnum !== '' && nam !== '' && exp !== '' && cvc !== '' ? '#25d482' : '#9DA1B7'}
+                                    height={wp(16)}
+                                    borderRadius={20}
+                                    marginBottom={hp(1.5)}
+                                />}
                         </View>
                     </> :
                     <Pressable onPress={() => props.navigation.navigate('HomeScreen')}>
@@ -292,7 +291,7 @@ const ElsePayment = (props) => {
                     </Pressable>}
                 <Modal
                     visible={isPayment}>
-                    
+
                     <ScrollView style={{
                         flex: 1,
                         width: wpp('100%'),
@@ -310,50 +309,48 @@ const ElsePayment = (props) => {
                         // backgroundGradientTop: "#333333",
                         // backgroundGradientBottom: "#666666"
                     }}>
-                        <LinearGradient colors={['white','#2a4578','white']}>
-                        
-                        <View
-                            onPress={() => setPayment(false)}
-                            style={{
-                                width: 325,
-                                marginTop: wpp('30%'),
-                                height: 260,
-                                borderRadius: 30,
-                                alignSelf: 'center',
-                                backgroundColor: "white"
-                            }}>
+                        <LinearGradient colors={['white', '#2a4578', 'white']}>
 
-                            <Image style={{ alignSelf: 'center', marginTop: wpp('12%') }} 
-                            source={require('../../../../assets/fireworks.png')} />
-                            <Apptext style={{
-                                marginTop: 30,
-                                alignSelf: 'center', color: DefaultStyles.colors.secondary,
-                                fontSize: 18, fontFamily: 'Poppins-SemiBold'
+                            <View
+                                onPress={() => setPayment(false)}
+                                style={{
+                                    width: 325,
+                                    marginTop: wpp('30%'),
+                                    height: 260,
+                                    borderRadius: 30,
+                                    alignSelf: 'center',
+                                    backgroundColor: "white"
+                                }}>
 
-                            }}>Congratulations!</Apptext>
+                                <Image style={{ alignSelf: 'center', marginTop: wpp('12%') }}
+                                    source={require('../../../../assets/fireworks.png')} />
+                                <Apptext style={{
+                                    marginTop: 30,
+                                    alignSelf: 'center', color: DefaultStyles.colors.secondary,
+                                    fontSize: 18, fontFamily: 'Poppins-SemiBold'
 
-                            <Apptext style={{
-                                marginTop: 30,
-                                alignSelf: 'center', color: DefaultStyles.colors.secondary,
-                                fontSize: 18, fontFamily: 'Poppins-Regular'
+                                }}>Congratulations!</Apptext>
 
-                            }}>Enjoy Premium Vidmatch</Apptext>
-                        </View>
-                        <TouchableOpacity
-                            onPress={() =>
-                                 {
-                                setPayment(false)
-                                // navigation.navigate("Premium")
-                                // User ? props.navigation.navigate("Home")
-                                // :
-                                // dispatch(setUser(true))
-                                // props.navigation.navigate("Login")
+                                <Apptext style={{
+                                    marginTop: 30,
+                                    alignSelf: 'center', color: DefaultStyles.colors.secondary,
+                                    fontSize: 18, fontFamily: 'Poppins-Regular'
+
+                                }}>Enjoy Premium Vidmatch</Apptext>
+                            </View>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setPayment(false)
+                                    // navigation.navigate("Premium")
+                                    navigation.navigate("Home")
+                                    // :
+                                    // dispatch(setUser(true))
+                                    // props.navigation.navigate("Login")
                                 }}
-                            style={[styles.buttonContainer, { marginTop: wpp('60%') }]}>
-                            {/* <Image style={{marginHorizontal:wp('2%')}} source={require('../../../../assets/Lock.png')} />  */}
-                            <Apptext style={styles.buttonText}>{"Go To Home"}</Apptext>
-                        </TouchableOpacity>
-                    </LinearGradient>
+                                style={[styles.buttonContainer, { marginTop: wpp('60%') }]}>
+                                <Apptext style={styles.buttonText}>{"Go To Home"}</Apptext>
+                            </TouchableOpacity>
+                        </LinearGradient>
 
                     </ScrollView>
                 </Modal>
@@ -381,13 +378,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#25d482",
         borderRadius: 16,
         alignSelf: 'center',
-        flexDirection:'row',
-        
+        flexDirection: 'row',
+
     },
     buttonText: {
         fontSize: 16,
         color: '#ffffff',
-        marginHorizontal:wpp('3%'),
+        marginHorizontal: wpp('3%'),
         fontFamily: 'Poppins-SemiBold'
     },
 })

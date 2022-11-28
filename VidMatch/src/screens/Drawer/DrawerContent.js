@@ -71,9 +71,9 @@ function DrawerContent({ navigation, userImg, username, userEmail }) {
                     <Apptext style={styles.innerTxt} > Your Connects</Apptext>
                     <Image style={{ marginTop: wp('1%'), tintColor: DefaultStyles.colors.secondary }} source={require('../../../assets/chevron-right.png')} />
                 </TouchableOpacity>
-                <TouchableOpacity 
-                onPress={() => navigation.navigate("EditProfile")}
-                style={styles.listView}>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("EditProfile")}
+                    style={styles.listView}>
                     <View style={styles.blueBox}>
                         <Image style={{ tintColor: "white", height: 12, width: 12 }} source={require('../../../assets/settings.png')} />
                     </View>
@@ -108,8 +108,8 @@ function DrawerContent({ navigation, userImg, username, userEmail }) {
 
             <TouchableOpacity
                 onPress={() => {
-                  dispatch(setSplash(true))
-                //   dispatch(setUser(false))
+                    dispatch(setSplash(true))
+                    //   dispatch(setUser(false))
                     auth().signOut()
                         .then(() => {
                             dispatch(setUser(false))
@@ -134,10 +134,8 @@ function DrawerContent({ navigation, userImg, username, userEmail }) {
 
 const styles = StyleSheet.create({
     container: {
-        // marginTop: 0,
         flex: 1,
         backgroundColor: DefaultStyles.colors.secondary,
-        // paddingTop: -50
     },
     bck: {
         marginHorizontal: wp('4%'),
@@ -158,7 +156,6 @@ const styles = StyleSheet.create({
     },
     golBox: {
         width: 52, height: 52,
-        // backgroundColor:"red",
         borderWidth: 2,
         borderColor: "white",
         borderRadius: 40,
@@ -166,8 +163,8 @@ const styles = StyleSheet.create({
     hanaTxt: {
         fontSize: 14,
         color: "white",
-        width: wp('42%'),
-        // backgroundColor:'red',
+        width: wp('37%'),
+        marginLeft: wp(3),
         fontFamily: 'Poppins-SemiBold'
     },
     add: {
@@ -187,8 +184,6 @@ const styles = StyleSheet.create({
         marginHorizontal: wp('5%'),
         marginTop: wp('2%'),
         alignItems: 'center',
-        // justifyContent:'center'
-        // alignSelf:'center'
     },
     blueBox: {
         height: wp('6%'),

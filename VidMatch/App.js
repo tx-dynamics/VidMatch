@@ -12,16 +12,18 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import Main from './src/Main';
 import { Provider } from 'react-redux';
-import store from './src/redux/store';
-import {useSelector} from 'react-redux'
+import { store, persistor } from './src/redux/store';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const App = () => {
   return (
     <NavigationContainer>
       <Provider store={store}>
-      <SafeAreaView  style={{ flex: 1,}}>
-      <Main />
-      </SafeAreaView>
+        <PersistGate persistor={persistor}>
+          <SafeAreaView style={{ flex: 1, }}>
+            <Main />
+          </SafeAreaView>
+        </PersistGate>
       </Provider>
     </NavigationContainer>
   );

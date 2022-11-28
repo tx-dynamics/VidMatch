@@ -17,11 +17,11 @@ import CountryPicker from 'react-native-country-picker-modal'
 import { CountryCode, Country } from '../../appScreens/PaymentScreens/types';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import {setPckg } from '../../../redux/actions/authAction';
-import { saveData,getListing, } from '../../../firebase/utility';
+import { setPckg } from '../../../redux/actions/authAction';
+import { saveData, getListing, } from '../../../firebase/utility';
 import auth from '@react-native-firebase/auth';
 import Snackbar from 'react-native-snackbar';
-import { useIsFocused } from '@react-navigation/native';    
+import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
 
 
@@ -30,43 +30,51 @@ const Premium = ({ navigation }) => {
     const user = useSelector((state) => state.auth.user)
     const isFocused = useIsFocused();
     const Userdata = useSelector((state) => state.auth.userData)
-
     /////////////////////////////////////////////////////////////////////////
     const [isItem, setSelectedItem] = useState([]);
-    const [withFlag, setWithFlag] = useState('')
-    const [countryCode, setCountryCode] = useState('US')
-    const [country, setCountry] = useState("America")
-    const [isVisibe, setVisible] = useState(false)
     const [isLoading, setLoading] = useState(false)
     const [isChkPlan, setChkPlan] = useState('');
-    const [isMDays,setMDays] = useState('');
-    const [isYDays,setYDays] = useState('');
-    const [isHYDays,setHYDays] = useState('');
-
+    const [isMDays, setMDays] = useState('');
+    const [isYDays, setYDays] = useState('');
+    const [isHYDays, setHYDays] = useState('');
 
     const DATA = [
+        {
+            id: 'bd237acbea-c1b33ewew1-46c2-aed5-3ad53abb28ba',
+            count: "+3",
+            label: "Free",
+            currency: '$',
+            msg: "0.00",
+            chkOffer: true,
+            showDate: "Free Subscription",
+            dt: "3 hours ago",
+            move: "Detail",
+            clr: isChkPlan == undefined ? true : false
+
+        },
         {
             id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
             count: "+5",
             label: "Per Month",
+            currency: '$',
             msg: "2.49",
             showDate: isMDays + " Days Left",
-            chkOffer: isMDays !=='' && isChkPlan === "Per Month" ? true : false,
+            chkOffer: isMDays !== '' && isChkPlan === "Per Month" ? true : false,
             dt: "5 minutes ago",
             move: "Detail",
-            clr:isChkPlan === "Per Month" ? true : false
+            clr: isChkPlan === "Per Month" ? true : false
         },
         {
             id: 'bd7acbewweea-c1b1-46c2-aed5-3ad53abb28ba',
             count: "",
             label: 'Per 6 month',
             msg: "8.94",
+            currency: '$',
             chkOffer: true,
             showDate: isChkPlan === 'Per 6 month' ? isHYDays + " Days Left" : "Save ($1,49) 40%",
-            // offer: '',
             dt: "2 hours ago",
             move: "Detail",
-            clr:isChkPlan === 'Per 6 month' ? true : false
+            clr: isChkPlan === 'Per 6 month' ? true : false
 
         },
         {
@@ -75,38 +83,29 @@ const Premium = ({ navigation }) => {
             label: "Per 12 month",
             msg: "11.88",
             chkOffer: true,
+            currency: '$',
             showDate: isChkPlan === "Per 12 month" ? isYDays + " Days Left" : "Save ($0,99) 60%",
-            // offer: "Save ($4,99) 50%",
             dt: "3 hours ago",
             move: "Detail",
-            clr:isChkPlan === "Per 12 month" ? true : false
+            clr: isChkPlan === "Per 12 month" ? true : false
 
         },
-
         {
             id: 'bd7acbea-c1b33ewew1-46c2-aed5-3ad53abb28ba',
             count: "+3",
             label: "Lifetime",
             msg: "50",
             chkOffer: true,
+            currency: '$',
             showDate: isChkPlan == "Lifetime" ? "Subscription Added" : "Pay $50 for Lifetime",
-            // offer: "Save ($4,99) 50%",
             dt: "3 hours ago",
             move: "Detail",
-            clr:isChkPlan === "Lifetime" ? true : false
+            clr: isChkPlan === "Lifetime" ? true : false
 
         },
 
 
     ];
-
-    // console.log(isChkPlan, "plan")
-    const onSelect = (country) => {
-        setCountryCode(country.cca2)
-        setCountry(country.name)
-        setWithFlag(country.flag)
-    }
-
     const addCategories = async (item) => {
         var selectedIdss = [...isItem]
         if (selectedIdss.includes(item.id)) {
@@ -118,48 +117,42 @@ const Premium = ({ navigation }) => {
         }
         await setSelectedItem(selectedIdss)
     }
-
-    const getData = async() => {
-    setLoading(true)
-    const userInfo = auth().currentUser;
-    let res = await getListing("paidUsers", userInfo.uid)
-    if (res === false) {
-        console.log("No Paid User")
-        setLoading(false)
+    const getData = async () => {
+        setLoading(true)
+        const userInfo = auth().currentUser;
+        let res = await getListing("paidUsers", userInfo.uid)
+        if (res === false) {
+            console.log("No Paid User")
+            setLoading(false)
+        }
+        else {
+            const cnvrtDate = new Date();
+            let a = new Date(res?.PlanDate);
+            let b = moment(cnvrtDate);
+            let aa = moment(a)
+            let finalY = aa.diff(b, 'days')
+            console.log("finalY", finalY, cnvrtDate, aa)
+            let YearDays = 365
+            let calY = YearDays - finalY
+            console.log("Cal Y => ", calY)
+            setYDays(calY)
+            let finalM = aa.diff(b, 'days')
+            let MonthDays = 30
+            let calM = MonthDays - finalM
+            console.log("Cal M => ", calM)
+            setMDays(calM)
+            let finalHY = aa.diff(b, 'days')
+            let HalfYearDays = 182
+            let calHY = HalfYearDays - finalHY
+            console.log("Cal Half Year => ", calHY)
+            setHYDays(calHY)
+            setChkPlan(res?.packageDetail)
+            setLoading(false)
+        }
     }
-    else{
-        // console.log("res", res)
-        const cnvrtDate = new Date();
-        let a = new Date(res?.PlanDate);
-        let b = moment(cnvrtDate);
-        let aa = moment(a)
-        let finalY = aa.diff(b, 'days')
-        console.log("finalY", finalY, cnvrtDate, aa)
-        let YearDays = 365
-        let calY = YearDays - finalY
-        console.log("Cal Y => ", calY)
-        setYDays(calY)
-        let finalM = aa.diff(b, 'days')
-        let MonthDays = 30
-        let calM = MonthDays - finalM
-        console.log("Cal M => ", calM)
-        setMDays(calM)
-        let finalHY = aa.diff(b, 'days')
-        let HalfYearDays = 182
-        let calHY = HalfYearDays - finalHY
-        console.log("Cal Half Year => ", calHY)
-        setHYDays(calHY)
-        setChkPlan(res.packageDetail)
-        setLoading(false)
-    }}
-
-    
-
     useEffect(() => {
         getData()
-    },[isFocused])
-
-  
+    }, [isFocused])
 
     return (
         <View style={styles.container}>
@@ -198,94 +191,49 @@ const Premium = ({ navigation }) => {
                     </View>
                 </View>
                 <View style={styles.rgn}>
-                    {/* <View style={{ flexDirection: 'row', marginTop: wp('4%'), }}>
-                    <Apptext style={styles.rgnTxt}>Your Region</Apptext>
-                        <TouchableOpacity onPress={() => setVisible(true)} style={styles.inputContainer}>
-                            <CountryPicker
-                                {...{
-                                    countryCode,
-                                    onSelect,
-                                }}
-                                visible={isVisibe}
-                            />
-                            <TextInput
-                                // value={labelValue}
-                                numberOfLines={1}
-                                placeholder={country}
-                                placeholderTextColor={"black"}
-                            />
-
-                        </TouchableOpacity>
-                    </View> */}
-                    {/* <TouchableOpacity style={{flexDirection:'row' }} onPress={() => setVisible(true)} >
-                        <CountryPicker
-                            {...{
-                                countryCode,
-                                onSelect,
-                            }}
-                            visible={isVisibe}
-                        />                        
-                        <FormInput
-                            // labelValue={email}
-                            // leftImgName={require('../../../../assets/google.png')}
-                            leftImgName={withFlag}
-                            backgroundColor="white"
-                            placeholderText=" America"
-                            placeholderTextColor='black'
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            borderColor={"lightgray"}
-                            borderWidth={0.5}
-                        />
-                    </TouchableOpacity>
-                   */}
                     <Apptext style={[styles.rgnTxt, { marginTop: 14 }]}>Select Package</Apptext>
-
                 </View>
-            
-                <View style={{marginTop:wp('4%')}}>
-                  {isLoading ? <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
-                  :
-                  <FlatList
-                        data={DATA}
-                        maxHeight={"99%"}
-                        showsVerticalScrollIndicator={false}
-                        keyExtractor={(item) => item.id}
-                        ListEmptyComponent={() => {
-                            return (
-                                <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
-                                    No Item Found
-                                </Apptext>
-                            );
-                        }}
-                        renderItem={({ item, index }) => (
-                            <>
-                            <PremiumComp
-                                labelValue={item.label}
-                                priceValue={item.msg}
-                                isOffer={item.chkOffer}
-                                offerTxt={item.showDate}
-                                onPress={() => {
-                                    addCategories(item)
-                                    {
-                                    user ? (navigation.navigate("withoutBottomTabnavigator",
-                                    {screen:"AskPaymentOption"}) ,dispatch(setPckg(item)))
-                                    :
-                                    navigation.navigate("AskPaymentOption")
-                                    dispatch(setPckg(item))
-                                    
-                                 
-                                }
-                                }}
-                                // myStl={isItem.includes(item.id) ? true : false}
-                                myStl={item.clr}
-                            />
-                            </>
+                <View style={{ marginTop: wp('4%') }}>
+                    {isLoading ? <ActivityIndicator size={"small"} color={DefaultStyles.colors.primary} />
+                        :
+                        <FlatList
+                            data={DATA}
+                            maxHeight={"99%"}
+                            showsVerticalScrollIndicator={false}
+                            keyExtractor={(item) => item.id}
+                            ListEmptyComponent={() => {
+                                return (
+                                    <Apptext style={{ alignSelf: "center", marginTop: 50 }}>
+                                        No Item Found
+                                    </Apptext>
+                                );
+                            }}
+                            renderItem={({ item, index }) => (
+                                <>
+                                    <PremiumComp
+                                        labelValue={item.label}
+                                        priceValue={'$' + item.msg}
+                                        isOffer={item.chkOffer}
+                                        offerTxt={item.showDate}
+                                        onPress={() => {
+                                            addCategories(item)
+                                            {
+                                                user ? (navigation.navigate("withoutBottomTabnavigator",
+                                                    { screen: "AskPaymentOption" }), dispatch(setPckg(item)))
+                                                    :
+                                                    navigation.navigate("AskPaymentOption")
+                                                dispatch(setPckg(item))
 
-                        )}
-                    />}
-                    <View style={{height:wp(5)}} />
+
+                                            }
+                                        }}
+                                        myStl={item.clr}
+                                    />
+                                </>
+
+                            )}
+                        />}
+                    <View style={{ height: wp(5) }} />
                 </View>
             </ScrollView>
         </View>
@@ -427,8 +375,8 @@ const styles = StyleSheet.create({
         borderRightColor: "white",
         borderLeftColor: "white",
         borderTopColor: "white",
-        alignItems:'center',
-        paddingLeft:wp('3%'),
+        alignItems: 'center',
+        paddingLeft: wp('3%'),
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -439,5 +387,5 @@ const styles = StyleSheet.create({
 
         elevation: 1,
     },
-  
+
 });
