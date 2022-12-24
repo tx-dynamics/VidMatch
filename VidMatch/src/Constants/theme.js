@@ -5,7 +5,7 @@
 // margin={[0,0,0,20]} Left margin=20
 // margin={[0,20]} Horizental margin=20
 // margin={[20,0]} VERTICAL margin=20
-export const   handlePadding = (padding) => {
+export const handlePadding = (padding) => {
   if (typeof padding === 'number') {
     return {
       paddingTop: padding,

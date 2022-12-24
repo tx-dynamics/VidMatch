@@ -168,7 +168,7 @@ export default VideoMatch = ({ navigation }) => {
     let obj = JSON.stringify({
       pageNo: isPage
     })
-    // console.log("body => ", obj)
+
     fetch(Base.apiUrl + '/trending_movies', {
       method: 'POST',
       headers: {
@@ -178,12 +178,13 @@ export default VideoMatch = ({ navigation }) => {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log("data =>", data);
         // setData(data)
-        if (data.code === 200) {
+        if (data?.code === 200) {
           setArrays(data?.data?.results)
           setLoading(false)
         }
-        else{
+        else {
           console.log("Data agya", data?.code)
           setLoading(false)
           Snackbar.show({
@@ -319,16 +320,16 @@ export default VideoMatch = ({ navigation }) => {
     // })
 
     // console.log("new data => ", newData)
-    
+
     let details = [];
-    obj.map(async(item) => {
+    obj.map(async (item) => {
       let dt = await getData('Users', item.uid)
       details.push(dt)
       setFound([...details])
-    })    
+    })
   }
-  
- 
+
+
   return (
     <View style={styles.container}>
       <Header
@@ -409,22 +410,22 @@ export default VideoMatch = ({ navigation }) => {
 
                   {
                     item.thumbnail ?
-                    <TouchableOpacity onPress={() => navigation.navigate("AddConnect", {items:item})}>
-                      <Image style={{
-                        width: 80, height: 80,
-                        borderRadius: 68
-                      }}
-                        source={{ uri: item.thumbnail }} />
+                      <TouchableOpacity onPress={() => navigation.navigate("AddConnect", { items: item })}>
+                        <Image style={{
+                          width: 80, height: 80,
+                          borderRadius: 68
+                        }}
+                          source={{ uri: item.thumbnail }} />
                       </TouchableOpacity>
                       :
                       <TouchableOpacity
-                      onPress={() => navigation.navigate("AddConnect", {items:item})}
+                        onPress={() => navigation.navigate("AddConnect", { items: item })}
                       >
-                      <Image style={{
-                        width: 80, height: 80,
-                        borderRadius: 68
-                      }} source={require('../../../../assets/empty-img.jpg')} />
-                    </TouchableOpacity>
+                        <Image style={{
+                          width: 80, height: 80,
+                          borderRadius: 68
+                        }} source={require('../../../../assets/empty-img.jpg')} />
+                      </TouchableOpacity>
                   }
                 </View>
                 {/* ////////////////////////////////////////////// */}
@@ -440,16 +441,18 @@ export default VideoMatch = ({ navigation }) => {
                     width: wp('30%'),
                     color: "white"
                   }}>{Userdata.displayName}</Apptext>
-                  <Apptext style={{ fontSize: 14,textAlign: 'center',
-                    width: wp('30%'),color: "white" }}>{item?.displayName}</Apptext>
+                  <Apptext style={{
+                    fontSize: 14, textAlign: 'center',
+                    width: wp('30%'), color: "white"
+                  }}>{item?.displayName}</Apptext>
                 </View>
 
               </ScrollView>
             )}
             ListFooterComponent={item => (
-          <View>   
-         
-          {/* <TouchableOpacity
+              <View>
+
+                {/* <TouchableOpacity
             onPress={() => {
               console.log("item",item)
               // navigation.navigate("AddConnect", {items:item})
@@ -476,25 +479,25 @@ export default VideoMatch = ({ navigation }) => {
             }}>Send A Message</Apptext>
           </TouchableOpacity>
           */}
-          <TouchableOpacity
-          style={{ marginTop:wp('15%')}}
-          onPress={() => {
-            navigation.navigate("VideoMatch")
-            setVisible(false)
-          }}>
-            <Apptext
-              style={{
-                fontSize: 18, fontFamily: 'Poppins-Medium',
-                marginTop: wp('15%'),
-                color: "white", alignSelf: 'center'
-              }}>Continue</Apptext>
-          </TouchableOpacity>
-          
-          </View>
-          )}
+                <TouchableOpacity
+                  style={{ marginTop: wp('15%') }}
+                  onPress={() => {
+                    navigation.navigate("VideoMatch")
+                    setVisible(false)
+                  }}>
+                  <Apptext
+                    style={{
+                      fontSize: 18, fontFamily: 'Poppins-Medium',
+                      marginTop: wp('15%'),
+                      color: "white", alignSelf: 'center'
+                    }}>Continue</Apptext>
+                </TouchableOpacity>
+
+              </View>
+            )}
           />
         </View>
-        
+
       </Modal>
 
       {/* ///////////////////////////////////////////MODAL ENDS HERE///////////////////////////////////////////////////////// */}
@@ -559,7 +562,7 @@ export default VideoMatch = ({ navigation }) => {
                 cards={isArrays}
                 renderCard={card =>
                   <Card card={card}
-                    btnPress={() => navigation.navigate("VideoDetail", {movieId : card.id})}
+                    btnPress={() => navigation.navigate("VideoDetail", { movieId: card.id })}
                     onPress={setValue(card)} />
                   // console.log(card)
                 }

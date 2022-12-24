@@ -15,7 +15,7 @@ import FormButton from '../../../components/FormButton';
 import GoogleSign from '../../../components/GoogleSign';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
-import { setUser, setUserData } from '../../../redux/actions/authAction';
+import { setAppleLoginData, setUser, setUserData } from '../../../redux/actions/authAction';
 import { getData, saveInitialData, saveInitialChat, saveData } from '../../../firebase/utility';
 import Snackbar from 'react-native-snackbar';
 import firestore from '@react-native-firebase/firestore';
@@ -25,6 +25,7 @@ import { appleAuth } from '@invertase/react-native-apple-authentication';
 
 
 const SignIn = ({ navigation }) => {
+    const appleLoginData = useSelector((state) => state.auth.appleLoginData)
     let dispatch = useDispatch();
     const [isEntry, setEntry] = useState(true);
     const [email, setEmail] = useState('');
@@ -43,23 +44,101 @@ const SignIn = ({ navigation }) => {
             requestedOperation: appleAuth.Operation.LOGIN,
             requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
         });
-        console.log("log =>", appleAuthRequestResponse)
-        // Ensure Apple returned a user identityToken
+        console.log("response log =>", appleAuthRequestResponse)
+        // var token = jwt_decode(appleAuthRequestResponse?.identityToken);
         if (!appleAuthRequestResponse.identityToken) {
             throw new Error('Apple Sign-In failed - no identify token returned');
         }
-
-        // Create a Firebase credential from the response
         const { identityToken, nonce } = appleAuthRequestResponse;
         const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
-        console.log("Credentials =>", appleCredential.token)
-        // Sign the user in with the credential
-        if (appleCredential.token === '') {
-            alert('Error While Apple Login')
+
+        if (appleCredential?.token === '') {
+            console.log("log =>", appleAuthRequestResponse)
+            console.log('Failed To Get Token')
         }
         else {
-            dispatch(setUser(true))
-            // dispatch(setUserData(userinfo))
+            if (appleAuthRequestResponse?.email == null) {
+                var regData = {
+                    email: appleLoginData?.email,
+                    fullName: appleLoginData?.fullName?.givenName,
+                    lastName: appleLoginData?.fullName?.lastName,
+                    displayName: appleLoginData?.fullName?.givenName,
+                    provider: "Apple",
+                    createdAt: new Date().toISOString(),
+                    thumbnail: '',
+                    uid: appleLoginData?.user,
+                    isPaid: false
+                };
+                const userDatabase = firestore().collection(`Users`).doc(uid);
+                userDatabase.set(regData).then(async () => {
+                    console.log("in if")
+                    dispatch(setUser(true))
+                    dispatch(setUserData(regData))
+                    console.log(regData, "kkkk")
+
+                    let connections = await getData('Connections', uid);
+                    if (typeof connections.media === "undefined") {
+                        await saveInitialData('Connections', uid)
+                    }
+                    else {
+                    }
+
+                    let chats = await getData('Chats', uid);
+                    if (chats === false) {
+                        await saveInitialChat('Chats', uid)
+                    }
+                    else {
+                    }
+                    Snackbar.show({
+                        text: `Sign in Succesfully`,
+                        backgroundColor: DefaultStyles.colors.secondary,
+                        duration: Snackbar.LENGTH_LONG,
+                    });
+                    setLoading(false)
+                });
+
+            }
+            else {
+                dispatch(setAppleLoginData(appleAuthRequestResponse))
+                var regData = {
+                    email: appleAuthRequestResponse?.email,
+                    fullName: appleAuthRequestResponse?.fullName?.givenName,
+                    lastName: appleAuthRequestResponse?.fullName?.lastName,
+                    displayName: appleAuthRequestResponse?.fullName?.givenName,
+                    provider: "Apple",
+                    createdAt: new Date().toISOString(),
+                    thumbnail: '',
+                    uid: appleAuthRequestResponse?.user,
+                    isPaid: false
+                };
+                const userDatabase = firestore().collection(`Users`).doc(uid);
+                userDatabase.set(regData).then(async () => {
+                    console.log("in if")
+                    dispatch(setUser(true))
+                    dispatch(setUserData(regData))
+                    console.log(regData, "kkkk")
+
+                    let connections = await getData('Connections', uid);
+                    if (typeof connections.media === "undefined") {
+                        await saveInitialData('Connections', uid)
+                    }
+                    else {
+                    }
+
+                    let chats = await getData('Chats', uid);
+                    if (chats === false) {
+                        await saveInitialChat('Chats', uid)
+                    }
+                    else {
+                    }
+                    Snackbar.show({
+                        text: `Sign in Succesfully`,
+                        backgroundColor: DefaultStyles.colors.secondary,
+                        duration: Snackbar.LENGTH_LONG,
+                    });
+                    setLoading(false)
+                });
+            }
         }
         return auth().signInWithCredential(appleCredential);
     }
